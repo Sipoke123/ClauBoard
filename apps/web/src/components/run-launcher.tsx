@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Rocket, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
+import { Rocket, CheckCircle, AlertCircle, Sparkles, Users, GitBranch } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../lib/cn";
 import { buttonVariants, inputVariants, panelVariants } from "../lib/variants";
@@ -16,7 +16,18 @@ interface RunPreset {
   agentName?: string;
 }
 
+interface SessionPreset {
+  id: string;
+  label: string;
+  description: string;
+  name: string;
+  agents: { agentName: string; prompt: string; dependsOn?: string[] }[];
+}
+
+type Tab = "single" | "pipeline";
+
 export function RunLauncher() {
+  const [tab, setTab] = useState<Tab>("single");
   const [prompt, setPrompt] = useState("");
   const [cwd, setCwd] = useState("");
   const [agentName, setAgentName] = useState("");
@@ -24,12 +35,17 @@ export function RunLauncher() {
   const [error, setError] = useState<string | null>(null);
   const [lastLaunch, setLastLaunch] = useState<string | null>(null);
   const [presets, setPresets] = useState<RunPreset[]>([]);
+  const [sessionPresets, setSessionPresets] = useState<SessionPreset[]>([]);
   const [showPresets, setShowPresets] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/api/presets/runs`)
       .then((r) => r.json())
       .then(setPresets)
+      .catch(() => {});
+    fetch(`${API_URL}/api/presets/sessions`)
+      .then((r) => r.json())
+      .then(setSessionPresets)
       .catch(() => {});
   }, []);
 
@@ -60,6 +76,32 @@ export function RunLauncher() {
       setLastLaunch(`Launched: ${data.agentId}`);
     } catch (err: any) {
       setError(err.message ?? "Failed to launch");
+    } finally {
+      setLaunching(false);
+    }
+  }
+
+  async function launchSession(preset: SessionPreset) {
+    setLaunching(true);
+    setError(null);
+    setLastLaunch(null);
+    try {
+      const res = await fetch(`${API_URL}/api/sessions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: preset.name,
+          agents: preset.agents,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setLastLaunch(`Pipeline launched: ${preset.agents.length} agents`);
+    } catch (err: any) {
+      setError(err.message ?? "Failed to launch pipeline");
     } finally {
       setLaunching(false);
     }
@@ -103,95 +145,203 @@ export function RunLauncher() {
 
   return (
     <div className="space-y-3">
-      {/* Preset quick-launch buttons */}
-      <AnimatePresence>
-        {showPresets && presets.length > 0 && !prompt && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="overflow-hidden"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={11} className="text-zinc-600" />
-              <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Quick Launch</span>
+      {/* Tab switcher */}
+      <div className="flex gap-1 p-0.5 rounded-lg bg-zinc-900/50 border border-white/[0.04] w-fit">
+        <button
+          onClick={() => setTab("single")}
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium uppercase tracking-wider transition-colors",
+            tab === "single"
+              ? "bg-zinc-800 text-zinc-200 border border-white/[0.06]"
+              : "text-zinc-500 hover:text-zinc-400"
+          )}
+        >
+          <Rocket size={11} /> Single Agent
+        </button>
+        <button
+          onClick={() => setTab("pipeline")}
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium uppercase tracking-wider transition-colors",
+            tab === "pipeline"
+              ? "bg-zinc-800 text-zinc-200 border border-white/[0.06]"
+              : "text-zinc-500 hover:text-zinc-400"
+          )}
+        >
+          <GitBranch size={11} /> Pipeline
+        </button>
+      </div>
+
+      {/* Single agent tab */}
+      {tab === "single" && (
+        <>
+          {/* Preset quick-launch buttons */}
+          <AnimatePresence>
+            {showPresets && presets.length > 0 && !prompt && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="overflow-hidden"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles size={11} className="text-zinc-600" />
+                  <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Quick Launch</span>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {presets.map((preset) => (
+                    <div
+                      key={preset.id}
+                      className={cn(
+                        panelVariants({ variant: "inset" }),
+                        "rounded-xl px-3 py-2 text-left hover:bg-zinc-800/60 hover:border-white/[0.1] transition-colors group"
+                      )}
+                    >
+                      <button
+                        onClick={() => applyPreset(preset)}
+                        className="w-full text-left cursor-pointer"
+                      >
+                        <div className="text-xs font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
+                          {preset.label}
+                        </div>
+                        <div className="text-[10px] text-zinc-600 mt-0.5">{preset.description}</div>
+                      </button>
+                      <button
+                        onClick={() => quickLaunchPreset(preset)}
+                        disabled={launching}
+                        className={cn(buttonVariants({ variant: "primary", size: "xs" }), "mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity")}
+                      >
+                        <Rocket size={10} /> Quick Launch
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Launch form */}
+          <form onSubmit={handleLaunch} className="space-y-3">
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter a prompt for the agent..."
+              rows={3}
+              className={cn(inputVariants({ size: "md" }), "resize-none")}
+            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={cwd}
+                onChange={(e) => setCwd(e.target.value)}
+                placeholder="Working directory (optional)"
+                className={cn(inputVariants({ size: "sm" }), "flex-1")}
+              />
+              <input
+                type="text"
+                value={agentName}
+                onChange={(e) => setAgentName(e.target.value)}
+                placeholder="Agent name"
+                className={cn(inputVariants({ size: "sm" }), "w-36")}
+              />
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {presets.map((preset) => (
+            <div className="flex items-center gap-3">
+              <button
+                type="submit"
+                disabled={launching || !prompt.trim()}
+                className={buttonVariants({ variant: "primary", size: "sm" })}
+              >
+                <Rocket size={13} />
+                {launching ? "Launching..." : "Launch"}
+              </button>
+              {prompt && (
+                <button
+                  type="button"
+                  onClick={() => { setPrompt(""); setAgentName(""); setShowPresets(true); }}
+                  className={buttonVariants({ variant: "ghost", size: "xs" })}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </form>
+        </>
+      )}
+
+      {/* Pipeline tab */}
+      {tab === "pipeline" && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Users size={11} className="text-zinc-600" />
+            <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Pipeline Presets</span>
+          </div>
+          <div className="space-y-2">
+            {sessionPresets.map((preset) => {
+              const parallelAgents = preset.agents.filter((a) => !a.dependsOn?.length);
+              const dependentAgents = preset.agents.filter((a) => a.dependsOn?.length);
+              return (
                 <div
                   key={preset.id}
                   className={cn(
                     panelVariants({ variant: "inset" }),
-                    "rounded-xl px-3 py-2 text-left hover:bg-zinc-800/60 hover:border-white/[0.1] transition-colors group"
+                    "rounded-xl px-4 py-3 hover:bg-zinc-800/60 hover:border-white/[0.1] transition-colors group"
                   )}
                 >
-                  <button
-                    onClick={() => applyPreset(preset)}
-                    className="w-full text-left cursor-pointer"
-                  >
-                    <div className="text-xs font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
-                      {preset.label}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-zinc-200">{preset.label}</div>
+                      <div className="text-[11px] text-zinc-500 mt-0.5">{preset.description}</div>
+                      {/* Agent flow visualization */}
+                      <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
+                        {parallelAgents.map((a, i) => (
+                          <span key={a.agentName} className="flex items-center gap-1">
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium">
+                              {a.agentName}
+                            </span>
+                            {i < parallelAgents.length - 1 && (
+                              <span className="text-zinc-700 text-[10px]">|</span>
+                            )}
+                          </span>
+                        ))}
+                        {dependentAgents.length > 0 && (
+                          <>
+                            <span className="text-zinc-600 text-[10px]">→</span>
+                            {dependentAgents.map((a, i) => (
+                              <span key={a.agentName} className="flex items-center gap-1">
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-400 font-medium">
+                                  {a.agentName}
+                                </span>
+                                {i < dependentAgents.length - 1 && (
+                                  <span className="text-zinc-600 text-[10px]">→</span>
+                                )}
+                              </span>
+                            ))}
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-[10px] text-zinc-600 mt-0.5">{preset.description}</div>
-                  </button>
-                  <button
-                    onClick={() => quickLaunchPreset(preset)}
-                    disabled={launching}
-                    className={cn(buttonVariants({ variant: "primary", size: "xs" }), "mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity")}
-                  >
-                    <Rocket size={10} /> Quick Launch
-                  </button>
+                    <button
+                      onClick={() => launchSession(preset)}
+                      disabled={launching}
+                      className={cn(
+                        buttonVariants({ variant: "primary", size: "sm" }),
+                        "shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+                      )}
+                    >
+                      <Rocket size={12} />
+                      {launching ? "..." : "Launch"}
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Launch form */}
-      <form onSubmit={handleLaunch} className="space-y-3">
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter a prompt for the agent..."
-          rows={3}
-          className={cn(inputVariants({ size: "md" }), "resize-none")}
-        />
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={cwd}
-            onChange={(e) => setCwd(e.target.value)}
-            placeholder="Working directory (optional)"
-            className={cn(inputVariants({ size: "sm" }), "flex-1")}
-          />
-          <input
-            type="text"
-            value={agentName}
-            onChange={(e) => setAgentName(e.target.value)}
-            placeholder="Agent name"
-            className={cn(inputVariants({ size: "sm" }), "w-36")}
-          />
+              );
+            })}
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={launching || !prompt.trim()}
-            className={buttonVariants({ variant: "primary", size: "sm" })}
-          >
-            <Rocket size={13} />
-            {launching ? "Launching..." : "Launch"}
-          </button>
-          {prompt && (
-            <button
-              type="button"
-              onClick={() => { setPrompt(""); setAgentName(""); setShowPresets(true); }}
-              className={buttonVariants({ variant: "ghost", size: "xs" })}
-            >
-              Clear
-            </button>
-          )}
+      )}
+
+      {/* Status messages */}
+      {(error || lastLaunch) && (
+        <div className="flex items-center gap-2">
           {error && (
             <span className="flex items-center gap-1 text-xs text-red-400">
               <AlertCircle size={11} /> {error}
@@ -203,7 +353,7 @@ export function RunLauncher() {
             </span>
           )}
         </div>
-      </form>
+      )}
     </div>
   );
 }

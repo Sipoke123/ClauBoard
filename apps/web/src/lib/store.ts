@@ -85,9 +85,7 @@ class Store {
         );
         break;
       case "agent.deregistered":
-        agents = agents.map((a) =>
-          a.id === event.agentId ? { ...a, status: "offline", blockedReason: undefined } : a,
-        );
+        agents = agents.filter((a) => a.id !== event.agentId);
         break;
       case "agent.blocked":
         agents = agents.map((a) =>

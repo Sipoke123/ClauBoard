@@ -243,15 +243,111 @@ function AgentNodeCard({
 // Main Canvas
 // ---------------------------------------------------------------------------
 
+function computeAutoLayout(
+  agents: Agent[],
+  sessions: Session[],
+  runs: Run[],
+): Map<string, { x: number; y: number }> {
+  const positions = new Map<string, { x: number; y: number }>();
+  const COL_WIDTH = 280;
+  const ROW_HEIGHT = 160;
+
+  // 1) Identify which agents belong to sessions
+  const sessionAgentIds = new Set<string>();
+  const activeSessions = sessions.filter((s) => s.agents?.length);
+  for (const session of activeSessions) {
+    for (const sa of session.agents!) {
+      if (sa.agentId) sessionAgentIds.add(sa.agentId);
+      else if (sa.runId) {
+        const run = runs.find((r) => r.id === sa.runId);
+        if (run) sessionAgentIds.add(run.agentId);
+      }
+    }
+  }
+
+  // 2) Position standalone agents (mock + single) in a grid, top-left
+  const standaloneAgents = agents.filter((a) => !sessionAgentIds.has(a.id));
+  const STANDALONE_COLS = 3;
+  standaloneAgents.forEach((agent, i) => {
+    positions.set(agent.id, {
+      x: 40 + (i % STANDALONE_COLS) * COL_WIDTH,
+      y: 50 + Math.floor(i / STANDALONE_COLS) * ROW_HEIGHT,
+    });
+  });
+
+  // 3) Position each session's agents in dependency-based layout, to the right
+  const standaloneRows = Math.ceil(standaloneAgents.length / STANDALONE_COLS);
+  const standaloneMaxX = standaloneAgents.length > 0
+    ? STANDALONE_COLS * COL_WIDTH + 60
+    : 0;
+
+  let sessionOffsetX = standaloneMaxX;
+
+  for (const session of activeSessions) {
+    if (!session.agents?.length) continue;
+
+    // Build agentId lookup
+    const nameToId = new Map<string, string>();
+    for (const sa of session.agents) {
+      if (sa.agentId) nameToId.set(sa.agentName, sa.agentId);
+      else if (sa.runId) {
+        const run = runs.find((r) => r.id === sa.runId);
+        if (run) nameToId.set(sa.agentName, run.agentId);
+      }
+    }
+
+    // Compute stages from dependencies
+    const stages = new Map<string, number>();
+    function resolveStage(name: string): number {
+      if (stages.has(name)) return stages.get(name)!;
+      const sa = session.agents!.find((a) => a.agentName === name);
+      if (!sa || !sa.dependsOn?.length) { stages.set(name, 0); return 0; }
+      const depStage = Math.max(...sa.dependsOn.map((d) => resolveStage(d)));
+      stages.set(name, depStage + 1);
+      return depStage + 1;
+    }
+    for (const sa of session.agents) resolveStage(sa.agentName);
+
+    // Group by stage
+    const stageGroups = new Map<number, string[]>();
+    for (const [name, stage] of stages) {
+      if (!stageGroups.has(stage)) stageGroups.set(stage, []);
+      stageGroups.get(stage)!.push(name);
+    }
+
+    // Position agents per stage
+    let maxStageX = 0;
+    for (const [stage, names] of stageGroups) {
+      const x = sessionOffsetX + stage * (COL_WIDTH + 20);
+      const totalHeight = names.length * ROW_HEIGHT;
+      const startY = Math.max(50, (Math.max(500, standaloneRows * ROW_HEIGHT) - totalHeight) / 2);
+      names.forEach((name, rowIdx) => {
+        const agentId = nameToId.get(name);
+        if (agentId) {
+          positions.set(agentId, { x, y: startY + rowIdx * ROW_HEIGHT });
+        }
+      });
+      maxStageX = Math.max(maxStageX, x + COL_WIDTH);
+    }
+
+    // Next session starts after this one
+    sessionOffsetX = maxStageX + 80;
+  }
+
+  return positions;
+}
+
 function buildNodes(
   agents: Agent[],
   runs: Run[],
   events: AgentEvent[],
+  sessions: Session[],
   savedPositions: Map<string, { x: number; y: number }>,
 ): AgentNode[] {
+  const autoLayout = computeAutoLayout(agents, sessions, runs);
   const sorted = [...agents].sort((a, b) => a.name.localeCompare(b.name));
 
-  return sorted.map((agent, i) => {
+  return sorted.map((agent) => {
     const agentRuns = runs.filter((r) => r.agentId === agent.id);
     const currentRun = agentRuns.find((r) => r.status === "running") ?? agentRuns[agentRuns.length - 1];
     const agentEvents = events.filter((e) => e.agentId === agent.id);
@@ -266,19 +362,7 @@ function buildNodes(
       if (ev.type === "task.created") { lastActivity = p.title; break; }
     }
 
-    // Workflow-style layout: staggered positions
-    const positions: Record<string, { x: number; y: number }> = {
-      "Alice":  { x: 40,  y: 60 },
-      "Bob":    { x: 320, y: 60 },
-      "Linter": { x: 600, y: 160 },
-      "Carlos": { x: 40,  y: 280 },
-      "Diana":  { x: 320, y: 280 },
-      "Eve":    { x: 320, y: 160 },
-    };
-    const defaultPos = positions[agent.name] ?? {
-      x: 60 + (i % 3) * 280,
-      y: 60 + Math.floor(i / 3) * 180,
-    };
+    const defaultPos = autoLayout.get(agent.id) ?? { x: 60, y: 60 };
 
     return {
       id: agent.id,
@@ -328,28 +412,59 @@ function buildConnections(agents: Agent[], sessions: Session[], runs: Run[]): Ag
     if (last) lastRunMap.set(a.id, last);
   }
 
-  // Build connections from session dependencies
+  // Build connections from session dependency graph
   for (const session of sessions) {
-    const sessionRuns = session.runIds
-      .map((id) => runs.find((r) => r.id === id))
-      .filter(Boolean) as Run[];
+    if (!session.agents?.length) continue;
 
-    for (let i = 0; i < sessionRuns.length - 1; i++) {
-      const fromAgent = agentMap.get(sessionRuns[i].agentId);
-      const toAgent = agentMap.get(sessionRuns[i + 1].agentId);
-      if (fromAgent && toAgent) {
+    // Map agentName → agentId (prefer direct agentId, fallback to runId lookup)
+    const nameToAgentId = new Map<string, string>();
+    for (const sa of session.agents) {
+      if (sa.agentId) {
+        nameToAgentId.set(sa.agentName, sa.agentId);
+      } else if (sa.runId) {
+        const run = runs.find((r) => r.id === sa.runId);
+        if (run) nameToAgentId.set(sa.agentName, run.agentId);
+      }
+    }
+
+    // Build edges from dependsOn
+    for (const sa of session.agents) {
+      if (!sa.dependsOn?.length) continue;
+      const toAgentId = nameToAgentId.get(sa.agentName);
+      if (!toAgentId) continue;
+      const toAgent = agentMap.get(toAgentId);
+      if (!toAgent) continue;
+
+      for (const depName of sa.dependsOn) {
+        const fromAgentId = nameToAgentId.get(depName);
+        if (!fromAgentId) continue;
+        const fromAgent = agentMap.get(fromAgentId);
+        if (!fromAgent) continue;
+
         conns.push({
-          from: fromAgent.id,
-          to: toAgent.id,
-          status: getConnectionStatus(fromAgent, lastRunMap.get(fromAgent.id), toAgent),
+          from: fromAgentId,
+          to: toAgentId,
+          status: getConnectionStatus(fromAgent, lastRunMap.get(fromAgentId), toAgent),
         });
       }
     }
   }
 
-  // If no session connections, use default workflow layout
-  if (conns.length === 0 && agents.length > 1) {
-    const nameToId = new Map(agents.map((a) => [a.name, a.id]));
+  // Always add default workflow connections for standalone (mock) agents
+  const sessionAgentIds = new Set<string>();
+  for (const session of sessions) {
+    for (const sa of session.agents ?? []) {
+      if (sa.agentId) sessionAgentIds.add(sa.agentId);
+      else if (sa.runId) {
+        const run = runs.find((r) => r.id === sa.runId);
+        if (run) sessionAgentIds.add(run.agentId);
+      }
+    }
+  }
+
+  const standaloneAgents = agents.filter((a) => !sessionAgentIds.has(a.id));
+  if (standaloneAgents.length > 1) {
+    const nameToId = new Map(standaloneAgents.map((a) => [a.name, a.id]));
     for (const { fromName, toName } of DEFAULT_CONNECTIONS) {
       const fromId = nameToId.get(fromName);
       const toId = nameToId.get(toName);
@@ -391,8 +506,8 @@ export function AgentWorkflowCanvas({
   const [savedPositions, setSavedPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
 
   const nodes = useMemo(
-    () => buildNodes(agents, runs, events, savedPositions),
-    [agents, runs, events, savedPositions],
+    () => buildNodes(agents, runs, events, sessions, savedPositions),
+    [agents, runs, events, sessions, savedPositions],
   );
 
   const connections = useMemo(

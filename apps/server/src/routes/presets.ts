@@ -44,6 +44,39 @@ const runPresets: RunPreset[] = [
 
 const sessionPresets: SessionPreset[] = [
   {
+    id: "parallel-analysis",
+    label: "Parallel Analysis Pipeline",
+    description: "5 analysts run in parallel → aggregator combines results into a single report",
+    name: "Analysis Pipeline",
+    agents: [
+      {
+        agentName: "Analytics",
+        prompt: "Analyze key metrics in this project: test coverage, build times, bundle size, dependency count. Compute a health score. Write findings to analytics-report.md. Do not modify source code.",
+      },
+      {
+        agentName: "Diagnostics",
+        prompt: "Run diagnostics on this project: check for common issues, dead code, unused exports, circular dependencies. Write findings to diagnostics-report.md. Do not modify source code.",
+      },
+      {
+        agentName: "Config Auditor",
+        prompt: "Audit all configuration files (tsconfig, eslint, package.json, env files). Identify risky or suboptimal settings. Write findings to config-audit.md. Do not modify source code.",
+      },
+      {
+        agentName: "Code Analyst",
+        prompt: "Analyze the codebase for weak spots: complex functions, large files, missing error handling, poor naming. Write findings to code-analysis.md. Do not modify source code.",
+      },
+      {
+        agentName: "Improvement Planner",
+        prompt: "Based on a quick review of the project, propose 5-7 concrete improvements with effort estimates. Write findings to improvement-plan.md. Do not modify source code.",
+      },
+      {
+        agentName: "Report Aggregator",
+        prompt: "Read all report files (*-report.md, *-audit.md, *-analysis.md, *-plan.md). Combine them into a single executive summary with prioritized recommendations. Write to final-report.md. Do not modify source code.",
+        dependsOn: ["Analytics", "Diagnostics", "Config Auditor", "Code Analyst", "Improvement Planner"],
+      },
+    ],
+  },
+  {
     id: "parallel-duo",
     label: "Parallel Duo",
     description: "Two agents working independently in parallel",

@@ -73,7 +73,7 @@ if (adapterMode === "mock") {
 }
 
 // -- Run launcher --
-const runLauncher = new RunLauncher(emit, runManager, adapterFactory);
+const runLauncher = new RunLauncher(emit, runManager, adapterFactory, agentRegistry);
 
 // -- Session orchestrator --
 orchestrator = new SessionOrchestrator(sessionManager, runManager, runLauncher);
@@ -108,7 +108,12 @@ app.use("/api", runsRouter(runManager, runLauncher, eventStore, {
   onRunStopped: (agentId) => mockAutoLauncher?.pauseAgent(agentId),
   onAgentResumed: (agentId) => mockAutoLauncher?.resumeAgent(agentId),
 }));
-app.use("/api", sessionsRouter(sessionManager, runManager, runLauncher, orchestrator));
+app.use("/api", sessionsRouter(sessionManager, runManager, runLauncher, orchestrator, {
+  onSessionCreated: () => gateway?.broadcastSnapshot(),
+  onClearMockAgents: () => mockAutoLauncher?.stopAndClear(),
+  agentRegistry,
+  emit,
+}));
 app.use("/api", presetsRouter());
 
 // -- Mock auto-launcher --

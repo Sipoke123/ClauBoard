@@ -1,16 +1,20 @@
 import { Router } from "express";
-import type { CreateSessionRequest } from "@repo/shared";
+import type { CreateSessionRequest, AgentEvent } from "@repo/shared";
 import { validateDependencyGraph } from "@repo/shared";
 import type { SessionManager } from "../domain/session-manager.js";
 import type { RunManager } from "../domain/run-manager.js";
 import type { RunLauncher } from "../domain/run-launcher.js";
 import type { SessionOrchestrator } from "../domain/session-orchestrator.js";
+import type { EmitFn } from "../adapter/types.js";
+
+import type { AgentRegistry } from "../domain/agent-registry.js";
 
 export function sessionsRouter(
   sessionManager: SessionManager,
   runManager: RunManager,
   runLauncher: RunLauncher,
   orchestrator: SessionOrchestrator,
+  opts?: { onSessionCreated?: () => void; emit?: EmitFn; onClearMockAgents?: () => void; agentRegistry?: AgentRegistry },
 ): Router {
   const router = Router();
 
@@ -53,13 +57,37 @@ export function sessionsRouter(
       });
     }
 
+    // Note: no clearing — new pipeline agents are added alongside existing ones
+
     const sessionId = `session-${Date.now()}`;
     sessionManager.create(sessionId, body.name.trim(), body.agents);
 
+    const session = sessionManager.get(sessionId)!;
+
+    // Pre-register ALL agents (including waiting ones) so canvas shows them immediately
+    if (session.agents && opts?.emit) {
+      for (const sa of session.agents) {
+        const agentId = `agent-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        sa.agentId = agentId;
+
+        opts.emit({
+          id: `reg-${Date.now()}-${Math.random().toString(36).slice(2, 4)}`,
+          type: "agent.registered",
+          ts: Date.now(),
+          agentId,
+          runId: "",
+          payload: { name: sa.agentName },
+        });
+      }
+    }
+
     // Orchestrator launches the first wave (agents with no dependencies)
+    // Pass pre-assigned agentIds so RunLauncher reuses them
     orchestrator.launchInitialWave(sessionId);
 
-    const session = sessionManager.get(sessionId)!;
+    // Notify clients about new session + agents
+    setTimeout(() => opts?.onSessionCreated?.(), 200);
+
     res.status(201).json({
       sessionId,
       agents: session.agents,

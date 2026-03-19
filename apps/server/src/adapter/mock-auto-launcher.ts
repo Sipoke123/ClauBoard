@@ -95,6 +95,30 @@ export class MockAutoLauncher {
     console.log("[mock-auto-launcher] stopped");
   }
 
+  /** Stop all mock agents and deregister them (e.g. when a session pipeline is launched) */
+  stopAndClear(): void {
+    this.stopped = true;
+    // Stop all active runs
+    for (const [agentId, runId] of this.activeRunIds) {
+      try { this.runLauncher.stop(runId); } catch {}
+    }
+    this.activeRunIds.clear();
+    this.pausedAgents.clear();
+
+    // Deregister all mock agents
+    for (const agent of MOCK_AGENTS) {
+      this.emit({
+        id: `mock-dereg-${Date.now()}-${agent.id}`,
+        type: "agent.deregistered",
+        ts: Date.now(),
+        agentId: agent.id,
+        runId: "",
+        payload: {},
+      });
+    }
+    console.log("[mock-auto-launcher] cleared all mock agents");
+  }
+
   /** Called by server when a run finishes (any terminal event) */
   onRunFinished(runId: string, agentId: string): void {
     if (this.stopped) return;

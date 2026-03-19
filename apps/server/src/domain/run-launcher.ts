@@ -1,6 +1,7 @@
 import type { LaunchRunRequest, LaunchRunResponse, RunConfig } from "@repo/shared";
 import type { AgentAdapter, EmitFn } from "../adapter/types.js";
 import type { RunManager } from "./run-manager.js";
+import type { AgentRegistry } from "./agent-registry.js";
 import { ClaudeCodeAdapter } from "../adapter/claude-code-adapter.js";
 import { validateCwd } from "../config.js";
 
@@ -41,6 +42,7 @@ export class RunLauncher {
     private emit: EmitFn,
     private runManager: RunManager,
     private createAdapter: AdapterFactory = claudeAdapterFactory,
+    private agentRegistry?: AgentRegistry,
   ) {}
 
   /**
@@ -69,6 +71,18 @@ export class RunLauncher {
     });
 
     this.pendingConfigs.set(runId, runConfig);
+
+    // Auto-register agent if not already known
+    if (this.agentRegistry && !this.agentRegistry.get(agentId)) {
+      this.emit({
+        id: `reg-${Date.now()}-${Math.random().toString(36).slice(2, 4)}`,
+        type: "agent.registered",
+        ts: Date.now(),
+        agentId,
+        runId: "",
+        payload: { name: runConfig.agentName! },
+      });
+    }
 
     adapter.start((event) => {
       this.emit(event);

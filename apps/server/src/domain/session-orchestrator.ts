@@ -73,6 +73,7 @@ export class SessionOrchestrator {
           prompt: spec.prompt,
           cwd: spec.cwd,
           agentName: spec.agentName,
+          agentId: agent.agentId, // reuse pre-assigned ID
           sessionId: session.id,
         });
         agent.runId = result.runId;

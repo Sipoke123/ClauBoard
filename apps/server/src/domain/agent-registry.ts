@@ -30,11 +30,7 @@ export class AgentRegistry {
   }
 
   deregister(id: string): void {
-    const agent = this.agents.get(id);
-    if (agent) {
-      agent.status = "offline";
-      agent.blockedReason = undefined;
-    }
+    this.agents.delete(id);
   }
 
   setCurrentRun(agentId: string, runId: string | undefined): void {
@@ -57,5 +53,10 @@ export class AgentRegistry {
 
   count(): number {
     return this.agents.size;
+  }
+
+  /** Remove all agents from the registry */
+  clear(): void {
+    this.agents.clear();
   }
 }

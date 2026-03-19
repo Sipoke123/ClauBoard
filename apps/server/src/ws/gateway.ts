@@ -49,4 +49,23 @@ export class WsGateway {
       }
     }
   }
+
+  /** Re-send full snapshot to all clients (e.g. after session creation) */
+  broadcastSnapshot(): void {
+    const snapshot: ServerMessage = {
+      type: "snapshot",
+      data: {
+        agents: this.agents.all(),
+        runs: this.runs.all(),
+        tasks: this.tasks.all(),
+        sessions: this.sessions.all(),
+      },
+    };
+    const json = JSON.stringify(snapshot);
+    for (const client of this.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(json);
+      }
+    }
+  }
 }

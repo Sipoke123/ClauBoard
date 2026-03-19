@@ -184,6 +184,8 @@ export interface SessionAgent {
   status: SessionAgentStatus;
   dependsOn: string[];
   runId?: string;
+  /** Stable agent ID assigned at session creation (before run starts) */
+  agentId?: string;
 }
 
 export interface Session {
