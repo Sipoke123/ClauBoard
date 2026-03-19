@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls c:/Users/fortu/Desktop/ClaudeCode/.env*)",
+      "Bash(ls c:/Users/fortu/Desktop/ClaudeCode/apps/server/.env*)",
+      "Bash(ls c:/Users/fortu/Desktop/ClaudeCode/apps/web/.env*)",
+      "Bash(ls -la /c/Users/fortu/Desktop/ClaudeCode/apps/web/src/app/\\\\\\(app\\\\\\)/office/)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
