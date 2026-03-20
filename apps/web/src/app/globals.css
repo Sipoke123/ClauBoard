@@ -1,9 +1,58 @@
 @import "tailwindcss";
 
-/* Thin dark scrollbar matching the zinc dark theme */
+/* ---------------------------------------------------------------------------
+   Theme tokens — dark by default, light via class toggle
+   --------------------------------------------------------------------------- */
+
+:root {
+  --background: #fafafa;
+  --foreground: #09090b;
+  --muted: #f4f4f5;
+  --muted-fg: #71717a;
+  --card: #ffffff;
+  --card-fg: #09090b;
+  --surface: #ffffff;
+  --surface-inset: #fafafa;
+  --surface-elevated: #ffffff;
+  --border-base: #e4e4e7;
+  --border-subtle: rgba(0,0,0,0.06);
+  --input-bg: #f4f4f5;
+  --input-border: #e4e4e7;
+  --ring: #3b82f6;
+  --scrollbar-thumb: rgba(161,161,170,0.4);
+  --scrollbar-hover: rgba(113,113,122,0.6);
+  --nav-bg: rgba(250,250,250,0.8);
+  --panel-shadow: rgba(0,0,0,0.06);
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --muted: #27272a;
+  --muted-fg: #a1a1aa;
+  --card: #18181b;
+  --card-fg: #f4f4f5;
+  --surface: rgba(24,24,27,0.8);
+  --surface-inset: rgba(9,9,11,0.6);
+  --surface-elevated: #18181b;
+  --border-base: rgba(255,255,255,0.06);
+  --border-subtle: rgba(255,255,255,0.04);
+  --input-bg: rgba(9,9,11,0.6);
+  --input-border: rgba(255,255,255,0.08);
+  --ring: #3b82f6;
+  --scrollbar-thumb: rgba(63,63,70,0.5);
+  --scrollbar-hover: rgba(82,82,91,0.7);
+  --nav-bg: rgba(9,9,11,0.8);
+  --panel-shadow: rgba(0,0,0,0.2);
+}
+
+/* ---------------------------------------------------------------------------
+   Scrollbar
+   --------------------------------------------------------------------------- */
+
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(63, 63, 70, 0.5) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -16,10 +65,33 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(63, 63, 70, 0.5);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(82, 82, 91, 0.7);
+  background: var(--scrollbar-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Tailwind v4 theme — map CSS vars to utility classes
+   --------------------------------------------------------------------------- */
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-fg: var(--muted-fg);
+  --color-card: var(--card);
+  --color-card-fg: var(--card-fg);
+  --color-surface: var(--surface);
+  --color-surface-inset: var(--surface-inset);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-border-base: var(--border-base);
+  --color-border-subtle: var(--border-subtle);
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-ring: var(--ring);
+  --color-nav-bg: var(--nav-bg);
+  --color-panel-shadow: var(--panel-shadow);
 }

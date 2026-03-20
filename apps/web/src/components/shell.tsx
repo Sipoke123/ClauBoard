@@ -41,14 +41,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <div className={cn(
         "fixed bottom-3 left-3 z-50 flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium backdrop-blur-md border transition-colors",
         connected
-          ? "bg-zinc-900/80 border-white/[0.06] text-zinc-500"
+          ? "bg-surface border-border-base text-muted-fg"
           : "bg-red-950/80 border-red-500/20 text-red-400"
       )}>
         {connected ? <Wifi size={12} className="text-emerald-500" /> : <WifiOff size={12} className="animate-pulse" />}
         {connected ? "Live" : "Reconnecting..."}
         {connected && modeLabel && (
           <>
-            <span className="text-zinc-700">·</span>
+            <span className="text-muted-fg/50">·</span>
             <span className={cn(
               "flex items-center gap-1",
               adapterMode === "mock" ? "text-amber-500/70" : "text-blue-400/70"
@@ -60,7 +60,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
         {connected && health && !cwdRestricted && adapterMode !== "mock" && (
           <>
-            <span className="text-zinc-700">·</span>
+            <span className="text-muted-fg/50">·</span>
             <span className="flex items-center gap-1 text-amber-500/60" title="No allowed workspace roots configured — all paths accepted">
               <ShieldAlert size={10} /> Open
             </span>
@@ -68,7 +68,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
         {connected && cwdRestricted && (
           <>
-            <span className="text-zinc-700">·</span>
+            <span className="text-muted-fg/50">·</span>
             <span className="flex items-center gap-1 text-emerald-500/50" title="Working directory restricted to allowed roots">
               <ShieldCheck size={10} />
             </span>

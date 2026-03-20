@@ -84,21 +84,21 @@ function Features() {
   return (
     <section id="features" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-zinc-100 mb-3">What it does</h2>
-        <p className="text-zinc-500 text-sm">Everything you need to supervise AI agents in one surface.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-3">What it does</h2>
+        <p className="text-muted-fg text-sm">Everything you need to supervise AI agents in one surface.</p>
       </motion.div>
       <motion.div {...stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {features.map((f) => (
           <motion.div
             key={f.title}
             {...fadeUpChild}
-            className={cn(panelVariants({ variant: "elevated" }), "p-5 hover:border-white/[0.12] transition-colors")}
+            className={cn(panelVariants({ variant: "elevated" }), "p-5 hover:border-foreground/[0.12] transition-colors")}
           >
             <div className="w-9 h-9 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center mb-4">
               <f.icon size={16} className="text-blue-400" />
             </div>
-            <h3 className="text-sm font-semibold text-zinc-100 mb-2">{f.title}</h3>
-            <p className="text-xs text-zinc-500 leading-relaxed">{f.description}</p>
+            <h3 className="text-sm font-semibold text-foreground mb-2">{f.title}</h3>
+            <p className="text-xs text-muted-fg leading-relaxed">{f.description}</p>
           </motion.div>
         ))}
       </motion.div>
@@ -140,8 +140,8 @@ function Workflows() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-zinc-100 mb-3">Key workflows</h2>
-        <p className="text-zinc-500 text-sm">Three ways to use the control plane, from simple to orchestrated.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-3">Key workflows</h2>
+        <p className="text-muted-fg text-sm">Three ways to use the control plane, from simple to orchestrated.</p>
       </motion.div>
       <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {workflows.map((w, wi) => (
@@ -151,13 +151,13 @@ function Workflows() {
             className={cn(panelVariants({ variant: "surface" }), "p-5")}
           >
             <div className="flex items-center gap-2.5 mb-4">
-              <span className="w-6 h-6 rounded-lg bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">{wi + 1}</span>
-              <h3 className="text-sm font-semibold text-zinc-100">{w.title}</h3>
+              <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-fg">{wi + 1}</span>
+              <h3 className="text-sm font-semibold text-foreground">{w.title}</h3>
             </div>
             <ol className="space-y-2.5">
               {w.steps.map((step, si) => (
-                <li key={si} className="flex items-start gap-2.5 text-xs text-zinc-400 leading-relaxed">
-                  <span className="text-zinc-600 font-mono shrink-0 mt-0.5">{si + 1}.</span>
+                <li key={si} className="flex items-start gap-2.5 text-xs text-muted-fg leading-relaxed">
+                  <span className="text-muted-fg/60 font-mono shrink-0 mt-0.5">{si + 1}.</span>
                   {step}
                 </li>
               ))}
@@ -201,19 +201,19 @@ function Architecture() {
   return (
     <section id="architecture" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-zinc-100 mb-3">Architecture</h2>
-        <p className="text-zinc-500 text-sm">Turborepo monorepo with shared typed contracts.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-3">Architecture</h2>
+        <p className="text-muted-fg text-sm">Turborepo monorepo with shared typed contracts.</p>
       </motion.div>
 
       <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {components.map((c) => (
           <motion.div key={c.name} {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
             <div className="flex items-center gap-2.5 mb-3">
-              <c.icon size={15} className="text-zinc-500" />
-              <code className="text-sm font-semibold text-zinc-200">{c.name}</code>
+              <c.icon size={15} className="text-muted-fg" />
+              <code className="text-sm font-semibold text-foreground">{c.name}</code>
             </div>
-            <div className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider mb-2">{c.tech}</div>
-            <p className="text-xs text-zinc-500 leading-relaxed">{c.description}</p>
+            <div className="text-[10px] text-muted-fg/60 font-medium uppercase tracking-wider mb-2">{c.tech}</div>
+            <p className="text-xs text-muted-fg leading-relaxed">{c.description}</p>
           </motion.div>
         ))}
       </motion.div>
@@ -222,8 +222,8 @@ function Architecture() {
         {patterns.map((p) => (
           <motion.div key={p.label} {...fadeUpChild} className={cn(panelVariants({ variant: "inset" }), "p-4 text-center")}>
             <p.icon size={16} className="text-blue-400/60 mx-auto mb-2" />
-            <div className="text-xs font-semibold text-zinc-300 mb-1">{p.label}</div>
-            <div className="text-[10px] text-zinc-600">{p.detail}</div>
+            <div className="text-xs font-semibold text-foreground/80 mb-1">{p.label}</div>
+            <div className="text-[10px] text-muted-fg/60">{p.detail}</div>
           </motion.div>
         ))}
       </motion.div>
@@ -247,14 +247,14 @@ function WorksToday() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-zinc-100 mb-3">What works today</h2>
-        <p className="text-zinc-500 text-sm">Shipped and working in the current build.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-3">What works today</h2>
+        <p className="text-muted-fg text-sm">Shipped and working in the current build.</p>
       </motion.div>
       <motion.div {...stagger} className="max-w-2xl mx-auto">
         <div className={cn(panelVariants({ variant: "surface" }), "p-6")}>
           <ul className="space-y-3">
             {items.map((item) => (
-              <motion.li key={item} {...fadeUpChild} className="flex items-start gap-3 text-sm text-zinc-300">
+              <motion.li key={item} {...fadeUpChild} className="flex items-start gap-3 text-sm text-foreground/80">
                 <Check size={14} className="text-emerald-400 shrink-0 mt-0.5" />
                 {item}
               </motion.li>
@@ -279,8 +279,8 @@ function Limitations() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-zinc-100 mb-3">Current limitations</h2>
-        <p className="text-zinc-500 text-sm">This is early-stage. Here is what does not work yet.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-3">Current limitations</h2>
+        <p className="text-muted-fg text-sm">This is early-stage. Here is what does not work yet.</p>
       </motion.div>
       <motion.div {...stagger} className="max-w-2xl mx-auto">
         <div className={cn(panelVariants({ variant: "inset" }), "p-6")}>
@@ -289,8 +289,8 @@ function Limitations() {
               <motion.li key={item.text} {...fadeUpChild} className="flex items-start gap-3 text-sm">
                 <AlertTriangle size={13} className="text-amber-400/70 shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-zinc-300 font-medium">{item.text}</span>
-                  <span className="text-zinc-600"> — {item.detail}</span>
+                  <span className="text-foreground/80 font-medium">{item.text}</span>
+                  <span className="text-muted-fg/60"> — {item.detail}</span>
                 </div>
               </motion.li>
             ))}
@@ -305,26 +305,26 @@ function GettingStarted() {
   return (
     <section id="getting-started" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-zinc-100 mb-3">Getting started</h2>
-        <p className="text-zinc-500 text-sm">Up and running in under 2 minutes.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-3">Getting started</h2>
+        <p className="text-muted-fg text-sm">Up and running in under 2 minutes.</p>
       </motion.div>
       <motion.div {...stagger} className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
         <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
-          <h3 className="text-sm font-semibold text-zinc-100 mb-1">Mock mode</h3>
-          <p className="text-xs text-zinc-500 mb-4">No CLI needed. Six simulated agents generate realistic events.</p>
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-zinc-300 space-y-1")}>
-            <div><span className="text-zinc-600">$</span> npm install</div>
-            <div><span className="text-zinc-600">$</span> npm run dev:mock</div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Mock mode</h3>
+          <p className="text-xs text-muted-fg mb-4">No CLI needed. Six simulated agents generate realistic events.</p>
+          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
+            <div><span className="text-muted-fg/60">$</span> npm install</div>
+            <div><span className="text-muted-fg/60">$</span> npm run dev:mock</div>
           </div>
         </motion.div>
         <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
-          <h3 className="text-sm font-semibold text-zinc-100 mb-1">Real mode</h3>
-          <p className="text-xs text-zinc-500 mb-4">Requires <code className="text-zinc-400">claude</code> CLI installed and authenticated.</p>
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-zinc-300 space-y-1")}>
-            <div className="text-zinc-600"># Terminal 1: UI</div>
-            <div><span className="text-zinc-600">$</span> cd apps/web && npm run dev</div>
-            <div className="text-zinc-600 mt-2"># Terminal 2: Server</div>
-            <div><span className="text-zinc-600">$</span> cd apps/server && npx tsx src/index.ts</div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Real mode</h3>
+          <p className="text-xs text-muted-fg mb-4">Requires <code className="text-muted-fg">claude</code> CLI installed and authenticated.</p>
+          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
+            <div className="text-muted-fg/60"># Terminal 1: UI</div>
+            <div><span className="text-muted-fg/60">$</span> cd apps/web && npm run dev</div>
+            <div className="text-muted-fg/60 mt-2"># Terminal 2: Server</div>
+            <div><span className="text-muted-fg/60">$</span> cd apps/server && npx tsx src/index.ts</div>
           </div>
         </motion.div>
       </motion.div>
@@ -339,8 +339,8 @@ function GettingStarted() {
 
 function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] py-8">
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between text-xs text-zinc-600">
+    <footer className="border-t border-border-base py-8">
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between text-xs text-muted-fg/60">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-md bg-blue-600/20 flex items-center justify-center">
             <Building2 size={10} className="text-blue-400" />
@@ -348,8 +348,8 @@ function Footer() {
           AgentFlow
         </div>
         <div className="flex items-center gap-4">
-          <a href="/office" className="hover:text-zinc-400 transition-colors">Dashboard</a>
-          <a href="https://docs.anthropic.com/en/docs/claude-code" className="hover:text-zinc-400 transition-colors" target="_blank" rel="noopener noreferrer">Claude Code Docs</a>
+          <a href="/office" className="hover:text-muted-fg transition-colors">Dashboard</a>
+          <a href="https://docs.anthropic.com/en/docs/claude-code" className="hover:text-muted-fg transition-colors" target="_blank" rel="noopener noreferrer">Claude Code Docs</a>
         </div>
       </div>
     </footer>

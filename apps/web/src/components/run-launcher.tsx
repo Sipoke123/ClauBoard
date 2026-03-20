@@ -148,14 +148,14 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
   return (
     <div className="space-y-3">
       {/* Tab switcher */}
-      <div className="flex gap-1 p-0.5 rounded-lg bg-zinc-900/50 border border-white/[0.04] w-fit">
+      <div className="flex gap-1 p-0.5 rounded-lg bg-surface/50 border border-border-subtle w-fit">
         <button
           onClick={() => setTab("single")}
           className={cn(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium uppercase tracking-wider transition-colors",
             tab === "single"
-              ? "bg-zinc-800 text-zinc-200 border border-white/[0.06]"
-              : "text-zinc-500 hover:text-zinc-400"
+              ? "bg-muted text-foreground border border-border-base"
+              : "text-muted-fg hover:text-foreground"
           )}
         >
           <Rocket size={11} /> Single Agent
@@ -165,8 +165,8 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
           className={cn(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium uppercase tracking-wider transition-colors",
             tab === "pipeline"
-              ? "bg-zinc-800 text-zinc-200 border border-white/[0.06]"
-              : "text-zinc-500 hover:text-zinc-400"
+              ? "bg-muted text-foreground border border-border-base"
+              : "text-muted-fg hover:text-foreground"
           )}
         >
           <GitBranch size={11} /> Pipeline
@@ -180,8 +180,8 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
           {showPresets && presets.length > 0 && !prompt && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={11} className="text-zinc-600" />
-                <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Quick Launch</span>
+                <Sparkles size={11} className="text-muted-fg" />
+                <span className="text-[10px] text-muted-fg font-medium uppercase tracking-wider">Quick Launch</span>
               </div>
                 <div className="flex gap-2 flex-wrap">
                   {presets.map((preset) => (
@@ -189,17 +189,17 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                       key={preset.id}
                       className={cn(
                         panelVariants({ variant: "inset" }),
-                        "rounded-xl px-3 py-2 text-left hover:bg-zinc-800/60 hover:border-white/[0.1] transition-colors group"
+                        "rounded-xl px-3 py-2 text-left hover:bg-muted/60 hover:border-border-base transition-colors group"
                       )}
                     >
                       <button
                         onClick={() => applyPreset(preset)}
                         className="w-full text-left cursor-pointer"
                       >
-                        <div className="text-xs font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
+                        <div className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors">
                           {preset.label}
                         </div>
-                        <div className="text-[10px] text-zinc-600 mt-0.5">{preset.description}</div>
+                        <div className="text-[10px] text-muted-fg mt-0.5">{preset.description}</div>
                       </button>
                       <button
                         onClick={() => quickLaunchPreset(preset)}
@@ -266,8 +266,8 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
       {tab === "pipeline" && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <Users size={11} className="text-zinc-600" />
-            <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Pipeline Presets</span>
+            <Users size={11} className="text-muted-fg" />
+            <span className="text-[10px] text-muted-fg font-medium uppercase tracking-wider">Pipeline Presets</span>
           </div>
           <div className="space-y-2">
             {sessionPresets.map((preset) => {
@@ -278,13 +278,13 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                   key={preset.id}
                   className={cn(
                     panelVariants({ variant: "inset" }),
-                    "rounded-xl px-4 py-3 hover:bg-zinc-800/60 hover:border-white/[0.1] transition-colors group"
+                    "rounded-xl px-4 py-3 hover:bg-muted/60 hover:border-border-base transition-colors group"
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-zinc-200">{preset.label}</div>
-                      <div className="text-[11px] text-zinc-500 mt-0.5">{preset.description}</div>
+                      <div className="text-sm font-medium text-foreground">{preset.label}</div>
+                      <div className="text-[11px] text-muted-fg mt-0.5">{preset.description}</div>
                       {/* Agent flow visualization */}
                       <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
                         {parallelAgents.map((a, i) => (
@@ -293,20 +293,20 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                               {a.agentName}
                             </span>
                             {i < parallelAgents.length - 1 && (
-                              <span className="text-zinc-700 text-[10px]">|</span>
+                              <span className="text-muted-fg/50 text-[10px]">|</span>
                             )}
                           </span>
                         ))}
                         {dependentAgents.length > 0 && (
                           <>
-                            <span className="text-zinc-600 text-[10px]">→</span>
+                            <span className="text-muted-fg text-[10px]">→</span>
                             {dependentAgents.map((a, i) => (
                               <span key={a.agentName} className="flex items-center gap-1">
                                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-400 font-medium">
                                   {a.agentName}
                                 </span>
                                 {i < dependentAgents.length - 1 && (
-                                  <span className="text-zinc-600 text-[10px]">→</span>
+                                  <span className="text-muted-fg text-[10px]">→</span>
                                 )}
                               </span>
                             ))}

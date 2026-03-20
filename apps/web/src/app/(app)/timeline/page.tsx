@@ -10,11 +10,11 @@ import type { AgentEvent } from "@repo/shared";
 function EventRow({ event, agentName }: { event: AgentEvent; agentName: string }) {
   const color = getEventColor(event.type);
   return (
-    <div className="flex items-start gap-3 py-2 px-3.5 border-b border-white/[0.04] text-xs font-mono hover:bg-white/[0.02] transition-colors">
-      <span className="text-zinc-600 shrink-0 w-20">{new Date(event.ts).toLocaleTimeString()}</span>
-      <span className="text-zinc-500 shrink-0 w-20 truncate">{agentName}</span>
+    <div className="flex items-start gap-3 py-2 px-3.5 border-b border-border-base text-xs font-mono hover:bg-foreground/5 transition-colors">
+      <span className="text-muted-fg/60 shrink-0 w-20">{new Date(event.ts).toLocaleTimeString()}</span>
+      <span className="text-muted-fg shrink-0 w-20 truncate">{agentName}</span>
       <span className={cn("shrink-0 w-36", color)}>{event.type}</span>
-      <span className="text-zinc-600 truncate">{JSON.stringify((event as any).payload).slice(0, 120)}</span>
+      <span className="text-muted-fg/60 truncate">{JSON.stringify((event as any).payload).slice(0, 120)}</span>
     </div>
   );
 }
@@ -36,9 +36,9 @@ export default function TimelinePage() {
     <div className="flex flex-col h-full p-6">
       <div className="flex items-center justify-between mb-5 shrink-0">
         <div className="flex items-center gap-2.5">
-          <Activity size={18} className="text-zinc-500" />
-          <h2 className="text-lg font-semibold text-zinc-100">Event Timeline</h2>
-          <span className="text-xs text-zinc-600">{filtered.length} events</span>
+          <Activity size={18} className="text-muted-fg" />
+          <h2 className="text-lg font-semibold text-foreground">Event Timeline</h2>
+          <span className="text-xs text-muted-fg/60">{filtered.length} events</span>
         </div>
         <div className="flex gap-2">
           <select
@@ -64,7 +64,7 @@ export default function TimelinePage() {
       </div>
 
       <div className={cn(panelVariants({ variant: "surface" }), "flex flex-col min-h-0 flex-1 overflow-hidden")}>
-        <div className="flex gap-3 py-2 px-3.5 border-b border-white/[0.06] text-[11px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0">
+        <div className="flex gap-3 py-2 px-3.5 border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0">
           <span className="w-20">Time</span>
           <span className="w-20">Agent</span>
           <span className="w-36">Type</span>
@@ -73,9 +73,9 @@ export default function TimelinePage() {
         <div className="flex-1 overflow-y-auto">
           {filtered.length === 0 ? (
             <div className="p-12 text-center space-y-2">
-              <Activity size={20} className="text-zinc-700 mx-auto" />
-              <div className="text-zinc-500 text-sm font-medium">No events yet</div>
-              <div className="text-zinc-700 text-xs">Events appear here as agents work. Launch a run to get started.</div>
+              <Activity size={20} className="text-muted-fg/60 mx-auto" />
+              <div className="text-muted-fg text-sm font-medium">No events yet</div>
+              <div className="text-muted-fg/60 text-xs">Events appear here as agents work. Launch a run to get started.</div>
             </div>
           ) : (
             filtered.map((e) => (

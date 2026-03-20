@@ -27,24 +27,24 @@ function RunRow({
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex items-center gap-3 py-3 px-4 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+      className="flex items-center gap-3 py-3 px-4 border-b border-border-base hover:bg-foreground/5 transition-colors"
     >
       <span className={cn(statusPillVariants({ status: run.status as any }), "w-20 justify-center")}>
         {statusLabels[run.status] ?? run.status}
       </span>
-      <span className="text-zinc-400 text-sm w-24 shrink-0 truncate">{agentName}</span>
-      <span className="text-zinc-300 text-sm flex-1 truncate min-w-0">
+      <span className="text-muted-fg text-sm w-24 shrink-0 truncate">{agentName}</span>
+      <span className="text-foreground/80 text-sm flex-1 truncate min-w-0">
         {run.config?.prompt ?? run.description ?? run.id}
       </span>
       {run.config?.cwd && (
-        <span className="flex items-center gap-1 text-zinc-600 text-xs truncate max-w-40">
+        <span className="flex items-center gap-1 text-muted-fg/60 text-xs truncate max-w-40">
           <Folder size={10} /> {run.config.cwd}
         </span>
       )}
-      <span className="flex items-center gap-1 text-zinc-600 text-xs w-16 shrink-0 text-right">
+      <span className="flex items-center gap-1 text-muted-fg/60 text-xs w-16 shrink-0 text-right">
         <Clock size={10} /> {formatDuration(run)}
       </span>
-      <span className="text-zinc-700 text-xs w-32 shrink-0 text-right">
+      <span className="text-muted-fg/60 text-xs w-32 shrink-0 text-right">
         {new Date(run.startedAt).toLocaleString()}
       </span>
       <div className="flex gap-1 shrink-0 w-16 justify-end">
@@ -91,14 +91,14 @@ export default function RunsPage() {
   return (
     <div className="flex flex-col h-full p-6">
       <div className="flex items-center justify-between mb-5 shrink-0">
-        <h2 className="text-lg font-semibold text-zinc-100">Run History</h2>
+        <h2 className="text-lg font-semibold text-foreground">Run History</h2>
         {msg && (
           <span className={cn("text-xs", msg.startsWith("Error") ? "text-red-400" : "text-emerald-400")}>{msg}</span>
         )}
       </div>
 
       <div className={cn(panelVariants({ variant: "surface" }), "flex flex-col min-h-0 flex-1 overflow-hidden")}>
-        <div className="flex gap-3 py-2 px-4 border-b border-white/[0.06] text-[11px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0">
+        <div className="flex gap-3 py-2 px-4 border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0">
           <span className="w-20">Status</span>
           <span className="w-24">Agent</span>
           <span className="flex-1">Prompt</span>
@@ -109,9 +109,9 @@ export default function RunsPage() {
         <div className="flex-1 overflow-y-auto">
           {sortedRuns.length === 0 ? (
             <div className="p-12 text-center space-y-2">
-              <Rocket size={20} className="text-zinc-700 mx-auto" />
-              <div className="text-zinc-500 text-sm font-medium">No runs yet</div>
-              <div className="text-zinc-700 text-xs">Launch a run from the Office page to see it here.</div>
+              <Rocket size={20} className="text-muted-fg/60 mx-auto" />
+              <div className="text-muted-fg text-sm font-medium">No runs yet</div>
+              <div className="text-muted-fg/60 text-xs">Launch a run from the Office page to see it here.</div>
             </div>
           ) : (
             sortedRuns.map((run) => (

@@ -62,7 +62,7 @@ const agentColors: Record<string, string> = {
   idle: "border-emerald-500/30 bg-emerald-500/5",
   blocked: "border-amber-500/50 bg-amber-500/5",
   error: "border-red-500/50 bg-red-500/5",
-  offline: "border-zinc-700/50 bg-zinc-800/30",
+  offline: "border-border-base/50 bg-muted/30",
   paused: "border-amber-500/40 bg-amber-500/5",
 };
 
@@ -71,7 +71,7 @@ const iconColors: Record<string, string> = {
   idle: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
   blocked: "border-amber-500/40 bg-amber-500/10 text-amber-400",
   error: "border-red-500/40 bg-red-500/10 text-red-400",
-  offline: "border-zinc-600/40 bg-zinc-700/20 text-zinc-500",
+  offline: "border-border-base/40 bg-muted/20 text-muted-fg",
   paused: "border-amber-500/30 bg-amber-500/10 text-amber-400",
 };
 
@@ -183,11 +183,11 @@ function AgentNodeCard({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-0.5">
               <span className={statusDotVariants({ status: displayStatus as any, size: "sm" })} />
-              <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-medium">
+              <span className="text-[9px] uppercase tracking-wider text-muted-fg font-medium">
                 {statusLabels[displayStatus] ?? displayStatus}
               </span>
             </div>
-            <h3 className="truncate text-xs font-semibold text-zinc-100">
+            <h3 className="truncate text-xs font-semibold text-foreground">
               {agent.name}
             </h3>
           </div>
@@ -195,20 +195,20 @@ function AgentNodeCard({
         </div>
 
         {/* Task */}
-        <p className="text-[10px] leading-relaxed text-zinc-400 truncate">
+        <p className="text-[10px] leading-relaxed text-muted-fg truncate">
           {run?.config?.prompt ?? run?.description ?? "No active task"}
         </p>
 
         {/* Live activity */}
         {lastActivity && (agent.status === "working" || agent.status === "blocked") && (
-          <p className="text-[10px] font-mono text-zinc-500 truncate">
+          <p className="text-[10px] font-mono text-muted-fg truncate">
             {lastActivity}
           </p>
         )}
 
         {/* Footer metrics */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-[10px] text-zinc-600">
+          <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
               <span className="flex items-center gap-1 text-orange-400/60">
                 <Wrench size={9} /> {toolCount}
@@ -226,7 +226,7 @@ function AgentNodeCard({
             )}
           </div>
           {node.run && (
-            <div className="flex items-center gap-1 text-[9px] text-zinc-600">
+            <div className="flex items-center gap-1 text-[9px] text-muted-fg">
               <ArrowRight className="h-2.5 w-2.5" />
               <span className="uppercase tracking-wider">
                 {run?.status ?? "idle"}
@@ -586,8 +586,8 @@ export function AgentWorkflowCanvas({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="text-zinc-500 text-sm">No agents yet</div>
-          <div className="text-zinc-700 text-xs">Launch a run to see agents on the canvas</div>
+          <div className="text-muted-fg text-sm">No agents yet</div>
+          <div className="text-muted-fg/60 text-xs">Launch a run to see agents on the canvas</div>
         </div>
       </div>
     );
@@ -605,7 +605,7 @@ export function AgentWorkflowCanvas({
             onSelectAgent(null);
           }
         }}
-        className="relative flex-1 overflow-auto rounded-xl border border-white/[0.04] bg-zinc-950/40"
+        className="relative flex-1 overflow-auto rounded-xl border border-border-subtle bg-background/40"
         style={{
           backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)`,
           backgroundSize: "24px 24px",
@@ -678,23 +678,23 @@ export function AgentWorkflowCanvas({
       </div>
 
       {/* Legend — bottom left inside canvas */}
-      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-xl border border-white/[0.06] bg-zinc-950/90 backdrop-blur-md px-4 py-3 shadow-lg">
-        <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Connections</span>
+      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-xl border border-border-base bg-background/90 backdrop-blur-md px-4 py-3 shadow-lg">
+        <span className="text-[10px] font-semibold text-muted-fg uppercase tracking-wider">Connections</span>
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#10b981" strokeWidth="3" strokeLinecap="round" /></svg>
-          <span className="text-[10px] text-zinc-300">Active — data flowing</span>
+          <span className="text-[10px] text-foreground">Active — data flowing</span>
         </div>
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#8b5cf6" strokeWidth="2.5" strokeDasharray="5,3" strokeLinecap="round" /></svg>
-          <span className="text-[10px] text-zinc-300">Completed</span>
+          <span className="text-[10px] text-foreground">Completed</span>
         </div>
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#ef4444" strokeWidth="2.5" strokeDasharray="4,3" strokeLinecap="round" /></svg>
-          <span className="text-[10px] text-zinc-300">Blocked — chain broken</span>
+          <span className="text-[10px] text-foreground">Blocked — chain broken</span>
         </div>
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#71717a" strokeWidth="2" strokeDasharray="5,4" strokeLinecap="round" /></svg>
-          <span className="text-[10px] text-zinc-300">Idle — waiting</span>
+          <span className="text-[10px] text-foreground">Idle — waiting</span>
         </div>
       </div>
     </div>

@@ -93,15 +93,15 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
       {presets.length > 0 && !name && specs.every((s) => !s.prompt) && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Sparkles size={11} className="text-zinc-600" />
-            <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Presets</span>
+            <Sparkles size={11} className="text-muted-fg" />
+            <span className="text-[10px] text-muted-fg font-medium uppercase tracking-wider">Presets</span>
           </div>
           <div className="flex gap-2 flex-wrap">
             {presets.map((preset) => (
               <button key={preset.id} type="button" onClick={() => applyPreset(preset)}
-                className={cn(panelVariants({ variant: "inset" }), "rounded-xl px-3 py-2 text-left hover:bg-zinc-800/60 hover:border-white/[0.1] transition-colors group cursor-pointer")}>
-                <div className="text-xs font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">{preset.label}</div>
-                <div className="text-[10px] text-zinc-600 mt-0.5">{preset.description}</div>
+                className={cn(panelVariants({ variant: "inset" }), "rounded-xl px-3 py-2 text-left hover:bg-muted/60 hover:border-border-base transition-colors group cursor-pointer")}>
+                <div className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors">{preset.label}</div>
+                <div className="text-[10px] text-muted-fg mt-0.5">{preset.description}</div>
               </button>
             ))}
           </div>
@@ -114,17 +114,17 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
           return (
             <div key={idx} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-3 space-y-2")}>
               <div className="flex items-center justify-between">
-                <input type="text" value={spec.agentName} onChange={(e) => updateSpec(idx, "agentName", e.target.value)} className="bg-transparent border-none text-sm font-medium text-zinc-200 focus:outline-none w-32" />
+                <input type="text" value={spec.agentName} onChange={(e) => updateSpec(idx, "agentName", e.target.value)} className="bg-transparent border-none text-sm font-medium text-foreground focus:outline-none w-32" />
                 {specs.length > 1 && <button type="button" onClick={() => removeAgent(idx)} className={buttonVariants({ variant: "ghost", size: "xs" })}><X size={10} /></button>}
               </div>
               <textarea value={spec.prompt} onChange={(e) => updateSpec(idx, "prompt", e.target.value)} placeholder={`Prompt for ${spec.agentName}...`} rows={2} className={cn(inputVariants({ size: "sm" }), "resize-none")} />
               <input type="text" value={spec.cwd} onChange={(e) => updateSpec(idx, "cwd", e.target.value)} placeholder="Working directory (optional)" className={inputVariants({ size: "sm" })} />
               {otherNames.length > 0 && (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] text-zinc-600">After:</span>
+                  <span className="text-[10px] text-muted-fg">After:</span>
                   {otherNames.map((depName) => (
                     <button key={depName} type="button" onClick={() => toggleDep(idx, depName)}
-                      className={cn("px-2 py-0.5 rounded-md text-[10px] transition-colors", spec.dependsOn.includes(depName) ? "bg-blue-600 text-white" : "bg-zinc-800 text-zinc-500 hover:bg-zinc-700")}>
+                      className={cn("px-2 py-0.5 rounded-md text-[10px] transition-colors", spec.dependsOn.includes(depName) ? "bg-blue-600 text-white" : "bg-muted text-muted-fg hover:bg-muted/70")}>
                       {depName}
                     </button>
                   ))}
@@ -143,11 +143,11 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
       )}
       {hasDeps && graphResult.valid && graphResult.stages && (
         <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl px-3 py-2")}>
-          <div className="text-[10px] text-zinc-600 mb-1.5">Execution order:</div>
+          <div className="text-[10px] text-muted-fg mb-1.5">Execution order:</div>
           <div className="flex items-center gap-1.5 flex-wrap">
             {graphResult.stages.map((stage, i) => (
               <div key={i} className="flex items-center gap-1.5">
-                {i > 0 && <ArrowRight size={10} className="text-zinc-700" />}
+                {i > 0 && <ArrowRight size={10} className="text-muted-fg/50" />}
                 <div className="flex gap-1">{stage.map((n) => <span key={n} className={statusPillVariants({ status: "active" })}>{n}</span>)}</div>
               </div>
             ))}
@@ -180,13 +180,13 @@ function SessionCard({ session, selected, onClick, onStop }: {
   return (
     <button onClick={onClick} className={cn(
       "w-full text-left p-4 rounded-xl border transition-all duration-150",
-      selected ? "border-blue-500/40 bg-zinc-800/60 shadow-lg shadow-blue-900/10" : "border-white/[0.06] bg-zinc-900/60 hover:bg-zinc-800/40 hover:border-white/[0.1]"
+      selected ? "border-blue-500/40 bg-muted/60 shadow-lg shadow-blue-900/10" : "border-border-base bg-surface/60 hover:bg-muted/40 hover:border-border-base"
     )}>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="font-medium text-sm text-zinc-200 truncate">{session.name}</span>
+        <span className="font-medium text-sm text-foreground truncate">{session.name}</span>
         <span className={statusPillVariants({ status: session.status as any })}>{statusLabels[session.status] ?? session.status}</span>
       </div>
-      <div className="flex items-center gap-2 text-[10px] text-zinc-600 mb-2">
+      <div className="flex items-center gap-2 text-[10px] text-muted-fg mb-2">
         <span>{agents.length} agents</span>
         {hasDeps && <span className="text-blue-400">staged</span>}
         {running > 0 && <span className="text-emerald-400">{running} running</span>}
@@ -196,7 +196,7 @@ function SessionCard({ session, selected, onClick, onStop }: {
         {agents.map((a) => (
           <div key={a.agentName} className="flex items-center gap-1" title={`${a.agentName}: ${statusLabels[a.status]}`}>
             <span className={statusDotVariants({ status: a.status as any, size: "sm" })} />
-            <span className="text-[10px] text-zinc-600">{a.agentName}</span>
+            <span className="text-[10px] text-muted-fg">{a.agentName}</span>
           </div>
         ))}
       </div>
@@ -265,10 +265,10 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
       {/* Header */}
       <div className={cn(panelVariants({ variant: "surface" }), "p-4")}>
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold text-zinc-100">{session.name}</h3>
+          <h3 className="text-base font-semibold text-foreground">{session.name}</h3>
           <span className={statusPillVariants({ status: session.status as any })}>{statusLabels[session.status]}</span>
         </div>
-        <div className="text-xs text-zinc-500 mt-1">{sessionAgents.length} agents{hasDeps ? " (staged)" : " (parallel)"} · {sessionEvents.length} events</div>
+        <div className="text-xs text-muted-fg mt-1">{sessionAgents.length} agents{hasDeps ? " (staged)" : " (parallel)"} · {sessionEvents.length} events</div>
       </div>
 
       {/* Tabs */}
@@ -277,7 +277,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
           {tabs.map((tab) => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={tabVariants({ active: activeTab === tab.id })}>
               {tab.icon} {tab.label}
-              {tab.count != null && tab.count > 0 && <span className="text-zinc-600 ml-0.5">{tab.count}</span>}
+              {tab.count != null && tab.count > 0 && <span className="text-muted-fg ml-0.5">{tab.count}</span>}
             </button>
           ))}
         </div>
@@ -294,15 +294,15 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
               {cols.map((stageAgents, si) => (
                 <div key={si} className="flex items-start gap-3">
                   <div className="min-w-[200px] space-y-2">
-                    <div className="text-[10px] text-zinc-600 font-semibold uppercase tracking-wider text-center mb-1">Stage {si + 1}</div>
+                    <div className="text-[10px] text-muted-fg font-semibold uppercase tracking-wider text-center mb-1">Stage {si + 1}</div>
                     {stageAgents.map((sa) => {
                       const run = sa.runId ? sessionRuns.find((r) => r.id === sa.runId) : undefined;
                       const evts = sa.runId ? sessionEvents.filter((e) => e.agentId === (run?.agentId ?? "")) : [];
                       const tools = evts.filter((e) => e.type === "tool.invoked").length;
                       const headerGlow: Record<string, string> = {
-                        running: "border-emerald-500/30 bg-emerald-950/10", completed: "border-white/[0.06] bg-zinc-900/40",
-                        failed: "border-red-500/30 bg-red-950/10", waiting: "border-white/[0.04] bg-zinc-900/30",
-                        stopped: "border-amber-500/20 bg-amber-950/10", skipped: "border-white/[0.04] bg-zinc-900/20 opacity-60",
+                        running: "border-emerald-500/30 bg-emerald-950/10", completed: "border-border-base bg-surface/40",
+                        failed: "border-red-500/30 bg-red-950/10", waiting: "border-border-subtle bg-surface/30",
+                        stopped: "border-amber-500/20 bg-amber-950/10", skipped: "border-border-subtle bg-surface/20 opacity-60",
                       };
                       return (
                         <motion.div key={sa.agentName} layout initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
@@ -310,9 +310,9 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                           <div className="flex items-center justify-between mb-1.5">
                             <div className="flex items-center gap-2">
                               <span className={statusDotVariants({ status: sa.status as any, size: "md" })} />
-                              <span className="font-medium text-sm text-zinc-200">{sa.agentName}</span>
+                              <span className="font-medium text-sm text-foreground">{sa.agentName}</span>
                             </div>
-                            <span className="text-[10px] text-zinc-500">{statusLabels[sa.status]}</span>
+                            <span className="text-[10px] text-muted-fg">{statusLabels[sa.status]}</span>
                           </div>
                           {sa.dependsOn.length > 0 && (
                             <div className="flex items-center gap-1 mb-1.5 flex-wrap">
@@ -324,9 +324,9 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                               })}
                             </div>
                           )}
-                          <div className="text-xs text-zinc-500 truncate">{session.specs[sa.specIndex]?.prompt ?? "—"}</div>
+                          <div className="text-xs text-muted-fg truncate">{session.specs[sa.specIndex]?.prompt ?? "—"}</div>
                           {run && (
-                            <div className="flex gap-2 text-[10px] text-zinc-600 mt-1.5">
+                            <div className="flex gap-2 text-[10px] text-muted-fg mt-1.5">
                               {tools > 0 && <span className="text-orange-400/60">{tools} tools</span>}
                               <span>{evts.length} evts</span>
                               {run.completedAt && <span>{((run.completedAt - run.startedAt) / 1000).toFixed(1)}s</span>}
@@ -339,7 +339,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                     })}
                   </div>
                   {si < maxStage && (
-                    <div className="flex items-center self-center pt-8"><ArrowRight size={14} className="text-zinc-700" /></div>
+                    <div className="flex items-center self-center pt-8"><ArrowRight size={14} className="text-muted-fg/50" /></div>
                   )}
                 </div>
               ))}
@@ -358,19 +358,19 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
               <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={cn(inputVariants({ size: "sm" }), "w-auto")}>
                 {typeGroups.map((g) => <option key={g} value={g}>{g === "all" ? "All types" : g + "*"}</option>)}
               </select>
-              <span className="text-[10px] text-zinc-600 self-center ml-auto">{filteredEvents.length} events</span>
+              <span className="text-[10px] text-muted-fg self-center ml-auto">{filteredEvents.length} events</span>
             </div>
             <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl overflow-hidden")}>
-              <div className="flex gap-3 py-1.5 px-3.5 border-b border-white/[0.06] text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+              <div className="flex gap-3 py-1.5 px-3.5 border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
                 <span className="w-16">Time</span><span className="w-20">Agent</span><span className="w-32">Type</span><span className="flex-1">Payload</span>
               </div>
               <div className="max-h-80 overflow-y-auto">
-                {filteredEvents.length === 0 ? <div className="text-xs text-zinc-600 p-6 text-center">No events match filters</div> : filteredEvents.map((e) => (
-                  <div key={e.id} className="flex items-start gap-3 py-1.5 px-3.5 border-b border-white/[0.04] text-xs font-mono hover:bg-white/[0.02]">
-                    <span className="text-zinc-600 shrink-0 w-16">{new Date(e.ts).toLocaleTimeString()}</span>
-                    <span className="text-zinc-500 shrink-0 w-20 truncate">{agentMap.get(e.agentId)?.name ?? "?"}</span>
+                {filteredEvents.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No events match filters</div> : filteredEvents.map((e) => (
+                  <div key={e.id} className="flex items-start gap-3 py-1.5 px-3.5 border-b border-border-subtle text-xs font-mono hover:bg-foreground/[0.02]">
+                    <span className="text-muted-fg shrink-0 w-16">{new Date(e.ts).toLocaleTimeString()}</span>
+                    <span className="text-muted-fg shrink-0 w-20 truncate">{agentMap.get(e.agentId)?.name ?? "?"}</span>
                     <span className={cn("shrink-0 w-32", getEventColor(e.type))}>{e.type}</span>
-                    <span className="text-zinc-600 truncate">{JSON.stringify((e as any).payload).slice(0, 100)}</span>
+                    <span className="text-muted-fg truncate">{JSON.stringify((e as any).payload).slice(0, 100)}</span>
                   </div>
                 ))}
               </div>
@@ -381,15 +381,15 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
         {/* TOOLS */}
         {activeTab === "tools" && (
           <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl overflow-hidden")}>
-            {toolsSummary.length === 0 ? <div className="text-xs text-zinc-600 p-6 text-center">No tool calls yet</div> : <>
-              <div className="flex gap-3 py-1.5 px-3.5 border-b border-white/[0.06] text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+            {toolsSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No tool calls yet</div> : <>
+              <div className="flex gap-3 py-1.5 px-3.5 border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
                 <span className="w-28">Tool</span><span className="w-16 text-right">Calls</span><span className="w-16 text-right">Errors</span><span className="flex-1">Used by</span>
               </div>
               {toolsSummary.map((t) => (
-                <div key={t.name} className="flex items-center gap-3 py-2 px-3.5 border-b border-white/[0.04] text-xs">
+                <div key={t.name} className="flex items-center gap-3 py-2 px-3.5 border-b border-border-subtle text-xs">
                   <span className="text-orange-400 font-medium w-28">{t.name}</span>
-                  <span className="text-zinc-400 w-16 text-right">{t.count}</span>
-                  <span className={cn("w-16 text-right", t.errors > 0 ? "text-red-400" : "text-zinc-700")}>{t.errors}</span>
+                  <span className="text-muted-fg w-16 text-right">{t.count}</span>
+                  <span className={cn("w-16 text-right", t.errors > 0 ? "text-red-400" : "text-muted-fg")}>{t.errors}</span>
                   <div className="flex gap-1 flex-1 flex-wrap">{t.agents.map((aid) => <span key={aid} className={statusPillVariants({ status: "idle" })}>{agentMap.get(aid)?.name ?? "?"}</span>)}</div>
                 </div>
               ))}
@@ -400,16 +400,16 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
         {/* FILES */}
         {activeTab === "files" && (
           <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl overflow-hidden")}>
-            {fileSummary.length === 0 ? <div className="text-xs text-zinc-600 p-6 text-center">No file changes detected</div> : <>
-              <div className="flex gap-3 py-1.5 px-3.5 border-b border-white/[0.06] text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+            {fileSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No file changes detected</div> : <>
+              <div className="flex gap-3 py-1.5 px-3.5 border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
                 <span className="w-14">Action</span><span className="flex-1">Path</span><span className="w-20">Agent</span><span className="w-16">Time</span>
               </div>
               {fileSummary.map((f) => (
-                <div key={f.path} className="flex items-center gap-3 py-1.5 px-3.5 border-b border-white/[0.04] text-xs font-mono">
+                <div key={f.path} className="flex items-center gap-3 py-1.5 px-3.5 border-b border-border-subtle text-xs font-mono">
                   <span className={cn("w-14", f.action === "create" ? "text-emerald-400" : f.action === "delete" ? "text-red-400" : "text-amber-400")}>{f.action}</span>
                   <span className="text-cyan-400 truncate flex-1">{f.path}</span>
-                  <span className="text-zinc-500 w-20 truncate">{agentMap.get(f.agent)?.name ?? "?"}</span>
-                  <span className="text-zinc-600 w-16">{new Date(f.ts).toLocaleTimeString()}</span>
+                  <span className="text-muted-fg w-20 truncate">{agentMap.get(f.agent)?.name ?? "?"}</span>
+                  <span className="text-muted-fg w-16">{new Date(f.ts).toLocaleTimeString()}</span>
                 </div>
               ))}
             </>}
@@ -448,8 +448,8 @@ export default function SessionsPage() {
       <div className="w-80 shrink-0 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Layers size={15} className="text-zinc-500" />
-            <h2 className="text-sm font-semibold text-zinc-400">Sessions ({sessions.length})</h2>
+            <Layers size={15} className="text-muted-fg" />
+            <h2 className="text-sm font-semibold text-muted-fg">Sessions ({sessions.length})</h2>
           </div>
           <button onClick={() => setShowCreate(!showCreate)} className={buttonVariants({ variant: showCreate ? "ghost" : "outline", size: "xs" })}>
             {showCreate ? <><X size={10} /> Cancel</> : <><Plus size={10} /> New</>}
@@ -467,10 +467,10 @@ export default function SessionsPage() {
         </AnimatePresence>
 
         {sessions.length === 0 && !showCreate ? (
-          <div className="border border-dashed border-white/[0.06] rounded-xl p-8 text-center space-y-3">
-            <Layers size={24} className="text-zinc-700 mx-auto" />
-            <div className="text-zinc-500 text-sm font-medium">No sessions yet</div>
-            <div className="text-zinc-700 text-xs leading-relaxed">Sessions let you group and coordinate multiple AI agents.<br />Use presets for a quick start.</div>
+          <div className="border border-dashed border-border-base rounded-xl p-8 text-center space-y-3">
+            <Layers size={24} className="text-muted-fg/50 mx-auto" />
+            <div className="text-muted-fg text-sm font-medium">No sessions yet</div>
+            <div className="text-muted-fg/70 text-xs leading-relaxed">Sessions let you group and coordinate multiple AI agents.<br />Use presets for a quick start.</div>
             <button onClick={() => setShowCreate(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
               <Plus size={11} /> Create your first session
             </button>
@@ -491,8 +491,8 @@ export default function SessionsPage() {
         ) : (
           <div className="flex items-center justify-center h-64">
             <div className="text-center space-y-2">
-              <Users size={20} className="text-zinc-700 mx-auto" />
-              <div className="text-zinc-600 text-sm">
+              <Users size={20} className="text-muted-fg/50 mx-auto" />
+              <div className="text-muted-fg text-sm">
                 {sessions.length > 0 ? "Select a session to inspect its agents and activity" : "Create a session to coordinate multiple AI agents"}
               </div>
             </div>

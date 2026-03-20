@@ -18,7 +18,7 @@ const deskGlow: Record<string, string> = {
   idle: "border-emerald-500/20",
   error: "border-red-500/40 shadow-[0_0_20px_rgba(239,68,68,0.08)]",
   blocked: "border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.08)]",
-  offline: "border-white/[0.04]",
+  offline: "border-border-subtle",
   paused: "border-amber-500/30",
 };
 
@@ -121,8 +121,8 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
         "relative w-full text-left rounded-xl border transition-all cursor-pointer",
         glow,
         selected
-          ? "ring-2 ring-blue-500/60 ring-offset-1 ring-offset-zinc-950 bg-zinc-800/60"
-          : "bg-zinc-900/70 hover:bg-zinc-800/50 hover:shadow-lg",
+          ? "ring-2 ring-blue-500/60 ring-offset-1 ring-offset-background bg-muted/60"
+          : "bg-surface/70 hover:bg-muted/50 hover:shadow-lg",
       )}
     >
       {/* Gradient overlay */}
@@ -134,24 +134,24 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-0.5">
               <span className={statusDotVariants({ status: displayStatus as any, size: "sm" })} />
-              <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-medium">
+              <span className="text-[9px] uppercase tracking-wider text-muted-fg font-medium">
                 {statusLabels[displayStatus] ?? displayStatus}
               </span>
             </div>
-            <h3 className="truncate text-xs font-semibold text-zinc-100">
+            <h3 className="truncate text-xs font-semibold text-foreground">
               {agent.name}
             </h3>
           </div>
         </div>
 
         {/* Task */}
-        <p className="text-[10px] leading-relaxed text-zinc-400 truncate">
+        <p className="text-[10px] leading-relaxed text-muted-fg truncate">
           {run?.config?.prompt ?? run?.description ?? "No active task"}
         </p>
 
         {/* Live activity */}
         {lastActivity && (agent.status === "working" || agent.status === "blocked") && (
-          <p className="text-[10px] font-mono text-zinc-500 truncate">
+          <p className="text-[10px] font-mono text-muted-fg truncate">
             {lastActivity}
           </p>
         )}
@@ -165,7 +165,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
 
         {/* Footer metrics */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-[10px] text-zinc-600">
+          <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
               <span className="flex items-center gap-1 text-orange-400/60">
                 <Wrench size={9} /> {toolCount}
@@ -183,7 +183,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
             )}
           </div>
           {run && (
-            <div className="flex items-center gap-1 text-[9px] text-zinc-600">
+            <div className="flex items-center gap-1 text-[9px] text-muted-fg">
               <span className="uppercase tracking-wider">{run?.status ?? "idle"}</span>
             </div>
           )}
@@ -235,9 +235,9 @@ function Room({
           <div className="flex items-center gap-2">
             <Users size={13} className={cn(
               "opacity-50",
-              metrics?.working ? "text-emerald-400 opacity-100" : metrics?.failed ? "text-red-400 opacity-100" : "text-zinc-500",
+              metrics?.working ? "text-emerald-400 opacity-100" : metrics?.failed ? "text-red-400 opacity-100" : "text-muted-fg",
             )} />
-            <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">{label}</span>
+            <span className="text-xs font-semibold text-muted-fg uppercase tracking-wider">{label}</span>
           </div>
 
           {metrics && (
@@ -249,7 +249,7 @@ function Room({
                 <span className={statusPillVariants({ status: "completed" })}>{metrics.completed} done</span>
               )}
               {metrics.toolCalls > 0 && (
-                <span className="flex items-center gap-1 text-[10px] text-zinc-600"><Wrench size={9} />{metrics.toolCalls}</span>
+                <span className="flex items-center gap-1 text-[10px] text-muted-fg"><Wrench size={9} />{metrics.toolCalls}</span>
               )}
               {metrics.fileChanges > 0 && (
                 <span className="flex items-center gap-1 text-[10px] text-cyan-500/50"><FileCode size={9} />{metrics.fileChanges}</span>
@@ -287,12 +287,12 @@ function OfficeEmptyState({ onLaunchRun, onNavigateToSessions }: { onLaunchRun?:
   return (
     <div className="h-full flex items-center justify-center">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-5 max-w-md">
-        <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-white/[0.06] flex items-center justify-center mx-auto">
-          <Building2 size={24} className="text-zinc-700" />
+        <div className="w-16 h-16 rounded-2xl bg-surface border border-border-base flex items-center justify-center mx-auto">
+          <Building2 size={24} className="text-muted-fg" />
         </div>
         <div>
-          <div className="text-zinc-300 text-sm font-medium">The office is empty</div>
-          <div className="text-zinc-600 text-xs mt-1.5 leading-relaxed">
+          <div className="text-foreground text-sm font-medium">The office is empty</div>
+          <div className="text-muted-fg text-xs mt-1.5 leading-relaxed">
             Launch a single agent run or create a multi-agent session to get started.
           </div>
         </div>
@@ -308,9 +308,9 @@ function OfficeEmptyState({ onLaunchRun, onNavigateToSessions }: { onLaunchRun?:
             </button>
           )}
         </div>
-        <div className="text-[10px] text-zinc-700 space-y-1">
+        <div className="text-[10px] text-muted-fg space-y-1">
           <div>Use presets for a quick demo, or enter a custom prompt.</div>
-          <div>Try <span className="text-zinc-500">npm run dev:mock</span> for simulated agents.</div>
+          <div>Try <span className="text-foreground/60">npm run dev:mock</span> for simulated agents.</div>
         </div>
       </motion.div>
     </div>

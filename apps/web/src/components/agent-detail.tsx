@@ -20,17 +20,17 @@ function ToolCallRow({ invoked, result }: { invoked: AgentEvent; result?: AgentE
   const failed = result?.type === "tool.error";
 
   return (
-    <div className="border-b border-white/[0.04] py-2.5 px-3 text-xs font-mono">
+    <div className="border-b border-border-subtle py-2.5 px-3 text-xs font-mono">
       <div className="flex items-center gap-2">
         <Wrench size={10} className="text-orange-400/70 shrink-0" />
         <span className="text-orange-400 font-semibold">{inv.payload.tool}</span>
-        <span className="text-zinc-600">{new Date(invoked.ts).toLocaleTimeString()}</span>
+        <span className="text-muted-fg">{new Date(invoked.ts).toLocaleTimeString()}</span>
         {succeeded && <span className="text-emerald-400 text-[10px]">{res.payload.durationMs}ms</span>}
         {failed && <span className={statusPillVariants({ status: "failed" })}>ERROR</span>}
         {!result && <span className={cn(statusPillVariants({ status: "running" }), "animate-pulse")}>running</span>}
       </div>
-      <div className="text-zinc-500 mt-1 truncate pl-5">{inv.payload.input}</div>
-      {res?.payload?.output && <div className="text-zinc-600 mt-1 truncate pl-5">{res.payload.output}</div>}
+      <div className="text-muted-fg mt-1 truncate pl-5">{inv.payload.input}</div>
+      {res?.payload?.output && <div className="text-muted-fg mt-1 truncate pl-5">{res.payload.output}</div>}
       {res?.payload?.error && <div className="text-red-400 mt-1 truncate pl-5">{res.payload.error}</div>}
     </div>
   );
@@ -42,7 +42,7 @@ function TextOutputBlock({ event }: { event: AgentEvent }) {
   return (
     <div className={cn(
       "py-2 px-3 text-xs whitespace-pre-wrap font-mono leading-relaxed",
-      isStderr ? "text-red-300/80 bg-red-950/20" : "text-zinc-300"
+      isStderr ? "text-red-300/80 bg-red-950/20" : "text-foreground"
     )}>
       {p.text}
     </div>
@@ -57,7 +57,7 @@ function FileChangeRow({ event }: { event: AgentEvent }) {
     delete: <XCircle size={10} className="text-red-400" />,
   };
   return (
-    <div className="flex items-center gap-2 py-1.5 px-3 text-xs font-mono border-b border-white/[0.04]">
+    <div className="flex items-center gap-2 py-1.5 px-3 text-xs font-mono border-b border-border-subtle">
       {icons[p.action] ?? null}
       <span className="text-cyan-400 truncate">{p.path}</span>
     </div>
@@ -67,10 +67,10 @@ function FileChangeRow({ event }: { event: AgentEvent }) {
 function RawEventRow({ event }: { event: AgentEvent }) {
   const color = getEventColor(event.type);
   return (
-    <div className="flex gap-3 text-xs py-1.5 px-3 font-mono border-b border-white/[0.04] hover:bg-white/[0.02]">
-      <span className="text-zinc-600 shrink-0">{new Date(event.ts).toLocaleTimeString()}</span>
+    <div className="flex gap-3 text-xs py-1.5 px-3 font-mono border-b border-border-subtle hover:bg-foreground/[0.02]">
+      <span className="text-muted-fg shrink-0">{new Date(event.ts).toLocaleTimeString()}</span>
       <span className={cn("shrink-0", color)}>{event.type}</span>
-      <span className="text-zinc-600 truncate">{JSON.stringify((event as any).payload).slice(0, 100)}</span>
+      <span className="text-muted-fg truncate">{JSON.stringify((event as any).payload).slice(0, 100)}</span>
     </div>
   );
 }
@@ -116,8 +116,8 @@ export function AgentDetail({
     working: "border-emerald-500/30 bg-emerald-950/20",
     blocked: "border-amber-500/30 bg-amber-950/20",
     error: "border-red-500/30 bg-red-950/20",
-    idle: "border-white/[0.06] bg-zinc-900/60",
-    offline: "border-white/[0.04] bg-zinc-900/40",
+    idle: "border-border-base bg-surface/60",
+    offline: "border-border-subtle bg-surface/40",
     paused: "border-amber-500/20 bg-amber-950/10",
   };
 
@@ -135,7 +135,7 @@ export function AgentDetail({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className={statusDotVariants({ status: displayStatus as any, size: "lg" })} />
-            <h3 className="text-base font-semibold text-zinc-100">{agent.name}</h3>
+            <h3 className="text-base font-semibold text-foreground">{agent.name}</h3>
           </div>
           <div className="flex items-center gap-2">
             {(displayStatus === "working" || displayStatus === "blocked") && (
@@ -172,7 +172,7 @@ export function AgentDetail({
           </div>
         )}
         {(currentRun ?? lastRun) && (
-          <div className="mt-2 text-xs text-zinc-400 truncate">
+          <div className="mt-2 text-xs text-muted-fg truncate">
             {currentRun ? "Run: " : "Last: "}
             {(currentRun ?? lastRun).description ?? (currentRun ?? lastRun).id}
           </div>
@@ -183,14 +183,14 @@ export function AgentDetail({
       {/* Metrics strip */}
       <div className="grid grid-cols-4 gap-2">
         {[
-          { label: "Runs", value: agentRuns.length, icon: <Zap size={11} className="text-zinc-500" /> },
-          { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircle size={11} className="text-zinc-500" /> },
+          { label: "Runs", value: agentRuns.length, icon: <Zap size={11} className="text-muted-fg" /> },
+          { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircle size={11} className="text-muted-fg" /> },
           { label: "Tools", value: toolInvoked.length, icon: <Wrench size={11} className="text-orange-400/60" /> },
           { label: "Files", value: fileEvents.length, icon: <FileCode size={11} className="text-cyan-400/60" /> },
         ].map((m) => (
           <div key={m.label} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-2.5 text-center")}>
-            <div className="text-lg font-bold text-zinc-200">{m.value}</div>
-            <div className="flex items-center justify-center gap-1 text-[10px] text-zinc-600">{m.icon} {m.label}</div>
+            <div className="text-lg font-bold text-foreground">{m.value}</div>
+            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-fg">{m.icon} {m.label}</div>
           </div>
         ))}
       </div>
@@ -205,7 +205,7 @@ export function AgentDetail({
               className={tabVariants({ active: activeTab === tab.id })}
             >
               {tab.icon} {tab.label}
-              {tab.count > 0 && <span className="text-zinc-600 ml-0.5">{tab.count}</span>}
+              {tab.count > 0 && <span className="text-muted-fg ml-0.5">{tab.count}</span>}
             </button>
           ))}
         </div>
@@ -238,5 +238,5 @@ export function AgentDetail({
 }
 
 function Empty({ label }: { label: string }) {
-  return <div className="text-xs text-zinc-600 p-6 text-center">{label}</div>;
+  return <div className="text-xs text-muted-fg p-6 text-center">{label}</div>;
 }

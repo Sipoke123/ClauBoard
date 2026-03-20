@@ -15,8 +15,8 @@ const columns: { status: TaskStatus; label: string; icon: React.ReactNode; accen
 function TaskCard({ task, agentName }: { task: Task; agentName: string }) {
   return (
     <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-3")}>
-      <div className="font-medium text-sm text-zinc-200 truncate">{task.title}</div>
-      <div className="text-[11px] text-zinc-500 mt-1">{agentName}</div>
+      <div className="font-medium text-sm text-foreground/80 truncate">{task.title}</div>
+      <div className="text-[11px] text-muted-fg mt-1">{agentName}</div>
       {task.error && <div className="text-[11px] text-red-400/80 mt-1.5 truncate">{task.error}</div>}
     </div>
   );
@@ -29,8 +29,8 @@ export default function TasksPage() {
   return (
     <div className="flex flex-col h-full p-6">
       <div className="flex items-center gap-2.5 mb-5 shrink-0">
-        <ListChecks size={18} className="text-zinc-500" />
-        <h2 className="text-lg font-semibold text-zinc-100">Task Board</h2>
+        <ListChecks size={18} className="text-muted-fg" />
+        <h2 className="text-lg font-semibold text-foreground">Task Board</h2>
       </div>
       <div className="grid grid-cols-3 gap-4 flex-1 min-h-0">
         {columns.map((col) => {
@@ -40,13 +40,13 @@ export default function TasksPage() {
               <div className={cn("border-t-2 pt-3 mb-3 shrink-0", col.accent)}>
                 <div className="flex items-center gap-2">
                   {col.icon}
-                  <h3 className="text-sm font-semibold text-zinc-400">{col.label}</h3>
-                  <span className="text-xs text-zinc-600">{colTasks.length}</span>
+                  <h3 className="text-sm font-semibold text-muted-fg">{col.label}</h3>
+                  <span className="text-xs text-muted-fg/60">{colTasks.length}</span>
                 </div>
               </div>
               <div className="space-y-2 flex-1 overflow-y-auto">
                 {colTasks.length === 0 ? (
-                  <div className="text-xs text-zinc-700 text-center py-6">No tasks</div>
+                  <div className="text-xs text-muted-fg/60 text-center py-6">No tasks</div>
                 ) : (
                   colTasks.map((t) => (
                     <TaskCard key={t.id} task={t} agentName={agentMap.get(t.agentId) ?? t.agentId} />
