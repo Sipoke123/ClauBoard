@@ -80,10 +80,10 @@ const iconColors: Record<string, string> = {
 // ---------------------------------------------------------------------------
 
 const connectionStyles: Record<string, { stroke: string; dot: string; width: number; dash: string; opacity: number }> = {
-  active:    { stroke: "rgba(16, 185, 129, 0.5)",  dot: "rgba(16, 185, 129, 0.7)",  width: 2.5, dash: "",    opacity: 1 },
-  completed: { stroke: "rgba(139, 92, 246, 0.3)",  dot: "rgba(139, 92, 246, 0.5)",  width: 2,   dash: "8,6", opacity: 0.8 },
-  blocked:   { stroke: "rgba(239, 68, 68, 0.4)",   dot: "rgba(239, 68, 68, 0.6)",   width: 2,   dash: "4,4", opacity: 1 },
-  idle:      { stroke: "rgba(161, 161, 170, 0.15)", dot: "rgba(161, 161, 170, 0.25)", width: 1.5, dash: "8,6", opacity: 0.6 },
+  active:    { stroke: "#10b981",            dot: "#10b981",            width: 3,   dash: "",    opacity: 1 },
+  completed: { stroke: "rgba(139,92,246,0.6)", dot: "#8b5cf6",          width: 2.5, dash: "5,3", opacity: 1 },
+  blocked:   { stroke: "rgba(239,68,68,0.7)",  dot: "#ef4444",          width: 2.5, dash: "4,3", opacity: 1 },
+  idle:      { stroke: "rgba(113,113,122,0.35)", dot: "rgba(113,113,122,0.5)", width: 2,   dash: "5,4", opacity: 1 },
 };
 
 function ConnectionLine({
@@ -386,17 +386,25 @@ const DEFAULT_CONNECTIONS: { fromName: string; toName: string }[] = [
   { fromName: "Diana", toName: "Linter" },     // Security → QA
 ];
 
-function getConnectionStatus(fromAgent: Agent, fromRun: Run | undefined, toAgent: Agent): AgentConnection["status"] {
+function getConnectionStatus(fromAgent: Agent, fromRun: Run | undefined, toAgent: Agent, toRun?: Run): AgentConnection["status"] {
   const fromPaused = fromAgent.status === "idle" && fromRun?.status === "stopped";
   const fromFailed = fromAgent.status === "error" || fromRun?.status === "failed";
+  const toPaused = toAgent.status === "idle" && toRun?.status === "stopped";
+  const toFailed = toAgent.status === "error" || toRun?.status === "failed";
 
-  // Source agent stopped or failed → connection blocked
-  if (fromPaused || fromFailed) return "blocked";
+  // Either end stopped or failed → blocked
+  if (fromPaused || fromFailed || toPaused || toFailed) return "blocked";
 
-  // Source working, target waiting → active (data flowing)
+  // Both completed → completed connection
+  if (fromRun?.status === "completed" && toRun?.status === "completed") return "completed";
+
+  // Source completed, target working → active (data flowing downstream)
+  if (fromRun?.status === "completed" && toAgent.status === "working") return "active";
+
+  // Source working → active
   if (fromAgent.status === "working") return "active";
 
-  // Source completed successfully → completed
+  // Source completed (target not yet started) → completed
   if (fromRun?.status === "completed") return "completed";
 
   return "idle";
@@ -444,7 +452,7 @@ function buildConnections(agents: Agent[], sessions: Session[], runs: Run[]): Ag
         conns.push({
           from: fromAgentId,
           to: toAgentId,
-          status: getConnectionStatus(fromAgent, lastRunMap.get(fromAgentId), toAgent),
+          status: getConnectionStatus(fromAgent, lastRunMap.get(fromAgentId), toAgent, lastRunMap.get(toAgentId)),
         });
       }
     }
@@ -475,7 +483,7 @@ function buildConnections(agents: Agent[], sessions: Session[], runs: Run[]): Ag
           conns.push({
             from: fromId,
             to: toId,
-            status: getConnectionStatus(fromAgent, lastRunMap.get(fromId), toAgent),
+            status: getConnectionStatus(fromAgent, lastRunMap.get(fromId), toAgent, lastRunMap.get(toId)),
           });
         }
       }
@@ -670,23 +678,23 @@ export function AgentWorkflowCanvas({
       </div>
 
       {/* Legend — bottom left inside canvas */}
-      <div className="absolute bottom-3 left-3 z-10 flex flex-col gap-1.5 rounded-lg border border-white/[0.04] bg-zinc-950/80 backdrop-blur-sm px-3 py-2.5">
-        <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Connections</span>
-        <div className="flex items-center gap-2">
-          <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="2.5" /></svg>
-          <span className="text-[9px] text-zinc-500">Active — data flowing</span>
+      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-xl border border-white/[0.06] bg-zinc-950/90 backdrop-blur-md px-4 py-3 shadow-lg">
+        <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Connections</span>
+        <div className="flex items-center gap-2.5">
+          <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#10b981" strokeWidth="3" strokeLinecap="round" /></svg>
+          <span className="text-[10px] text-zinc-300">Active — data flowing</span>
         </div>
-        <div className="flex items-center gap-2">
-          <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="rgba(139, 92, 246, 0.3)" strokeWidth="2" strokeDasharray="4,3" /></svg>
-          <span className="text-[9px] text-zinc-500">Completed</span>
+        <div className="flex items-center gap-2.5">
+          <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#8b5cf6" strokeWidth="2.5" strokeDasharray="5,3" strokeLinecap="round" /></svg>
+          <span className="text-[10px] text-zinc-300">Completed</span>
         </div>
-        <div className="flex items-center gap-2">
-          <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="rgba(239, 68, 68, 0.4)" strokeWidth="2" strokeDasharray="3,3" /></svg>
-          <span className="text-[9px] text-zinc-500">Blocked — chain broken</span>
+        <div className="flex items-center gap-2.5">
+          <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#ef4444" strokeWidth="2.5" strokeDasharray="4,3" strokeLinecap="round" /></svg>
+          <span className="text-[10px] text-zinc-300">Blocked — chain broken</span>
         </div>
-        <div className="flex items-center gap-2">
-          <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="rgba(161, 161, 170, 0.15)" strokeWidth="1.5" strokeDasharray="4,3" /></svg>
-          <span className="text-[9px] text-zinc-500">Idle — waiting</span>
+        <div className="flex items-center gap-2.5">
+          <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#71717a" strokeWidth="2" strokeDasharray="5,4" strokeLinecap="round" /></svg>
+          <span className="text-[10px] text-zinc-300">Idle — waiting</span>
         </div>
       </div>
     </div>

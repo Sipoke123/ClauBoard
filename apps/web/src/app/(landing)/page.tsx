@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { buttonVariants, panelVariants } from "../../lib/variants";
+import { HeroSection } from "../../components/hero-section";
 
 // ---------------------------------------------------------------------------
 // Animation helpers
@@ -50,58 +51,6 @@ const fadeUpChild = {
 // Sections
 // ---------------------------------------------------------------------------
 
-function Navbar() {
-  return (
-    <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-zinc-950/80 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
-            <Building2 size={14} className="text-white" />
-          </div>
-          <span className="text-sm font-semibold tracking-tight text-zinc-100">AgentFlow</span>
-        </a>
-        <div className="flex items-center gap-3">
-          <a href="#getting-started" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-            Get Started
-          </a>
-          <a href="/office" className={buttonVariants({ variant: "primary", size: "sm" })}>
-            Open Dashboard <ArrowRight size={12} />
-          </a>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-function Hero() {
-  return (
-    <motion.section
-      {...fadeUp}
-      className="max-w-6xl mx-auto px-6 pt-24 pb-20 text-center"
-    >
-      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-medium mb-8">
-        <Zap size={12} /> Real-time multi-agent observability
-      </div>
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-zinc-50 leading-[1.1] mb-6">
-        Visual control plane for
-        <br />
-        <span className="text-blue-400">AI agents</span>
-      </h1>
-      <p className="text-lg text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-        Launch, monitor, and coordinate multiple AI agents from a single operator surface.
-        Replace terminal-hopping with a live office view of every agent, tool call, and file change.
-      </p>
-      <div className="flex items-center justify-center gap-4">
-        <a href="/office" className={cn(buttonVariants({ variant: "primary", size: "md" }), "h-10 px-6 text-sm")}>
-          <Rocket size={14} /> Open Dashboard
-        </a>
-        <a href="#getting-started" className={cn(buttonVariants({ variant: "outline", size: "md" }), "h-10 px-6 text-sm")}>
-          <Terminal size={14} /> Quick Start
-        </a>
-      </div>
-    </motion.section>
-  );
-}
 
 function Features() {
   const features = [
@@ -133,7 +82,7 @@ function Features() {
   ];
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
+    <section id="features" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
         <h2 className="text-2xl font-bold text-zinc-100 mb-3">What it does</h2>
         <p className="text-zinc-500 text-sm">Everything you need to supervise AI agents in one surface.</p>
@@ -250,7 +199,7 @@ function Architecture() {
   ];
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
+    <section id="architecture" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
         <h2 className="text-2xl font-bold text-zinc-100 mb-3">Architecture</h2>
         <p className="text-zinc-500 text-sm">Turborepo monorepo with shared typed contracts.</p>
@@ -414,8 +363,7 @@ function Footer() {
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
-      <Navbar />
-      <Hero />
+      <HeroSection />
       <Features />
       <Workflows />
       <Architecture />

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Rocket, CheckCircle, AlertCircle, Sparkles, Users, GitBranch } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../lib/cn";
 import { buttonVariants, inputVariants, panelVariants } from "../lib/variants";
 
@@ -26,7 +25,7 @@ interface SessionPreset {
 
 type Tab = "single" | "pipeline";
 
-export function RunLauncher() {
+export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
   const [tab, setTab] = useState<Tab>("single");
   const [prompt, setPrompt] = useState("");
   const [cwd, setCwd] = useState("");
@@ -74,6 +73,7 @@ export function RunLauncher() {
       }
       const data = await res.json();
       setLastLaunch(`Launched: ${data.agentId}`);
+      onClose?.();
     } catch (err: any) {
       setError(err.message ?? "Failed to launch");
     } finally {
@@ -100,6 +100,7 @@ export function RunLauncher() {
       }
       const data = await res.json();
       setLastLaunch(`Pipeline launched: ${preset.agents.length} agents`);
+      onClose?.();
     } catch (err: any) {
       setError(err.message ?? "Failed to launch pipeline");
     } finally {
@@ -136,6 +137,7 @@ export function RunLauncher() {
       setPrompt("");
       setAgentName("");
       setShowPresets(true);
+      onClose?.();
     } catch (err: any) {
       setError(err.message ?? "Failed to launch run");
     } finally {
@@ -175,19 +177,12 @@ export function RunLauncher() {
       {tab === "single" && (
         <>
           {/* Preset quick-launch buttons */}
-          <AnimatePresence>
-            {showPresets && presets.length > 0 && !prompt && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="overflow-hidden"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles size={11} className="text-zinc-600" />
-                  <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Quick Launch</span>
-                </div>
+          {showPresets && presets.length > 0 && !prompt && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={11} className="text-zinc-600" />
+                <span className="text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Quick Launch</span>
+              </div>
                 <div className="flex gap-2 flex-wrap">
                   {presets.map((preset) => (
                     <div
@@ -216,9 +211,8 @@ export function RunLauncher() {
                     </div>
                   ))}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </div>
+          )}
 
           {/* Launch form */}
           <form onSubmit={handleLaunch} className="space-y-3">

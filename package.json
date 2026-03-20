@@ -20,5 +20,9 @@
   "packageManager": "npm@10.9.0",
   "engines": {
     "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.2.4",
+    "motion": "^12.38.0"
   }
 }

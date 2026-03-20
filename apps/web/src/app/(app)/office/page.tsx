@@ -77,21 +77,13 @@ export default function OfficePage() {
       </div>
 
       {/* Launcher panel */}
-      <AnimatePresence>
-        {showLauncher && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden border-b border-white/[0.06] bg-zinc-900/40"
-          >
-            <div className="px-5 py-4 max-w-lg">
-              <RunLauncher />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showLauncher && (
+        <div className="border-b border-white/[0.06] bg-zinc-900/40">
+          <div className="px-5 py-4 max-w-lg">
+            <RunLauncher onClose={() => setShowLauncher(false)} />
+          </div>
+        </div>
+      )}
 
       {/* Main content */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
