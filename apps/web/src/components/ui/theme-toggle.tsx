@@ -15,8 +15,10 @@ export function ThemeToggle({ className }: { className?: string }) {
         className
       )}
       onClick={toggle}
+      onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } }}
       role="button"
       tabIndex={0}
+      aria-label="Toggle theme"
     >
       <div className="flex justify-between items-center w-full">
         <div

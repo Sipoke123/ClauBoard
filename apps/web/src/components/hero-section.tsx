@@ -35,7 +35,7 @@ export function HeroSection() {
             <main className="overflow-hidden">
                 <section>
                     <div className="relative pt-24">
-                        <div className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,#09090b_75%)]"></div>
+                        <div className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]"></div>
                         <div className="mx-auto max-w-5xl px-6">
                             <div className="sm:mx-auto lg:mr-auto">
                                 <AnimatedGroup
@@ -57,25 +57,24 @@ export function HeroSection() {
                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                     </div>
                                     <h1 className="mt-4 max-w-2xl text-balance text-5xl font-medium text-foreground md:text-6xl">
-                                        Visual control plane for{' '}
-                                        <span className="text-blue-400">AI agents</span>
+                                        One dashboard for all your{' '}
+                                        <span className="text-amber-600 dark:text-amber-400">AI agents</span>
                                     </h1>
                                     <p className="mt-8 max-w-2xl text-pretty text-lg text-muted-fg">
-                                        Launch, monitor, and coordinate multiple Claude Code agents from a single operator surface.
-                                        Replace terminal-hopping with a live office view of every agent, tool call, and file change.
+                                        Stop switching between terminals. Launch multiple Claude Code agents,
+                                        build pipelines, and watch everything happen live — tool calls, file changes,
+                                        results — all on one screen.
                                     </p>
                                     <div className="mt-12 flex items-center gap-2">
-                                        <div className="bg-white/5 rounded-[14px] border border-border-base p-0.5">
-                                            <Button
-                                                asChild
-                                                size="lg"
-                                                className="rounded-xl px-5 text-base bg-blue-600 text-white hover:bg-blue-500">
-                                                <Link href="/office">
-                                                    <Rocket size={16} className="mr-2" />
-                                                    <span className="text-nowrap">Open Dashboard</span>
-                                                </Link>
-                                            </Button>
-                                        </div>
+                                        <Button
+                                            asChild
+                                            size="lg"
+                                            className="rounded-xl px-5 text-base bg-transparent border border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/60">
+                                            <Link href="/office">
+                                                <Rocket size={16} className="mr-2" />
+                                                <span className="text-nowrap">Open Dashboard</span>
+                                            </Link>
+                                        </Button>
                                         <Button
                                             asChild
                                             size="lg"
@@ -118,7 +117,7 @@ export function HeroSection() {
                                                 <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" style={{ animationDelay: '0.8s' }} />
                                                 <div className="w-3 h-3 rounded-full bg-muted-fg" />
                                             </div>
-                                            <p className="text-foreground0 text-sm">6 agents active — open the dashboard to see them live</p>
+                                            <p className="text-muted-fg text-sm">6 agents active — open the dashboard to see them live</p>
                                         </div>
                                     </div>
                                 </div>
@@ -139,19 +138,19 @@ export function HeroSection() {
                         <div className="group-hover:blur-sm mx-auto mt-12 grid max-w-3xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
                             <div className="flex flex-col items-center gap-2">
                                 <span className="text-3xl font-bold text-foreground">6</span>
-                                <span className="text-[10px] uppercase tracking-wider text-foreground0">Mock Agents</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Agent Roles</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-foreground">15</span>
-                                <span className="text-[10px] uppercase tracking-wider text-foreground0">Event Types</span>
+                                <span className="text-3xl font-bold text-foreground">50k+</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Events / No Lag</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
                                 <span className="text-3xl font-bold text-foreground">RT</span>
-                                <span className="text-[10px] uppercase tracking-wider text-foreground0">WebSocket</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Interactive</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-blue-400">4</span>
-                                <span className="text-[10px] uppercase tracking-wider text-foreground0">Pipeline Presets</span>
+                                <span className="text-3xl font-bold text-amber-600 dark:text-amber-400">2</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Storage Backends</span>
                             </div>
                         </div>
                     </div>
@@ -184,7 +183,7 @@ const HeroHeader = () => {
         <header>
             <nav
                 data-state={menuState && 'active'}
-                className={cn('group fixed z-20 w-full border-b border-border-base transition-colors duration-150', scrolled && 'bg-nav-bg backdrop-blur-xl')}>
+                className={cn('group fixed z-20 w-full border-b transition-colors duration-150', scrolled ? 'bg-nav-bg backdrop-blur-xl border-border-base' : 'border-transparent')}>
                 <div className="mx-auto max-w-5xl px-6 transition-all duration-300">
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="flex w-full items-center justify-between lg:w-auto">
@@ -192,7 +191,7 @@ const HeroHeader = () => {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center gap-2.5">
-                                <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+                                <div className="w-7 h-7 rounded-lg bg-amber-600 flex items-center justify-center">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                                 </div>
                                 <span className="text-sm font-semibold tracking-tight text-foreground">AgentFlow</span>
@@ -213,7 +212,7 @@ const HeroHeader = () => {
                                     <li key={index}>
                                         <Link
                                             href={item.href}
-                                            className="text-foreground0 hover:text-foreground block duration-150">
+                                            className="text-muted-fg hover:text-foreground block duration-150">
                                             <span>{item.name}</span>
                                         </Link>
                                     </li>
@@ -228,7 +227,7 @@ const HeroHeader = () => {
                                         <li key={index}>
                                             <Link
                                                 href={item.href}
-                                                className="text-foreground0 hover:text-foreground block duration-150">
+                                                className="text-muted-fg hover:text-foreground block duration-150">
                                                 <span>{item.name}</span>
                                             </Link>
                                         </li>
@@ -248,7 +247,7 @@ const HeroHeader = () => {
                                 <Button
                                     asChild
                                     size="sm"
-                                    className="bg-blue-600 text-white hover:bg-blue-500">
+                                    className="bg-transparent border border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/60">
                                     <Link href="/office">
                                         <span>Dashboard</span>
                                     </Link>

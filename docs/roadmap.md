@@ -112,15 +112,15 @@
 
 ## What's next
 
-- [ ] Persistent storage (SQLite) for production use
+- [x] SQLite persistence via `--storage sqlite` (WAL mode, indexed queries, drop-in replacement for JSONL)
 - [ ] Authentication and multi-user support
-- [ ] Interactive/streaming sessions (multi-turn conversations)
-- [ ] Agent-to-agent context sharing within sessions
+- [x] Interactive sessions: operator can send follow-up messages to running agents via stdin
+- [x] Agent-to-agent context sharing: upstream run summary (files, tools, output) injected into dependent agent prompts
 - [ ] 3D office view (Three.js / R3F) — canvas view may suffice
-- [ ] Failover: skip stopped agents in session chains, launch next dependent
+- [x] Failover: dependent agents launch even when upstream fails/stops (with context note in prompt)
 - [ ] Cloud deployment (Docker, fly.io)
-- [ ] Notification / alert rules
-- [ ] Event archival / compaction for large histories
+- [x] Notification engine: built-in rules (run failed, agent blocked, tool errors, long-running), WS push, UI alert bell with unread badge
+- [x] Event archival (move old events to timestamped archive files) + compaction (remove verbose events for terminal runs) + auto-compact threshold
 - [ ] Plugin system for custom event types
 
 ## Risks

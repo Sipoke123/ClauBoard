@@ -48,6 +48,8 @@ export class EventStore {
     if (skipped > 0) {
       console.warn(`[event-store] skipped ${skipped} malformed line(s) in ${filePath}`);
     }
+    // Populate in-memory array (no disk write — they're already persisted)
+    this.events = [...loaded];
     console.log(`[event-store] loaded ${loaded.length} events from ${filePath}`);
     return loaded;
   }

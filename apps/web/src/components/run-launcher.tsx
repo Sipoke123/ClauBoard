@@ -204,7 +204,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                       <button
                         onClick={() => quickLaunchPreset(preset)}
                         disabled={launching}
-                        className={cn(buttonVariants({ variant: "primary", size: "xs" }), "mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity")}
+                        className={cn(buttonVariants({ variant: "primary", size: "xs" }), "mt-1.5 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity")}
                       >
                         <Rocket size={10} /> Quick Launch
                       </button>
@@ -302,7 +302,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                             <span className="text-muted-fg text-[10px]">→</span>
                             {dependentAgents.map((a, i) => (
                               <span key={a.agentName} className="flex items-center gap-1">
-                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-400 font-medium">
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/[0.08] border border-amber-500/15 text-[10px] text-amber-400 font-medium">
                                   {a.agentName}
                                 </span>
                                 {i < dependentAgents.length - 1 && (

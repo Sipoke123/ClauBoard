@@ -72,6 +72,39 @@ export function runsRouter(
     res.json({ stopped: true, runId });
   });
 
+  /** Send a follow-up message to a running agent (interactive mode) */
+  router.post("/runs/:id/message", (req, res) => {
+    const runId = req.params.id;
+    const { text } = req.body as { text?: string };
+    if (!text || typeof text !== "string" || text.trim().length === 0) {
+      return res.status(400).json({ error: "text is required" });
+    }
+    const run = runManager.get(runId);
+    if (!run) return res.status(404).json({ error: "run not found" });
+    if (run.status !== "running") {
+      return res.status(400).json({ error: `run is ${run.status}, not running` });
+    }
+
+    const sent = runLauncher.sendMessage(runId, text.trim());
+    if (!sent) {
+      return res.status(400).json({ error: "agent does not support interactive messaging" });
+    }
+
+    // Emit operator message as an event for visibility
+    if (opts?.emit) {
+      opts.emit({
+        id: `msg-${Date.now()}`,
+        type: "terminal.output",
+        ts: Date.now(),
+        agentId: run.agentId,
+        runId,
+        payload: { stream: "stdin", text: `[operator] ${text.trim()}` },
+      });
+    }
+
+    res.json({ sent: true, runId });
+  });
+
   /** Pause an agent — stops auto-relaunching and kills any running runs */
   router.post("/agents/:id/pause", (req, res) => {
     const agentId = req.params.id;

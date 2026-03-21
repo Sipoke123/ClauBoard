@@ -3,22 +3,27 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Rocket, X, Users, LayoutGrid, Network, Download } from "lucide-react";
-import { useStore } from "../../../lib/use-store";
+import { Rocket, X, Users, LayoutGrid, Network, Download, Bell } from "lucide-react";
+import { useStore, useStoreSelector } from "../../../lib/use-store";
 import { OfficeFloor } from "../../../components/office-floor";
 import { AgentWorkflowCanvas } from "../../../components/agent-workflow-canvas";
 import { AgentDetail } from "../../../components/agent-detail";
 import { RunLauncher } from "../../../components/run-launcher";
 import { cn } from "../../../lib/cn";
 import { buttonVariants, statusPillVariants } from "../../../lib/variants";
+import type { AlertData } from "../../../lib/store";
 
 type ViewMode = "grid" | "canvas";
 
 export default function OfficePage() {
   const { agents, runs, tasks, sessions, events } = useStore();
+  const alerts = useStoreSelector((s) => s.alerts);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showLauncher, setShowLauncher] = useState(false);
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [seenCount, setSeenCount] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>("canvas");
+  const unreadAlerts = alerts.length - seenCount;
 
   const router = useRouter();
   const selectedAgent = agents.find((a) => a.id === selectedId);
@@ -62,7 +67,7 @@ export default function OfficePage() {
   return (
     <div className="flex flex-col h-screen relative">
       {/* Office header bar */}
-      <div className="flex items-center justify-between px-5 py-2.5 bg-surface border-b border-border-base shrink-0 backdrop-blur-sm">
+      <div className="flex items-center justify-between px-5 py-2.5 bg-background border-b border-border-base shrink-0">
         <div className="flex items-center gap-4">
           <h2 className="text-sm font-semibold text-foreground">Office</h2>
           <div className="flex items-center gap-2">
@@ -101,12 +106,68 @@ export default function OfficePage() {
               <LayoutGrid size={11} /> Grid
             </button>
           </div>
-          <button
-            onClick={() => setShowLauncher(!showLauncher)}
-            className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-md text-[11px] font-medium border border-blue-500/30 bg-transparent text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all"
-          >
-            <Rocket size={11} /> Launch Run
-          </button>
+          <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
+            <button
+              onClick={() => setShowLauncher(!showLauncher)}
+              className={cn(
+                "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
+                showLauncher ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
+              )}
+            >
+              <Rocket size={11} /> Launch Run
+            </button>
+          </div>
+          {/* Alerts */}
+          <div className="relative">
+            <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
+              <button
+                onClick={() => { setShowAlerts(!showAlerts); if (!showAlerts) setSeenCount(alerts.length); }}
+                className={cn(
+                  "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
+                  showAlerts ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
+                )}
+              >
+                <Bell size={11} />
+                Alerts
+              {unreadAlerts > 0 && (
+                <span className="flex items-center justify-center min-w-[16px] h-4 rounded-full bg-red-500 text-white text-[9px] font-bold px-1">
+                  {unreadAlerts > 99 ? "99+" : unreadAlerts}
+                </span>
+              )}
+              </button>
+            </div>
+            {showAlerts && (
+              <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-border-base bg-background shadow-2xl z-50">
+                <div className="p-3 border-b border-border-base flex items-center justify-between sticky top-0 bg-background z-10">
+                  <span className="text-xs font-semibold text-foreground">Alerts ({alerts.length})</span>
+                  <button onClick={() => setShowAlerts(false)} className="text-[10px] text-muted-fg hover:text-foreground focus-visible:text-foreground focus-visible:outline-none transition-colors">Close</button>
+                </div>
+
+                {alerts.length === 0 ? (
+                  <div className="p-6 text-xs text-muted-fg/40 text-center">No alerts yet</div>
+                ) : (
+                  <div className="divide-y divide-border-subtle">
+                    {[...alerts].reverse().slice(0, 50).map((a: AlertData) => {
+                      const colors: Record<string, string> = {
+                        critical: "border-l-red-500",
+                        warning: "border-l-amber-500",
+                        info: "border-l-muted-fg",
+                      };
+                      return (
+                        <div key={a.id} className={cn("p-3 text-xs border-l-2", colors[a.severity] ?? colors.info)}>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="font-semibold text-foreground">{a.title}</span>
+                            <span className="text-[10px] text-muted-fg/40 tabular-nums">{new Date(a.ts).toLocaleTimeString()}</span>
+                          </div>
+                          <div className="text-muted-fg truncate">{a.detail}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

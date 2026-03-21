@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { motion, AnimatePresence } from "framer-motion";
-import { Layers, Plus, X, StopCircle, Wrench, FileCode, Zap, ArrowRight, AlertTriangle, Users, Sparkles } from "lucide-react";
+import { Layers, Plus, X, StopCircle, Wrench, FileCode, Zap, ArrowRight, AlertTriangle, Users, Sparkles, ChevronRight } from "lucide-react";
 import { useStore } from "../../../lib/use-store";
 import type { Session, Run, Agent, AgentEvent, SessionAgent } from "@repo/shared";
 import { validateDependencyGraph, computeStages } from "@repo/shared";
@@ -175,37 +176,112 @@ function SessionCard({ session, selected, onClick, onStop }: {
 }) {
   const agents = session.agents ?? [];
   const running = agents.filter((a) => a.status === "running").length;
+  const completed = agents.filter((a) => a.status === "completed").length;
+  const failed = agents.filter((a) => ["failed", "stopped"].includes(a.status)).length;
   const waiting = agents.filter((a) => a.status === "waiting").length;
   const hasDeps = agents.some((a) => a.dependsOn.length > 0);
+
+  const sessionGlow: Record<string, string> = {
+    active: "border-emerald-500/30 bg-emerald-500/[0.03]",
+    completed: "border-border-base bg-surface/60",
+    failed: "border-red-500/20 bg-red-500/[0.02]",
+    stopped: "border-amber-500/20 bg-amber-500/[0.02]",
+  };
 
   return (
     <div onClick={onClick} role="button" tabIndex={0} className={cn(
       "w-full text-left p-4 rounded-xl border transition-all duration-150 cursor-pointer",
-      selected ? "border-blue-500/40 bg-muted/60 shadow-lg shadow-blue-900/10" : "border-border-base bg-surface/60 hover:bg-muted/40 hover:border-border-base"
+      selected
+        ? "border-foreground/20 bg-foreground/[0.03] shadow-md"
+        : cn("hover:bg-foreground/[0.02]", sessionGlow[session.status] ?? "border-border-base bg-surface/60")
     )}>
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="font-medium text-sm text-foreground truncate">{session.name}</span>
-        <span className={statusPillVariants({ status: session.status as any })}>{statusLabels[session.status] ?? session.status}</span>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className={statusDotVariants({ status: session.status as any, size: "md" })} />
+          <span className="font-semibold text-sm text-foreground truncate">{session.name}</span>
+        </div>
+        <ChevronRight size={14} className={cn("text-muted-fg/40 shrink-0 transition-transform", selected && "rotate-90")} />
       </div>
-      <div className="flex items-center gap-2 text-[10px] text-muted-fg mb-2">
-        <span>{agents.length} agents</span>
-        {hasDeps && <span className="text-blue-400">staged</span>}
+
+      {/* Stats row */}
+      <div className="flex items-center gap-3 text-[10px] mb-2.5">
+        <span className="text-muted-fg">{agents.length} agents</span>
+        {hasDeps && <span className="text-amber-400/60">staged</span>}
         {running > 0 && <span className="text-emerald-400">{running} running</span>}
-        {waiting > 0 && <span>{waiting} waiting</span>}
+        {completed > 0 && <span className="text-muted-fg">{completed} done</span>}
+        {failed > 0 && <span className="text-red-400">{failed} failed</span>}
+        {waiting > 0 && <span className="text-muted-fg/60">{waiting} waiting</span>}
       </div>
-      <div className="flex gap-1.5 flex-wrap">
+
+      {/* Agent dots */}
+      <div className="flex gap-2 flex-wrap">
         {agents.map((a) => (
-          <div key={a.agentName} className="flex items-center gap-1" title={`${a.agentName}: ${statusLabels[a.status]}`}>
+          <div key={a.agentName} className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-foreground/[0.03]" title={`${a.agentName}: ${statusLabels[a.status]}`}>
             <span className={statusDotVariants({ status: a.status as any, size: "sm" })} />
             <span className="text-[10px] text-muted-fg">{a.agentName}</span>
           </div>
         ))}
       </div>
+
+      {/* Stop all */}
       {running > 0 && (
-        <button onClick={(e) => { e.stopPropagation(); onStop(); }} className={cn(buttonVariants({ variant: "danger", size: "xs" }), "mt-2")}>
-          <StopCircle size={10} /> Stop All
-        </button>
+        <div className="mt-3 pt-2 border-t border-border-subtle">
+          <button onClick={(e) => { e.stopPropagation(); onStop(); }}
+            className={cn(buttonVariants({ variant: "danger", size: "xs" }))}>
+            <StopCircle size={10} /> Stop All
+          </button>
+        </div>
       )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Virtual activity table
+// ---------------------------------------------------------------------------
+
+const ACTIVITY_ROW_HEIGHT = 32;
+
+function VirtualActivityTable({ events, agentMap }: { events: AgentEvent[]; agentMap: Map<string, Agent> }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: events.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ACTIVITY_ROW_HEIGHT,
+    overscan: 30,
+  });
+
+  if (events.length === 0) {
+    return <div className="text-xs text-muted-fg/40 p-6 text-center">No events match filters</div>;
+  }
+
+  return (
+    <div className="flex flex-col flex-1 min-h-0">
+      {/* Header */}
+      <div className="flex border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider shrink-0">
+        <div className="py-1.5 px-3 w-20">Time</div>
+        <div className="py-1.5 px-3 w-24">Agent</div>
+        <div className="py-1.5 px-3 w-36">Type</div>
+        <div className="py-1.5 px-3 flex-1">Payload</div>
+      </div>
+      {/* Virtual rows */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
+          {virtualizer.getVirtualItems().map((vRow) => {
+            const e = events[vRow.index];
+            return (
+              <div key={e.id} className="flex items-center border-b border-border-subtle text-xs font-mono hover:bg-foreground/[0.02] absolute w-full"
+                style={{ height: ACTIVITY_ROW_HEIGHT, top: vRow.start }}>
+                <div className="px-3 w-20 text-muted-fg whitespace-nowrap">{new Date(e.ts).toLocaleTimeString()}</div>
+                <div className="px-3 w-24 text-muted-fg truncate">{agentMap.get(e.agentId)?.name ?? "?"}</div>
+                <div className={cn("px-3 w-36 whitespace-nowrap", getEventColor(e.type))}>{e.type}</div>
+                <div className="px-3 flex-1 text-muted-fg truncate">{JSON.stringify((e as any).payload).slice(0, 120)}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -264,20 +340,23 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className={cn(panelVariants({ variant: "surface" }), "p-4 shrink-0")}>
+      <div className="shrink-0 mb-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold text-foreground">{session.name}</h3>
+          <div className="flex items-center gap-2.5">
+            <span className={statusDotVariants({ status: session.status as any, size: "lg" })} />
+            <h3 className="text-lg font-semibold text-foreground">{session.name}</h3>
+          </div>
           <span className={statusPillVariants({ status: session.status as any })}>{statusLabels[session.status]}</span>
         </div>
-        <div className="text-xs text-muted-fg mt-1">{sessionAgents.length} agents{hasDeps ? " (staged)" : " (parallel)"} · {sessionEvents.length} events</div>
+        <div className="text-xs text-muted-fg mt-1 ml-5">{sessionAgents.length} agents{hasDeps ? " (staged pipeline)" : " (parallel)"} · {sessionEvents.length} events</div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 my-3 shrink-0">
+      <div className="flex gap-1 mb-4 shrink-0 border-b border-border-subtle pb-3">
         {tabs.map((tab) => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={tabVariants({ active: activeTab === tab.id })}>
             {tab.icon} {tab.label}
-            {tab.count != null && tab.count > 0 && <span className="text-muted-fg ml-0.5">{tab.count}</span>}
+            {tab.count != null && tab.count > 0 && <span className="text-muted-fg/60 ml-0.5 tabular-nums">{tab.count}</span>}
           </button>
         ))}
       </div>
@@ -291,32 +370,36 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
           for (const sa of sessionAgents) cols[stageMap.get(sa.agentName) ?? 0].push(sa);
 
           return (
-            <div className="flex items-start gap-3 overflow-x-auto pb-2">
+            <div className="flex items-start gap-4 overflow-x-auto pb-2">
               {cols.map((stageAgents, si) => (
-                <div key={si} className="flex items-start gap-3">
-                  <div className="min-w-[200px] space-y-2">
-                    <div className="text-[10px] text-muted-fg font-semibold uppercase tracking-wider text-center mb-1">Stage {si + 1}</div>
+                <div key={si} className="flex items-start gap-4">
+                  <div className="min-w-[220px] space-y-2">
+                    <div className="text-[10px] text-muted-fg/60 font-semibold uppercase tracking-wider text-center mb-2">Stage {si + 1}</div>
                     {stageAgents.map((sa) => {
                       const run = sa.runId ? sessionRuns.find((r) => r.id === sa.runId) : undefined;
                       const evts = sa.runId ? sessionEvents.filter((e) => e.agentId === (run?.agentId ?? "")) : [];
                       const tools = evts.filter((e) => e.type === "tool.invoked").length;
                       const headerGlow: Record<string, string> = {
-                        running: "border-emerald-500/30 bg-emerald-500/5", completed: "border-border-base bg-surface/40",
-                        failed: "border-red-500/30 bg-red-500/5", waiting: "border-border-subtle bg-surface/30",
-                        stopped: "border-amber-500/20 bg-amber-500/5", skipped: "border-border-subtle bg-surface/20 opacity-60",
+                        running: "border-emerald-500/30 bg-emerald-500/[0.04]",
+                        completed: "border-emerald-500/20 bg-emerald-500/[0.02]",
+                        failed: "border-red-500/30 bg-red-500/[0.04]",
+                        waiting: "border-border-subtle bg-surface-inset",
+                        stopped: "border-amber-500/20 bg-amber-500/[0.03]",
+                        skipped: "border-border-subtle bg-surface-inset opacity-50",
                       };
                       return (
                         <motion.div key={sa.agentName} layout initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
-                          className={cn("rounded-xl border p-3", headerGlow[sa.status] ?? headerGlow.waiting)}>
-                          <div className="flex items-center justify-between mb-1.5">
+                          className={cn("rounded-xl border p-3.5 transition-colors", headerGlow[sa.status] ?? headerGlow.waiting)}>
+                          <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
                               <span className={statusDotVariants({ status: sa.status as any, size: "md" })} />
-                              <span className="font-medium text-sm text-foreground">{sa.agentName}</span>
+                              <span className="font-semibold text-sm text-foreground">{sa.agentName}</span>
                             </div>
-                            <span className="text-[10px] text-muted-fg">{statusLabels[sa.status]}</span>
+                            <span className={statusPillVariants({ status: sa.status as any })}>{statusLabels[sa.status]}</span>
                           </div>
                           {sa.dependsOn.length > 0 && (
-                            <div className="flex items-center gap-1 mb-1.5 flex-wrap">
+                            <div className="flex items-center gap-1 mb-2 flex-wrap">
+                              <span className="text-[10px] text-muted-fg/50">Depends on:</span>
                               {sa.dependsOn.map((dep) => {
                                 const d = sessionAgents.find((a) => a.agentName === dep);
                                 const done = d?.status === "completed";
@@ -327,20 +410,20 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                           )}
                           <div className="text-xs text-muted-fg truncate">{session.specs[sa.specIndex]?.prompt ?? "—"}</div>
                           {run && (
-                            <div className="flex gap-2 text-[10px] text-muted-fg mt-1.5">
-                              {tools > 0 && <span className="text-orange-400/60">{tools} tools</span>}
-                              <span>{evts.length} evts</span>
+                            <div className="flex gap-3 text-[10px] text-muted-fg/60 mt-2 pt-2 border-t border-border-subtle">
+                              {tools > 0 && <span className="text-amber-400/60">{tools} tools</span>}
+                              <span>{evts.length} events</span>
                               {run.completedAt && <span>{((run.completedAt - run.startedAt) / 1000).toFixed(1)}s</span>}
                             </div>
                           )}
-                          {sa.status === "skipped" && <div className="text-[10px] text-amber-400/70 mt-1">Skipped — dep failed</div>}
-                          {run?.error && <div className="text-[10px] text-red-400/70 mt-1 truncate">{run.error}</div>}
+                          {sa.status === "skipped" && <div className="text-[10px] text-amber-400/70 mt-1.5">Skipped — dependency failed</div>}
+                          {run?.error && <div className="text-[10px] text-red-400/80 mt-1.5 truncate">{run.error}</div>}
                         </motion.div>
                       );
                     })}
                   </div>
                   {si < maxStage && (
-                    <div className="flex items-center self-center pt-8"><ArrowRight size={14} className="text-muted-fg/50" /></div>
+                    <div className="flex items-center self-center pt-8"><ArrowRight size={16} className="text-muted-fg/30" /></div>
                   )}
                 </div>
               ))}
@@ -351,7 +434,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
         {/* ACTIVITY */}
         {activeTab === "activity" && (
           <div className="flex flex-col flex-1 min-h-0">
-            <div className="flex gap-2 mb-2 shrink-0">
+            <div className="flex gap-2 mb-3 shrink-0">
               <select value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} className={cn(inputVariants({ size: "sm" }), "w-auto")}>
                 <option value="all">All agents</option>
                 {sessionRuns.map((r) => <option key={r.agentId} value={r.agentId}>{agentMap.get(r.agentId)?.name ?? r.agentId}</option>)}
@@ -359,33 +442,10 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
               <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={cn(inputVariants({ size: "sm" }), "w-auto")}>
                 {typeGroups.map((g) => <option key={g} value={g}>{g === "all" ? "All types" : g + "*"}</option>)}
               </select>
-              <span className="text-[10px] text-muted-fg self-center ml-auto">{filteredEvents.length} events</span>
+              <span className="text-[10px] text-muted-fg/50 self-center ml-auto tabular-nums">{filteredEvents.length} events</span>
             </div>
-            <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
-              <div className="h-full overflow-y-auto">
-                {filteredEvents.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No events match filters</div> : (
-                  <table className="w-full">
-                    <thead className="sticky top-0 bg-surface z-10">
-                      <tr className="border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
-                        <th className="py-1.5 px-3.5 text-left w-20">Time</th>
-                        <th className="py-1.5 px-3.5 text-left w-24">Agent</th>
-                        <th className="py-1.5 px-3.5 text-left w-36">Type</th>
-                        <th className="py-1.5 px-3.5 text-left">Payload</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredEvents.map((e) => (
-                        <tr key={e.id} className="border-b border-border-subtle text-xs font-mono hover:bg-foreground/[0.02]">
-                          <td className="py-1.5 px-3.5 text-muted-fg whitespace-nowrap">{new Date(e.ts).toLocaleTimeString()}</td>
-                          <td className="py-1.5 px-3.5 text-muted-fg truncate max-w-[100px]">{agentMap.get(e.agentId)?.name ?? "?"}</td>
-                          <td className={cn("py-1.5 px-3.5 whitespace-nowrap", getEventColor(e.type))}>{e.type}</td>
-                          <td className="py-1.5 px-3.5 text-muted-fg truncate max-w-[300px]">{JSON.stringify((e as any).payload).slice(0, 100)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
+            <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden flex flex-col")}>
+              <VirtualActivityTable events={filteredEvents} agentMap={agentMap} />
             </div>
           </div>
         )}
@@ -394,27 +454,26 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
         {activeTab === "tools" && (
           <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
             <div className="h-full overflow-y-auto">
-              {toolsSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No tool calls yet</div> : (
-                <table className="w-full">
-                  <thead className="sticky top-0 bg-surface z-10">
-                    <tr className="border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
-                      <th className="py-1.5 px-3.5 text-left w-32">Tool</th>
-                      <th className="py-1.5 px-3.5 text-right w-20">Calls</th>
-                      <th className="py-1.5 px-3.5 text-right w-20">Errors</th>
-                      <th className="py-1.5 px-3.5 text-left">Used by</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {toolsSummary.map((t) => (
-                      <tr key={t.name} className="border-b border-border-subtle text-xs">
-                        <td className="py-2 px-3.5 text-orange-400 font-medium">{t.name}</td>
-                        <td className="py-2 px-3.5 text-muted-fg text-right">{t.count}</td>
-                        <td className={cn("py-2 px-3.5 text-right", t.errors > 0 ? "text-red-400" : "text-muted-fg")}>{t.errors}</td>
-                        <td className="py-2 px-3.5"><div className="flex gap-1 flex-wrap">{t.agents.map((aid) => <span key={aid} className={statusPillVariants({ status: "idle" })}>{agentMap.get(aid)?.name ?? "?"}</span>)}</div></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {toolsSummary.length === 0 ? <div className="text-xs text-muted-fg/40 p-6 text-center">No tool calls yet</div> : (
+                <div className="divide-y divide-border-subtle">
+                  {toolsSummary.map((t) => (
+                    <div key={t.name} className="flex items-center gap-4 px-4 py-3 hover:bg-foreground/[0.02] transition-colors">
+                      <div className="flex items-center gap-2 w-36">
+                        <Wrench size={12} className="text-amber-400/60 shrink-0" />
+                        <span className="text-sm font-medium text-foreground truncate">{t.name}</span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-fg">
+                        <span className="tabular-nums">{t.count} calls</span>
+                        {t.errors > 0 && <span className="text-red-400 tabular-nums">{t.errors} errors</span>}
+                      </div>
+                      <div className="flex gap-1 flex-wrap ml-auto">
+                        {t.agents.map((aid) => (
+                          <span key={aid} className={cn(statusPillVariants({ status: "idle" }))}>{agentMap.get(aid)?.name ?? "?"}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -424,27 +483,20 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
         {activeTab === "files" && (
           <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
             <div className="h-full overflow-y-auto">
-              {fileSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No file changes detected</div> : (
-                <table className="w-full">
-                  <thead className="sticky top-0 bg-surface z-10">
-                    <tr className="border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
-                      <th className="py-1.5 px-3.5 text-left w-20">Action</th>
-                      <th className="py-1.5 px-3.5 text-left">Path</th>
-                      <th className="py-1.5 px-3.5 text-left w-24">Agent</th>
-                      <th className="py-1.5 px-3.5 text-left w-24">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fileSummary.map((f) => (
-                      <tr key={f.path} className="border-b border-border-subtle text-xs font-mono">
-                        <td className={cn("py-1.5 px-3.5", f.action === "create" ? "text-emerald-400" : f.action === "delete" ? "text-red-400" : "text-amber-400")}>{f.action}</td>
-                        <td className="py-1.5 px-3.5 text-cyan-400 truncate max-w-[300px]">{f.path}</td>
-                        <td className="py-1.5 px-3.5 text-muted-fg truncate max-w-[100px]">{agentMap.get(f.agent)?.name ?? "?"}</td>
-                        <td className="py-1.5 px-3.5 text-muted-fg whitespace-nowrap">{new Date(f.ts).toLocaleTimeString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {fileSummary.length === 0 ? <div className="text-xs text-muted-fg/40 p-6 text-center">No file changes detected</div> : (
+                <div className="divide-y divide-border-subtle">
+                  {fileSummary.map((f) => (
+                    <div key={f.path} className="flex items-center gap-4 px-4 py-2.5 hover:bg-foreground/[0.02] transition-colors font-mono text-xs">
+                      <span className={cn(
+                        "w-14 shrink-0 text-[10px] font-semibold uppercase tracking-wider",
+                        f.action === "create" ? "text-emerald-400" : f.action === "delete" ? "text-red-400" : "text-amber-400"
+                      )}>{f.action}</span>
+                      <span className="text-cyan-400/80 truncate flex-1">{f.path}</span>
+                      <span className="text-muted-fg/60 w-20 truncate text-right">{agentMap.get(f.agent)?.name ?? "?"}</span>
+                      <span className="text-muted-fg/40 w-20 text-right whitespace-nowrap">{new Date(f.ts).toLocaleTimeString()}</span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -480,11 +532,13 @@ function SessionsPageInner() {
 
   return (
     <div className="flex gap-6 h-full p-6 overflow-hidden">
-      <div className="w-80 shrink-0 space-y-4">
-        <div className="flex items-center justify-between">
+      {/* Sidebar */}
+      <div className="w-80 shrink-0 flex flex-col min-h-0">
+        <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="flex items-center gap-2">
-            <Layers size={15} className="text-muted-fg" />
-            <h2 className="text-sm font-semibold text-muted-fg">Sessions ({sessions.length})</h2>
+            <Layers size={16} className="text-muted-fg" />
+            <h2 className="text-base font-semibold text-foreground">Sessions</h2>
+            {sessions.length > 0 && <span className="text-xs text-muted-fg/50 tabular-nums">{sessions.length}</span>}
           </div>
           <button onClick={() => setShowCreate(!showCreate)} className={buttonVariants({ variant: showCreate ? "ghost" : "outline", size: "xs" })}>
             {showCreate ? <><X size={10} /> Cancel</> : <><Plus size={10} /> New</>}
@@ -493,8 +547,8 @@ function SessionsPageInner() {
 
         <AnimatePresence>
           {showCreate && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-              <div className={cn(panelVariants({ variant: "surface" }), "p-4")}>
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden shrink-0">
+              <div className={cn(panelVariants({ variant: "surface" }), "p-4 mb-4")}>
                 <CreateSessionForm onCreated={() => setShowCreate(false)} presets={sessionPresets} />
               </div>
             </motion.div>
@@ -503,15 +557,15 @@ function SessionsPageInner() {
 
         {sessions.length === 0 && !showCreate ? (
           <div className="border border-dashed border-border-base rounded-xl p-8 text-center space-y-3">
-            <Layers size={24} className="text-muted-fg/50 mx-auto" />
-            <div className="text-muted-fg text-sm font-medium">No sessions yet</div>
-            <div className="text-muted-fg/70 text-xs leading-relaxed">Sessions let you group and coordinate multiple AI agents.<br />Use presets for a quick start.</div>
+            <Layers size={28} className="text-muted-fg/30 mx-auto" />
+            <div className="text-foreground/80 text-sm font-medium">No sessions yet</div>
+            <div className="text-muted-fg/60 text-xs leading-relaxed max-w-[220px] mx-auto">Sessions let you group and coordinate multiple AI agents with dependency chains.</div>
             <button onClick={() => setShowCreate(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
               <Plus size={11} /> Create your first session
             </button>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-y-auto flex-1 min-h-0">
             {[...sessions].sort((a, b) => b.createdAt - a.createdAt).map((s) => (
               <SessionCard key={s.id} session={s}
                 selected={s.id === selectedId} onClick={() => setSelectedId(s.id === selectedId ? null : s.id)} onStop={() => stopSession(s.id)} />
@@ -520,9 +574,17 @@ function SessionsPageInner() {
         )}
       </div>
 
-      {selectedSession && (
+      {/* Detail */}
+      {selectedSession ? (
         <div className="flex-1 min-w-0">
           <SessionDetail session={selectedSession} runs={runs} agents={agents} events={events} />
+        </div>
+      ) : sessions.length > 0 && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-2">
+            <Layers size={32} className="text-muted-fg/20 mx-auto" />
+            <p className="text-sm text-muted-fg/50">Select a session to view details</p>
+          </div>
         </div>
       )}
     </div>

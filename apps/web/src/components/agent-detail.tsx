@@ -68,8 +68,8 @@ function ToolCallRow({ invoked, result }: { invoked: AgentEvent; result?: AgentE
   return (
     <div className="border-b border-border-subtle py-2.5 px-3 text-xs font-mono h-full">
       <div className="flex items-center gap-2">
-        <Wrench size={10} className="text-orange-400/70 shrink-0" />
-        <span className="text-orange-400 font-semibold">{inv.payload.tool}</span>
+        <Wrench size={10} className="text-amber-400/70 shrink-0" />
+        <span className="text-amber-400 font-semibold">{inv.payload.tool}</span>
         <span className="text-muted-fg">{new Date(invoked.ts).toLocaleTimeString()}</span>
         {succeeded && <span className="text-emerald-400 text-[10px]">{res.payload.durationMs}ms</span>}
         {failed && <span className={statusPillVariants({ status: "failed" })}>ERROR</span>}
@@ -228,6 +228,41 @@ export function AgentDetail({
           </div>
         )}
         {lastRun?.error && <div className="mt-1 text-xs text-red-400/80 truncate">{lastRun.error}</div>}
+
+        {/* Interactive message input */}
+        {currentRun && (displayStatus === "working" || displayStatus === "blocked") && (
+          <form
+            className="mt-3 flex gap-2"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const input = form.elements.namedItem("agentMsg") as HTMLInputElement;
+              const text = input.value.trim();
+              if (!text) return;
+              input.value = "";
+              try {
+                await fetch(`${API_URL}/api/runs/${currentRun.id}/message`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ text }),
+                });
+              } catch {}
+            }}
+          >
+            <input
+              name="agentMsg"
+              type="text"
+              placeholder="Send message to agent..."
+              className="flex-1 h-7 rounded-lg border border-border-base bg-input-bg px-2.5 text-xs text-foreground placeholder:text-muted-fg/40 focus:outline-none focus:border-amber-500/40 transition-colors"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg text-[11px] font-medium border border-border-base bg-transparent text-muted-fg hover:text-foreground hover:border-foreground/20 transition-all"
+            >
+              Send
+            </button>
+          </form>
+        )}
       </div>
 
       {/* Metrics strip */}
@@ -235,7 +270,7 @@ export function AgentDetail({
         {[
           { label: "Runs", value: agentRuns.length, icon: <Zap size={11} className="text-muted-fg" /> },
           { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircle size={11} className="text-muted-fg" /> },
-          { label: "Tools", value: toolInvoked.length, icon: <Wrench size={11} className="text-orange-400/60" /> },
+          { label: "Tools", value: toolInvoked.length, icon: <Wrench size={11} className="text-amber-400/60" /> },
           { label: "Files", value: fileEvents.length, icon: <FileCode size={11} className="text-cyan-400/60" /> },
         ].map((m) => (
           <div key={m.label} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-2.5 text-center")}>

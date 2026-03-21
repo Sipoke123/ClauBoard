@@ -2,21 +2,52 @@
 
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ListChecks, Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { ListChecks, Loader2, CheckCircle2, XCircle, Clock, AlertTriangle } from "lucide-react";
 import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
-import { panelVariants } from "../../../lib/variants";
+import { statusDotVariants } from "../../../lib/variants";
 import type { Task, TaskStatus } from "@repo/shared";
 
-const columns: { status: TaskStatus; label: string; icon: React.ReactNode; accent: string }[] = [
-  { status: "pending", label: "Pending", icon: <Clock size={13} className="text-muted-fg" />, accent: "border-border-base" },
-  { status: "in_progress", label: "In Progress", icon: <Loader2 size={13} className="text-blue-400 animate-spin" />, accent: "border-blue-500/40" },
-  { status: "completed", label: "Completed", icon: <CheckCircle size={13} className="text-emerald-400" />, accent: "border-emerald-500/40" },
-  { status: "failed", label: "Failed", icon: <XCircle size={13} className="text-red-400" />, accent: "border-red-500/40" },
+const columns: { status: TaskStatus; label: string; icon: React.ReactNode; dotColor: string; headerBorder: string }[] = [
+  {
+    status: "pending",
+    label: "Pending",
+    icon: <Clock size={14} />,
+    dotColor: "text-muted-fg",
+    headerBorder: "border-border-base",
+  },
+  {
+    status: "in_progress",
+    label: "In Progress",
+    icon: <Loader2 size={14} className="animate-spin" />,
+    dotColor: "text-blue-400",
+    headerBorder: "border-blue-500/50",
+  },
+  {
+    status: "completed",
+    label: "Completed",
+    icon: <CheckCircle2 size={14} />,
+    dotColor: "text-emerald-400",
+    headerBorder: "border-emerald-500/50",
+  },
+  {
+    status: "failed",
+    label: "Failed",
+    icon: <XCircle size={14} />,
+    dotColor: "text-red-400",
+    headerBorder: "border-red-500/50",
+  },
 ];
 
-const CARD_HEIGHT = 64;
-const CARD_GAP = 8;
+const statusCardStyles: Record<TaskStatus, string> = {
+  pending: "border-border-subtle bg-surface-inset",
+  in_progress: "border-blue-500/20 bg-blue-500/[0.03]",
+  completed: "border-emerald-500/20 bg-emerald-500/[0.03]",
+  failed: "border-red-500/20 bg-red-500/[0.03]",
+};
+
+const CARD_HEIGHT = 80;
+const CARD_GAP = 6;
 
 function VirtualTaskColumn({ tasks, agentMap }: { tasks: Task[]; agentMap: Map<string, string> }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -28,7 +59,11 @@ function VirtualTaskColumn({ tasks, agentMap }: { tasks: Task[]; agentMap: Map<s
   });
 
   if (tasks.length === 0) {
-    return <div className="text-xs text-muted-fg/60 text-center py-6">No tasks</div>;
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-xs text-muted-fg/40">No tasks</p>
+      </div>
+    );
   }
 
   return (
@@ -36,16 +71,34 @@ function VirtualTaskColumn({ tasks, agentMap }: { tasks: Task[]; agentMap: Map<s
       <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
         {virtualizer.getVirtualItems().map((vRow) => {
           const task = tasks[vRow.index];
+          const agentName = agentMap.get(task.agentId) ?? task.agentId;
           return (
             <div
               key={task.id}
-              className="absolute w-full"
+              className="absolute w-full px-0.5"
               style={{ height: CARD_HEIGHT, top: vRow.start }}
             >
-              <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-3 h-full")}>
-                <div className="font-medium text-sm text-foreground/80 truncate">{task.title}</div>
-                <div className="text-[11px] text-muted-fg mt-1">{agentMap.get(task.agentId) ?? task.agentId}</div>
-                {task.error && <div className="text-[11px] text-red-400/80 mt-1 truncate">{task.error}</div>}
+              <div
+                className={cn(
+                  "rounded-xl border p-3 h-full flex flex-col justify-between transition-colors hover:brightness-105",
+                  statusCardStyles[task.status]
+                )}
+              >
+                <div>
+                  <div className="font-medium text-sm text-foreground truncate leading-tight">
+                    {task.title}
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <span className={cn(statusDotVariants({ status: task.status === "in_progress" ? "running" : task.status, size: "sm" }))} />
+                    <span className="text-[11px] text-muted-fg truncate">{agentName}</span>
+                  </div>
+                </div>
+                {task.error && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <AlertTriangle size={10} className="text-red-400 shrink-0" />
+                    <span className="text-[10px] text-red-400/80 truncate">{task.error}</span>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -64,18 +117,22 @@ export default function TasksPage() {
       <div className="flex items-center gap-2.5 mb-5 shrink-0">
         <ListChecks size={18} className="text-muted-fg" />
         <h2 className="text-lg font-semibold text-foreground">Task Board</h2>
-        <span className="text-xs text-muted-fg/60">{tasks.length} tasks</span>
+        <span className="ml-1 text-xs text-muted-fg/50 tabular-nums">{tasks.length} tasks</span>
       </div>
-      <div className="grid grid-cols-4 gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
         {columns.map((col) => {
           const colTasks = tasks.filter((t) => t.status === col.status);
           return (
             <div key={col.status} className="flex flex-col min-h-0">
-              <div className={cn("border-t-2 pt-3 mb-3 shrink-0", col.accent)}>
+              <div className={cn("border-t-2 pt-3 mb-3 shrink-0", col.headerBorder)}>
                 <div className="flex items-center gap-2">
-                  {col.icon}
-                  <h3 className="text-sm font-semibold text-muted-fg">{col.label}</h3>
-                  <span className="text-xs text-muted-fg/60">{colTasks.length}</span>
+                  <span className={col.dotColor}>{col.icon}</span>
+                  <h3 className="text-sm font-semibold text-foreground/80">{col.label}</h3>
+                  {colTasks.length > 0 && (
+                    <span className="ml-auto text-[11px] font-medium text-muted-fg/50 bg-foreground/[0.04] px-1.5 py-0.5 rounded-md tabular-nums">
+                      {colTasks.length}
+                    </span>
+                  )}
                 </div>
               </div>
               <VirtualTaskColumn tasks={colTasks} agentMap={agentMap} />

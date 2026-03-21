@@ -38,7 +38,7 @@ interface AgentNode {
 interface AgentConnection {
   from: string;
   to: string;
-  status: "active" | "completed" | "blocked" | "idle";
+  status: "active" | "completed" | "blocked" | "bypassed" | "idle";
 }
 
 // ---------------------------------------------------------------------------
@@ -80,9 +80,10 @@ const iconColors: Record<string, string> = {
 // ---------------------------------------------------------------------------
 
 const connectionStyles: Record<string, { stroke: string; dot: string; width: number; dash: string; opacity: number }> = {
-  active:    { stroke: "#10b981",            dot: "#10b981",            width: 3,   dash: "",    opacity: 1 },
-  completed: { stroke: "rgba(139,92,246,0.6)", dot: "#8b5cf6",          width: 2.5, dash: "5,3", opacity: 1 },
-  blocked:   { stroke: "rgba(239,68,68,0.7)",  dot: "#ef4444",          width: 2.5, dash: "4,3", opacity: 1 },
+  active:    { stroke: "#10b981",              dot: "#10b981",              width: 3,   dash: "",    opacity: 1 },
+  completed: { stroke: "rgba(139,92,246,0.6)", dot: "#8b5cf6",             width: 2.5, dash: "5,3", opacity: 1 },
+  blocked:   { stroke: "rgba(239,68,68,0.7)",  dot: "#ef4444",             width: 2.5, dash: "4,3", opacity: 1 },
+  bypassed:  { stroke: "rgba(245,158,11,0.6)", dot: "#f59e0b",             width: 2.5, dash: "3,3", opacity: 0.8 },
   idle:      { stroke: "rgba(113,113,122,0.35)", dot: "rgba(113,113,122,0.5)", width: 2,   dash: "5,4", opacity: 1 },
 };
 
@@ -138,6 +139,20 @@ function ConnectionLine({
           />
         </>
       )}
+      {/* Bypassed ≫ marker at midpoint */}
+      {status === "bypassed" && (
+        <text
+          x={(startX + endX) / 2}
+          y={(startY + endY) / 2 + 4}
+          textAnchor="middle"
+          fill="#f59e0b"
+          fontSize="12"
+          fontWeight="bold"
+          opacity={0.7}
+        >
+          ≫
+        </text>
+      )}
     </g>
   );
 }
@@ -166,7 +181,7 @@ function AgentNodeCard({
         isDragging ? "border-2" : "hover:shadow-lg",
       )}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent" />
 
       <div className="relative p-3 h-full flex flex-col">
         {/* Header: icon + name + status */}
@@ -204,7 +219,7 @@ function AgentNodeCard({
         <div className="flex items-center justify-between shrink-0 pt-1">
           <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
-              <span className="flex items-center gap-1 text-orange-400/60">
+              <span className="flex items-center gap-1 text-amber-400/60">
                 <Wrench size={9} /> {toolCount}
               </span>
             )}
@@ -383,8 +398,14 @@ function getConnectionStatus(fromAgent: Agent, fromRun: Run | undefined, toAgent
   const toPaused = toAgent.status === "idle" && toRun?.status === "stopped";
   const toFailed = toAgent.status === "error" || toRun?.status === "failed";
 
-  // Either end stopped or failed → blocked
-  if (fromPaused || fromFailed || toPaused || toFailed) return "blocked";
+  // Source failed/stopped but target is running or completed → bypassed (failover)
+  if ((fromPaused || fromFailed) && (toAgent.status === "working" || toRun?.status === "completed")) return "bypassed";
+
+  // Target failed/stopped, source was fine → blocked
+  if (toPaused || toFailed) return "blocked";
+
+  // Source failed/stopped, target still waiting → blocked
+  if (fromPaused || fromFailed) return "blocked";
 
   // Both completed → completed connection
   if (fromRun?.status === "completed" && toRun?.status === "completed") return "completed";
@@ -650,7 +671,7 @@ export function AgentWorkflowCanvas({
                 }}
                 className={cn(
                   "absolute cursor-grab",
-                  selectedAgentId === node.id && "ring-1 ring-white/20 rounded-xl",
+                  selectedAgentId === node.id && "ring-2 ring-foreground/20 rounded-xl",
                 )}
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -682,6 +703,10 @@ export function AgentWorkflowCanvas({
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#ef4444" strokeWidth="2.5" strokeDasharray="4,3" strokeLinecap="round" /></svg>
           <span className="text-[10px] text-foreground">Blocked — chain broken</span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#f59e0b" strokeWidth="2.5" strokeDasharray="3,3" strokeLinecap="round" opacity="0.8" /></svg>
+          <span className="text-[10px] text-foreground">Bypassed — failover</span>
         </div>
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#71717a" strokeWidth="2" strokeDasharray="5,4" strokeLinecap="round" /></svg>

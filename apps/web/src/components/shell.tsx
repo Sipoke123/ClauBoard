@@ -46,7 +46,7 @@ export function StatusBar() {
       {connected && modeLabel && (
         <span className={cn(
           "flex items-center gap-1",
-          adapterMode === "mock" ? "text-amber-500/70" : "text-blue-400/70"
+          adapterMode === "mock" ? "text-amber-500/70" : "text-amber-400/60"
         )}>
           {adapterMode === "mock" ? <FlaskConical size={10} /> : <Radio size={10} />}
           {modeLabel}

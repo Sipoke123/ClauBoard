@@ -141,6 +141,17 @@ export class RunLauncher {
     return true;
   }
 
+  /**
+   * Send a follow-up message to a running agent.
+   * Returns false if the run is not active or the adapter doesn't support messaging.
+   */
+  sendMessage(runId: string, text: string): boolean {
+    const run = this.activeRuns.get(runId);
+    if (!run) return false;
+    if (!run.adapter.sendMessage) return false;
+    return run.adapter.sendMessage(text);
+  }
+
   isRunning(runId: string): boolean {
     return this.activeRuns.has(runId);
   }

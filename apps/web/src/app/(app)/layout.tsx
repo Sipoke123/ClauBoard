@@ -28,7 +28,7 @@ export default function AppLayout({
         {/* Sidebar */}
         <aside className="w-56 bg-surface border-r border-border-base p-4 flex flex-col gap-6 shrink-0 h-screen sticky top-0 backdrop-blur-sm">
           <Link href="/" className="flex items-center gap-2.5 px-1 group">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-amber-600 flex items-center justify-center">
               <Building2 size={14} className="text-white" />
             </div>
             <h1 className="text-sm font-semibold tracking-tight text-foreground group-hover:opacity-80 transition-colors">AgentFlow</h1>
@@ -54,6 +54,7 @@ export default function AppLayout({
               );
             })}
           </nav>
+
           <div className="mt-auto flex flex-col items-center gap-3">
             <StatusBar />
             <ThemeToggle />

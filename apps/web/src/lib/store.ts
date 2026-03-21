@@ -7,12 +7,24 @@ import type { Agent, AgentEvent, Run, Session, Task, ServerMessage } from "@repo
 // State is derived entirely from server events.
 // ---------------------------------------------------------------------------
 
+export interface AlertData {
+  id: string;
+  ts: number;
+  severity: "info" | "warning" | "critical";
+  rule: string;
+  title: string;
+  detail: string;
+  agentId?: string;
+  runId?: string;
+}
+
 export interface StoreState {
   agents: Agent[];
   runs: Run[];
   tasks: Task[];
   sessions: Session[];
   events: AgentEvent[];
+  alerts: AlertData[];
   connected: boolean;
 }
 
@@ -25,6 +37,7 @@ class Store {
     tasks: [],
     sessions: [],
     events: [],
+    alerts: [],
     connected: false,
   };
 
@@ -193,6 +206,11 @@ class Store {
       this.applySnapshot(msg.data);
     } else if (msg.type === "event") {
       this.applyEvent(msg.data);
+    } else if (msg.type === "alert") {
+      const alert = msg.data as AlertData;
+      const alerts = [...this.state.alerts, alert].slice(-100);
+      this.state = { ...this.state, alerts };
+      this.notify();
     }
   }
 }

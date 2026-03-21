@@ -27,4 +27,10 @@ export interface AgentAdapter {
 
   /** Stop producing events. Called on server shutdown. */
   stop(): void;
+
+  /**
+   * Send a follow-up message to the running agent (interactive mode).
+   * Returns false if the adapter doesn't support interactive messaging.
+   */
+  sendMessage?(text: string): boolean;
 }

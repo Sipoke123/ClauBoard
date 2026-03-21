@@ -125,20 +125,22 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
   const glow = deskGlow[displayStatus] ?? deskGlow.offline;
 
   return (
-    <div
+    <motion.div
       role="button"
       tabIndex={0}
       onClick={onClick}
       onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
+      whileHover={{ scale: 1.02, y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className={cn(
-        "relative w-full h-[120px] text-left rounded-xl border transition-all cursor-pointer",
+        "relative w-full h-[120px] text-left rounded-xl border transition-shadow cursor-pointer",
         glow,
         selected
-          ? "ring-2 ring-blue-500/60 ring-offset-1 ring-offset-background bg-muted/60"
-          : "bg-surface/70 hover:bg-muted/50 hover:shadow-lg",
+          ? "ring-2 ring-foreground/20 shadow-lg"
+          : "bg-surface/70 hover:shadow-lg",
       )}
     >
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent pointer-events-none" />
 
       <div className="relative p-3 h-full flex flex-col">
         {/* Header: icon + name + status */}
@@ -147,7 +149,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
             "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
             iconColors[displayStatus] ?? iconColors.offline,
           )}>
-            {(() => { const Icon = agentIcons[agent.name] ?? User; return <Icon className="h-4.5 w-4.5" />; })()}
+            {(() => { const Icon = agentIcons[agent.name] ?? User; return <Icon className="h-[18px] w-[18px]" />; })()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
@@ -178,7 +180,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
         <div className="flex items-center justify-between shrink-0 pt-1">
           <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
-              <span className="flex items-center gap-1 text-orange-400/60">
+              <span className="flex items-center gap-1 text-amber-400/60">
                 <Wrench size={9} /> {toolCount}
               </span>
             )}
@@ -198,7 +200,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -375,7 +377,7 @@ export function OfficeFloor({
     <div
       className="min-h-full p-6 space-y-5"
       style={{
-        backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+        backgroundImage: `radial-gradient(circle, var(--grid-dot) 1px, transparent 1px)`,
         backgroundSize: "20px 20px",
       }}
     >

@@ -14,8 +14,15 @@ AgentFlow gives you a real-time dashboard for supervising Claude Code agents. In
 - **Live event stream** — every tool call, file change, and text output in real time via WebSocket
 - **Inspection tools** — drill into any agent to see output, tool calls, file changes, and raw event timeline
 - **Export** — export all agents and their run data as JSON from the office view
-- **Light/Dark theme** — toggle between themes, persisted to localStorage with no flash on navigation
-- **Connection visualization** — lines between agents: green (active), purple (completed), red with X (blocked), gray (idle). Legend in bottom-left corner
+- **Light/Dark theme** — toggle between themes with Claude amber accent palette, persisted to localStorage with no flash
+- **Connection visualization** — lines between agents: green (active), purple (completed), red with X (blocked), amber with ≫ (bypassed/failover), gray (idle). Legend in bottom-left corner
+- **Interactive messaging** — send follow-up messages to running agents from the detail panel
+- **Context sharing** — dependent agents receive a summary of upstream work (files, tools, output) in their prompt
+- **Failover** — if an upstream agent fails, dependents still launch with a warning instead of being blocked
+- **Notifications** — built-in alert rules (run failed, agent blocked, tool errors, long-running). Real-time push via WebSocket with bell icon and unread badge
+- **Event archival** — archive old events to timestamped files, compact verbose events for completed runs, auto-compact threshold
+- **Dual storage** — JSONL (default) or SQLite (`--storage sqlite`) with WAL mode and indexed queries
+- **Virtual scrolling** — all tables and lists handle 50,000+ rows without lag via `@tanstack/react-virtual`
 
 All state is derived from an append-only event stream. The UI is a projection of server state — never the source of truth.
 
@@ -65,12 +72,12 @@ Open http://localhost:3000/office, click **Launch Run**, pick a preset or type a
 
 | URL | What |
 |-----|------|
-| http://localhost:3000 | Landing page |
+| http://localhost:3000 | Landing page with features, architecture, and getting started |
 | http://localhost:3000/office | Office dashboard (canvas + grid views) |
 | http://localhost:3000/sessions | Session management with pipeline visualization |
-| http://localhost:3000/runs | Run history table |
-| http://localhost:3000/tasks | Task board |
-| http://localhost:3000/timeline | Event timeline table |
+| http://localhost:3000/runs | Run history table with virtual scrolling |
+| http://localhost:3000/tasks | Task board (Pending, In Progress, Completed, Failed) |
+| http://localhost:3000/timeline | Event timeline with virtual scrolling |
 
 ## Key workflows
 
@@ -88,7 +95,7 @@ Open http://localhost:3000/office, click **Launch Run**, pick a preset or type a
 2. Pick a preset (Parallel Analysis Pipeline, Staged Pipeline, Review Team, Parallel Duo)
 3. Click **Launch** — all agents appear on the canvas with dependency connections
 4. Parallel agents run simultaneously; dependent agents wait for their prerequisites
-5. If an agent fails or is stopped, dependents are skipped and connections turn red
+5. If an agent fails or is stopped, dependents still launch with upstream context (failover). Connections turn amber (≫ bypassed)
 
 ### Real-world example
 
@@ -104,13 +111,59 @@ Imp. Planner ───┘
 
 Available as the **Parallel Analysis Pipeline** preset in Launch Run → Pipeline.
 
+### Interactive messaging
+
+While an agent is working, you can send follow-up messages from the Agent Detail panel. Type in the input field and press Send — the message is piped to the agent's stdin and appears in the event stream as `[operator]`.
+
+In real mode this uses Claude Code's interactive stdin. In mock mode the agent acknowledges the message.
+
+### Context sharing
+
+When a session pipeline launches a dependent agent, it automatically receives a summary of what upstream agents did:
+
+- Files created/edited (up to 15)
+- Tools used with call counts
+- Last output text (up to 300 chars)
+- Warnings about upstream agents that failed
+
+This context is prepended to the agent's prompt so it can build on previous work.
+
 ### Export agents
 
 Click **Export** in the bottom-right of the office view to download a JSON file with all agents, their runs, prompts, and event counts.
 
+### Notifications
+
+The **Alerts** button in the office header shows real-time notifications:
+
+- **Run Failed** (critical) — an agent run errored out
+- **Agent Blocked** (warning) — agent needs attention (e.g., permission denied)
+- **Run Stopped** (warning) — operator manually stopped an agent
+- **Tool Errors** (warning) — 3+ tool errors in 30 seconds
+- **Long Running** (info) — agent has been active for 5+ minutes
+
+Alerts are pushed via WebSocket in real time. The bell badge shows unread count. Rules can be toggled via `GET /api/alerts/rules` and `POST /api/alerts/rules/:id`.
+
+### Event maintenance
+
+For long-running installations, manage event history via admin API:
+
+```bash
+# View stats (event counts by type, oldest/newest timestamp)
+curl http://localhost:3001/api/admin/stats
+
+# Archive events older than 7 days to a timestamped file
+curl -X POST http://localhost:3001/api/admin/archive -H 'Content-Type: application/json' -d '{"days":7}'
+
+# Compact: remove verbose events (heartbeats, tool details) for completed runs
+curl -X POST http://localhost:3001/api/admin/compact
+```
+
+Auto-compact: set `--auto-compact 10000` to automatically compact when event count exceeds the threshold.
+
 ## Theme
 
-Toggle between light and dark themes using the switch in the sidebar. Your preference is saved to localStorage and applied instantly on page load (no flash).
+Toggle between light and dark themes using the switch in the sidebar or on the landing page footer. The palette uses Claude-inspired warm amber accents throughout. Your preference is saved to localStorage and applied instantly on page load (no flash).
 
 ## Configuration
 
@@ -121,9 +174,11 @@ All configuration is through environment variables or CLI flags. Copy `.env.exam
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3001` | Server HTTP + WebSocket port |
-| `DATA_DIR` | `./data` | Directory for `events.jsonl` persistence |
+| `DATA_DIR` | `./data` | Directory for persistence files |
+| `STORAGE` | `jsonl` | Storage backend: `jsonl` (default) or `sqlite` |
 | `MOCK_AGENTS` | `false` | Start with mock agents (`true` or `--mock` flag) |
 | `ALLOWED_WORKSPACE_ROOTS` | _(empty)_ | Comma-separated paths agents can use as cwd |
+| `AUTO_COMPACT` | `0` | Auto-compact when event count exceeds threshold (0 = disabled) |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | Server URL for the UI |
 | `NEXT_PUBLIC_WS_URL` | `ws://localhost:3001/ws` | WebSocket URL for the UI |
 
@@ -141,12 +196,28 @@ cd apps/server && npx tsx src/index.ts --allowed-roots "/home/user/projects,/tmp
 
 The UI status bar shows a shield icon indicating whether restrictions are active.
 
-### Persistence
+### Storage backends
 
-Events are appended to `apps/server/data/events.jsonl`. On server restart, events are replayed to rebuild state. To start fresh:
+**JSONL (default)** — events appended to `apps/server/data/events.jsonl`. Simple, human-readable, easy to debug.
+
+**SQLite** — events stored in `apps/server/data/agentflow.db`. WAL mode, indexed queries, better for production and large datasets.
 
 ```bash
+# Use SQLite
+npm run dev:mock -- --storage sqlite
+
+# Or via environment variable
+STORAGE=sqlite npm run dev:mock
+```
+
+On server restart, events are replayed from the chosen backend to rebuild state. To start fresh:
+
+```bash
+# JSONL
 rm apps/server/data/events.jsonl
+
+# SQLite
+rm apps/server/data/agentflow.db
 ```
 
 ## Running the server and UI separately
@@ -186,10 +257,12 @@ packages/shared/     TypeScript event types, API contracts, WS messages
 
 - **Event-sourced**: all state changes flow through 15 typed event types
 - **Adapter pattern**: agent runtimes implement `AgentAdapter` with `start(emit)` and `stop()`
-- **JSONL persistence**: events appended to file, replayed on restart
+- **Dual persistence**: JSONL (default) or SQLite with WAL mode and indexed queries
 - **WebSocket**: server pushes events + debounced snapshots to UI in real time
-- **Virtual scrolling**: `@tanstack/react-virtual` on all tables and lists — handles 50,000+ rows without lag
-- **CSS variable theming**: light/dark themes via `:root` and `.dark` class toggle
+- **Virtual scrolling**: `@tanstack/react-virtual` on all tables and lists — handles 50,000+ rows
+- **CSS variable theming**: light/dark themes via `:root` and `.dark` class toggle with Claude amber palette
+- **Notification engine**: rule-based alerts evaluated on every event, pushed via WebSocket
+- **Event archival**: archive + compact commands for managing large histories
 - **Client-side navigation**: Next.js `<Link>` for instant page transitions
 
 See [docs/architecture.md](docs/architecture.md) for the full system design.
@@ -199,29 +272,39 @@ See [docs/architecture.md](docs/architecture.md) for the full system design.
 - Launch real Claude Code runs from the UI
 - Pipeline presets: Parallel Analysis (5+1), Staged Pipeline, Review Team, Parallel Duo
 - Workflow canvas with draggable nodes and dependency-based auto-layout
-- Grid view alternative with unified card design
+- Grid view alternative with unified card design and hover animations
 - Agent roles displayed on cards and detail panel
 - Live event stream: tool calls, file changes, output, status transitions
 - Stop agents from detail panel (pauses auto-relaunch in mock)
 - Session orchestration with dependency validation and real-time status updates
 - Demo sessions auto-created in mock mode (Feature Pipeline + Infrastructure & Docs)
 - Session deep-linking from Office → Sessions page
-- Light/dark theme toggle with flash-free persistence (works on both themes)
-- Connection line legend (active, completed, blocked, idle)
+- Light/dark theme toggle with Claude amber accent palette (flash-free)
+- Connection line legend (active, completed, blocked, bypassed, idle)
 - Export agents data as JSON
 - Virtualized tables on Runs, Timeline, Tasks, Agent Detail, and Session Activity tabs
-- Task board with 4 columns: Pending, In Progress, Completed, Failed
+- Task board with status-colored cards (Pending, In Progress, Completed, Failed)
+- Landing page with animated hero, features, architecture, newsletter footer
+- Consistent selection highlighting across Canvas, Grid, and Sessions views
 - JSONL persistence with replay on restart
 - Mock adapter with 6 role-based agents and deterministic prompt sequencing
+- Interactive messaging: send follow-up messages to running agents
+- Context sharing: upstream run summaries injected into dependent agent prompts
+- Failover: dependents launch even when upstream fails (with warning context)
+- SQLite storage option with WAL mode, indexed queries, and direct query methods
+- Notification engine with 5 built-in alert rules and real-time WS push
+- Alert bell in office header with severity colors and unread badge
+- Event archival (move old events to archive files) and compaction (remove verbose events)
+- Auto-compact threshold for hands-off maintenance
+- Accessible: keyboard navigation on all interactive elements, aria-labels, focus-visible states
+- Theme-safe: all colors use CSS tokens, grid dots and gradients adapt to light/dark
 
 ## Limitations
 
 - **Local only** — runs on localhost, no auth, no multi-user support
-- **Single-shot runs** — each agent executes one prompt and exits
 - **Requires `--dangerously-skip-permissions`** — only run in trusted environments
 - **File change detection is best-effort** — detects Edit/Write but may miss Bash file changes
 - **No task granularity** — each run maps to one task
-- **No agent-to-agent communication** — sessions group and sequence agents but they don't share context
 
 See [docs/claude-code-adapter.md](docs/claude-code-adapter.md) for observability fidelity notes.
 
@@ -261,5 +344,6 @@ See [docs/claude-code-adapter.md](docs/claude-code-adapter.md) for observability
 - **UI**: Next.js 15, React 19, Tailwind CSS v4, Framer Motion, Lucide icons
 - **Shared**: TypeScript, class-variance-authority
 - **Build**: Turborepo monorepo
-- **Theming**: CSS custom properties with light/dark toggle
-- **Persistence**: JSONL (append-only event log)
+- **Theming**: CSS custom properties with Claude amber accent palette
+- **Performance**: `@tanstack/react-virtual` for virtual scrolling
+- **Persistence**: JSONL (default) or SQLite via `better-sqlite3`

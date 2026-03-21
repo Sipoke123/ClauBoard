@@ -22,7 +22,21 @@ export interface WsSnapshotMessage {
   };
 }
 
-export type ServerMessage = WsEventMessage | WsSnapshotMessage;
+export interface WsAlertMessage {
+  type: "alert";
+  data: {
+    id: string;
+    ts: number;
+    severity: "info" | "warning" | "critical";
+    rule: string;
+    title: string;
+    detail: string;
+    agentId?: string;
+    runId?: string;
+  };
+}
+
+export type ServerMessage = WsEventMessage | WsSnapshotMessage | WsAlertMessage;
 
 // -- Client → Server --------------------------------------------------------
 

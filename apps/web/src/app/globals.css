@@ -18,7 +18,7 @@
   --border-subtle: rgba(0,0,0,0.06);
   --input-bg: #f4f4f5;
   --input-border: #e4e4e7;
-  --ring: #3b82f6;
+  --ring: #d97706;
   --scrollbar-thumb: rgba(161,161,170,0.4);
   --scrollbar-hover: rgba(113,113,122,0.6);
   --nav-bg: rgba(250,250,250,0.8);
@@ -40,7 +40,7 @@
   --border-subtle: rgba(255,255,255,0.04);
   --input-bg: rgba(9,9,11,0.6);
   --input-border: rgba(255,255,255,0.08);
-  --ring: #3b82f6;
+  --ring: #d97706;
   --scrollbar-thumb: rgba(63,63,70,0.5);
   --scrollbar-hover: rgba(82,82,91,0.7);
   --nav-bg: rgba(9,9,11,0.8);
@@ -96,4 +96,5 @@
   --color-ring: var(--ring);
   --color-nav-bg: var(--nav-bg);
   --color-panel-shadow: var(--panel-shadow);
+  --color-grid-dot: var(--grid-dot);
 }

@@ -9,7 +9,7 @@ import type { SessionManager } from "../domain/session-manager.js";
 
 export class WsGateway {
   private wss: WebSocketServer;
-  private clients = new Set<WebSocket>();
+  readonly clients = new Set<WebSocket>();
 
   constructor(
     server: Server,

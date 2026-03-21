@@ -53,6 +53,7 @@ export interface MockRunAdapterOptions {
 export class MockRunAdapter implements AgentAdapter {
   readonly name = "mock-run";
   private abortController: AbortController | null = null;
+  private emitFn: EmitFn | null = null;
 
   constructor(private options: MockRunAdapterOptions) {}
 
@@ -61,6 +62,7 @@ export class MockRunAdapter implements AgentAdapter {
   }
 
   start(emit: EmitFn): void {
+    this.emitFn = emit;
     this.abortController = new AbortController();
     this.simulateRun(emit, this.abortController.signal);
   }
@@ -68,6 +70,20 @@ export class MockRunAdapter implements AgentAdapter {
   stop(): void {
     this.abortController?.abort();
     this.abortController = null;
+  }
+
+  sendMessage(text: string): boolean {
+    if (!this.emitFn) return false;
+    // Mock: emit the operator message as a terminal event, then simulate a brief response
+    this.emitFn({
+      id: uid(),
+      type: "terminal.output",
+      ts: Date.now(),
+      agentId: this.options.agentId,
+      runId: this.options.runId,
+      payload: { stream: "stdout", text: `Acknowledged: "${text.slice(0, 100)}". Adjusting approach...` },
+    });
+    return true;
   }
 
   private async simulateRun(emit: EmitFn, signal: AbortSignal): Promise<void> {

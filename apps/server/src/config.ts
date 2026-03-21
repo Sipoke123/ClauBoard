@@ -20,6 +20,9 @@ export const config = {
   port: parseInt(process.env.PORT ?? "3001", 10),
   dataDir: process.env.DATA_DIR ?? "./data",
   mockAgents: process.env.MOCK_AGENTS === "true" || process.argv.includes("--mock"),
+  storage: (getArgValue("--storage") ?? process.env.STORAGE ?? "jsonl") as "jsonl" | "sqlite",
+  /** Auto-compact when event count exceeds this threshold (0 = disabled) */
+  autoCompactThreshold: parseInt(getArgValue("--auto-compact") ?? process.env.AUTO_COMPACT ?? "0", 10),
 
   // Claude Code adapter config (legacy CLI mode)
   claudePrompt: getArgValue("--claude") ?? process.env.CLAUDE_PROMPT,

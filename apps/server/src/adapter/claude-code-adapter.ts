@@ -16,6 +16,8 @@ export interface ClaudeCodeAdapterOptions {
   agentId?: string;
   /** Pre-set run ID */
   runId?: string;
+  /** Enable interactive mode (stdin open for follow-up messages) */
+  interactive?: boolean;
 }
 
 let counter = 0;
@@ -52,12 +54,13 @@ export class ClaudeCodeAdapter implements AgentAdapter {
     this.taskId = `task-${Date.now()}`;
     const agentName = this.options.agentName ?? "Claude";
 
+    const interactive = this.options.interactive ?? false;
     const args = [
-      "--print",
+      ...(interactive ? [] : ["--print"]),
       "--output-format", "stream-json",
       "--verbose",
       "--dangerously-skip-permissions",
-      "--no-session-persistence",
+      ...(interactive ? [] : ["--no-session-persistence"]),
       ...(this.options.extraFlags ?? []),
       this.options.prompt,
     ];
@@ -67,7 +70,7 @@ export class ClaudeCodeAdapter implements AgentAdapter {
 
     const child = spawn("claude", args, {
       cwd: this.options.cwd ?? process.cwd(),
-      stdio: ["ignore", "pipe", "pipe"],
+      stdio: [interactive ? "pipe" : "ignore", "pipe", "pipe"],
       shell: true,
     });
     this.process = child;
@@ -145,6 +148,24 @@ export class ClaudeCodeAdapter implements AgentAdapter {
       console.log("[claude-code-adapter] sent SIGTERM to claude process");
     }
     this.process = null;
+  }
+
+  /**
+   * Send a follow-up message to the running agent via stdin.
+   * Only works in interactive mode (stdin is "pipe").
+   */
+  sendMessage(text: string): boolean {
+    if (!this.process || this.process.killed || !this.process.stdin) {
+      return false;
+    }
+    try {
+      this.process.stdin.write(text + "\n");
+      console.log(`[claude-code-adapter] sent message to agent: "${text.slice(0, 80)}"`);
+      return true;
+    } catch (err: any) {
+      console.error(`[claude-code-adapter] failed to send message: ${err.message}`);
+      return false;
+    }
   }
 
   private handleStreamMessage(
