@@ -162,6 +162,7 @@ export function HeroSection() {
 
 const menuItems = [
     { name: 'Features', href: '#features' },
+    { name: 'Pricing', href: '#pricing' },
     { name: 'Architecture', href: '#architecture' },
     { name: 'Get Started', href: '#getting-started' },
 ]

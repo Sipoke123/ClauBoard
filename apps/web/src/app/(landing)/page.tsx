@@ -23,6 +23,9 @@ import {
   Code2,
   Box,
   Send,
+  Minus,
+  Crown,
+  Users,
 } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { buttonVariants, panelVariants } from "../../lib/variants";
@@ -173,6 +176,152 @@ function Workflows() {
             </ol>
           </motion.div>
         ))}
+      </motion.div>
+    </section>
+  );
+}
+
+function Pricing() {
+  const plans = [
+    {
+      name: "Free",
+      price: "$0",
+      period: "forever",
+      description: "Get started with the basics",
+      icon: Rocket,
+      featured: false,
+      features: [
+        { text: "Up to 3 agents", included: true },
+        { text: "1 pipeline preset", included: true },
+        { text: "JSONL storage", included: true },
+        { text: "Canvas & Grid views", included: true },
+        { text: "Community support", included: true },
+        { text: "Sessions", included: false },
+        { text: "Notifications", included: false },
+        { text: "SQLite storage", included: false },
+        { text: "Interactive messaging", included: false },
+      ],
+      cta: "Get Started",
+      ctaHref: "/office",
+    },
+    {
+      name: "Pro",
+      price: "$29",
+      period: "/month",
+      description: "For power users and small teams",
+      icon: Crown,
+      featured: true,
+      features: [
+        { text: "Up to 10 agents", included: true },
+        { text: "Unlimited pipelines", included: true },
+        { text: "SQLite storage", included: true },
+        { text: "Sessions & orchestration", included: true },
+        { text: "Notifications & alerts", included: true },
+        { text: "Interactive messaging", included: true },
+        { text: "Context sharing", included: true },
+        { text: "Event archival", included: true },
+        { text: "Email support", included: true },
+      ],
+      cta: "Start Free Trial",
+      ctaHref: "/office",
+    },
+    {
+      name: "Team",
+      price: "$99",
+      period: "/month",
+      description: "For teams running agents at scale",
+      icon: Users,
+      featured: false,
+      features: [
+        { text: "Unlimited agents", included: true },
+        { text: "Unlimited pipelines", included: true },
+        { text: "SQLite + Cloud backup", included: true },
+        { text: "All Pro features", included: true },
+        { text: "Multi-user access", included: true },
+        { text: "Role-based permissions", included: true },
+        { text: "API access", included: true },
+        { text: "Custom alert rules", included: true },
+        { text: "Priority support", included: true },
+      ],
+      cta: "Contact Sales",
+      ctaHref: "#",
+    },
+  ];
+
+  return (
+    <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
+      <motion.div {...fadeUp} className="text-center mb-12">
+        <h2 className="text-2xl font-bold text-foreground mb-3">Simple, transparent pricing</h2>
+        <p className="text-muted-fg text-sm">Start free. Upgrade when you need more agents or features.</p>
+      </motion.div>
+      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+        {plans.map((plan) => {
+          const Icon = plan.icon;
+          return (
+            <motion.div
+              key={plan.name}
+              {...fadeUpChild}
+              className={cn(
+                panelVariants({ variant: plan.featured ? "elevated" : "surface" }),
+                "p-6 relative",
+                plan.featured && "ring-1 ring-amber-500/20",
+              )}
+            >
+              {plan.featured && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1 rounded-full bg-amber-600 text-white text-[10px] font-semibold uppercase tracking-wider">
+                    Most Popular
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className={cn(
+                  "w-9 h-9 rounded-xl flex items-center justify-center border",
+                  plan.featured
+                    ? "bg-amber-600/[0.08] border-amber-500/15 text-amber-600 dark:text-amber-400"
+                    : "bg-foreground/[0.04] border-border-base text-muted-fg",
+                )}>
+                  <Icon size={16} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">{plan.name}</h3>
+                  <p className="text-[10px] text-muted-fg">{plan.description}</p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                <span className="text-sm text-muted-fg ml-1">{plan.period}</span>
+              </div>
+
+              <ul className="space-y-2.5 mb-6">
+                {plan.features.map((f) => (
+                  <li key={f.text} className="flex items-center gap-2.5 text-xs">
+                    {f.included ? (
+                      <Check size={13} className="text-emerald-400 shrink-0" />
+                    ) : (
+                      <Minus size={13} className="text-muted-fg/30 shrink-0" />
+                    )}
+                    <span className={f.included ? "text-foreground/80" : "text-muted-fg/40"}>{f.text}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href={plan.ctaHref}
+                className={cn(
+                  "block w-full text-center py-2.5 rounded-lg text-sm font-medium transition-all",
+                  plan.featured
+                    ? "border border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/60"
+                    : "border border-border-base text-muted-fg hover:text-foreground hover:border-foreground/20 hover:bg-foreground/[0.04]",
+                )}
+              >
+                {plan.cta}
+              </Link>
+            </motion.div>
+          );
+        })}
       </motion.div>
     </section>
   );
@@ -448,6 +597,7 @@ export default function LandingPage() {
       <HeroSection />
       <Features />
       <Workflows />
+      <Pricing />
       <Architecture />
       <WorksToday />
       <Limitations />
