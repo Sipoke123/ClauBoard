@@ -1,6 +1,9 @@
 import { Router } from "express";
 import type { CreateSessionRequest, AgentEvent } from "@repo/shared";
 import { validateDependencyGraph } from "@repo/shared";
+
+let agentIdCounter = 0;
+let eventIdCounter = 0;
 import type { SessionManager } from "../domain/session-manager.js";
 import type { RunManager } from "../domain/run-manager.js";
 import type { RunLauncher } from "../domain/run-launcher.js";
@@ -67,11 +70,11 @@ export function sessionsRouter(
     // Pre-register ALL agents (including waiting ones) so canvas shows them immediately
     if (session.agents && opts?.emit) {
       for (const sa of session.agents) {
-        const agentId = `agent-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const agentId = `agent-sess-${Date.now()}-${++agentIdCounter}-${Math.random().toString(36).slice(2, 8)}`;
         sa.agentId = agentId;
 
         opts.emit({
-          id: `reg-${Date.now()}-${Math.random().toString(36).slice(2, 4)}`,
+          id: `reg-${Date.now()}-${++eventIdCounter}-${Math.random().toString(36).slice(2, 8)}`,
           type: "agent.registered",
           ts: Date.now(),
           agentId,

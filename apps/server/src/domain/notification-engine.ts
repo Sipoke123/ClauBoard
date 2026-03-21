@@ -83,21 +83,18 @@ const builtInRules: AlertRule[] = [
     id: "agent-blocked",
     name: "Agent Blocked",
     enabled: true,
-    triggers: ["agent.heartbeat"],
-    evaluate: (event) => {
-      if ((event as any).payload?.status !== "blocked") return null;
-      return {
-        id: alertId(),
-        ts: event.ts,
-        severity: "warning",
-        rule: "agent-blocked",
-        title: "Agent is blocked",
-        detail: (event as any).payload?.blockedReason ?? "Agent requires attention",
-        agentId: event.agentId,
-        runId: event.runId,
-        acknowledged: false,
-      };
-    },
+    triggers: ["agent.blocked"],
+    evaluate: (event) => ({
+      id: alertId(),
+      ts: event.ts,
+      severity: "warning",
+      rule: "agent-blocked",
+      title: "Agent is blocked",
+      detail: (event as any).payload?.reason ?? "Agent requires attention",
+      agentId: event.agentId,
+      runId: event.runId,
+      acknowledged: false,
+    }),
   },
   {
     id: "tool-error",

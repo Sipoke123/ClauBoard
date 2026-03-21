@@ -136,9 +136,13 @@ export class MockAutoLauncher {
     }, 3000 + Math.random() * 3000);
   }
 
-  /** Pause agent — stop auto-relaunching */
+  /** Pause agent — stop the active run and disable auto-relaunching */
   pauseAgent(agentId: string): void {
     this.pausedAgents.add(agentId);
+    const runId = this.activeRunIds.get(agentId);
+    if (runId) {
+      try { this.runLauncher.stop(runId); } catch {}
+    }
     this.activeRunIds.delete(agentId);
   }
 

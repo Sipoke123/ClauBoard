@@ -10,6 +10,7 @@ interface ActiveRun {
   agentId: string;
   runId: string;
   config: RunConfig;
+  cleanupInterval?: ReturnType<typeof setInterval>;
 }
 
 /**
@@ -96,6 +97,8 @@ export class RunLauncher {
       }
       // Clean up on terminal events
       if (event.runId === runId && (event.type === "run.failed" || event.type === "run.completed" || event.type === "run.stopped")) {
+        const active = this.activeRuns.get(runId);
+        if (active?.cleanupInterval) clearInterval(active.cleanupInterval);
         this.activeRuns.delete(runId);
       }
     });
@@ -109,10 +112,13 @@ export class RunLauncher {
       const run = this.runManager.get(runId);
       const elapsed = Date.now() - startTime;
       if ((run && run.status !== "running") || elapsed > MAX_CLEANUP_MS) {
-        this.activeRuns.delete(runId);
         clearInterval(checkDone);
+        this.activeRuns.delete(runId);
       }
     }, 2000);
+
+    const activeRun = this.activeRuns.get(runId);
+    if (activeRun) activeRun.cleanupInterval = checkDone;
 
     console.log(`[run-launcher] launched ${agentId} for: "${req.prompt.slice(0, 80)}"`);
     return { agentId, runId };
@@ -126,6 +132,7 @@ export class RunLauncher {
     if (!run) return false;
 
     run.adapter.stop();
+    if (run.cleanupInterval) clearInterval(run.cleanupInterval);
 
     this.emit({
       id: `stop-${Date.now()}-${++stopCounter}`,

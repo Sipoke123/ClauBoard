@@ -83,8 +83,8 @@ function emit(event: AgentEvent): void {
     mockAutoLauncher?.onRunFinished(event.runId, event.agentId);
   }
 
-  // Auto-compact when threshold exceeded
-  if (config.autoCompactThreshold > 0 && eventStore.count() > config.autoCompactThreshold) {
+  // Auto-compact when threshold exceeded (JSONL only — SQLite doesn't support archiver)
+  if (config.storage !== "sqlite" && config.autoCompactThreshold > 0 && eventStore.count() > config.autoCompactThreshold) {
     // Defer to not block the emit pipeline
     setTimeout(() => {
       try {
@@ -152,7 +152,9 @@ app.use("/api", sessionsRouter(sessionManager, runManager, runLauncher, orchestr
   emit,
 }));
 app.use("/api", presetsRouter());
-const archiver = new EventArchiver(eventStore as EventStore, runManager, config.dataDir);
+const archiver = config.storage !== "sqlite"
+  ? new EventArchiver(eventStore as EventStore, runManager, config.dataDir)
+  : null;
 app.use("/api", adminRouter(archiver));
 
 // -- Notifications --
@@ -169,7 +171,7 @@ app.use("/api", notificationsRouter(notificationEngine));
 // -- Plugins --
 pluginRegistry = new PluginRegistry(emit);
 pluginRegistry.register(metricsPlugin, { intervalMs: 60000 });
-app.use("/api", pluginsRouter(pluginRegistry));
+app.use("/api", pluginsRouter(pluginRegistry, emit));
 
 // -- Mock auto-launcher --
 if (adapterMode === "mock") {

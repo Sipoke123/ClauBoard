@@ -95,7 +95,7 @@ export interface ToolErrorEvent extends AgentEventBase {
 
 export interface TerminalOutputEvent extends AgentEventBase {
   type: "terminal.output";
-  payload: { stream: "stdout" | "stderr"; text: string };
+  payload: { stream: "stdout" | "stderr" | "stdin"; text: string };
 }
 
 // -- File changes -----------------------------------------------------------

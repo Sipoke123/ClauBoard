@@ -4,6 +4,8 @@ export class RunManager {
   private runs = new Map<string, Run>();
 
   start(id: string, agentId: string, description?: string, config?: RunConfig): void {
+    // Skip if already exists — prevents replay from overwriting persisted terminal state
+    if (this.runs.has(id)) return;
     this.runs.set(id, {
       id,
       agentId,

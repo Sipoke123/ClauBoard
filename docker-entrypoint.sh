@@ -12,9 +12,10 @@ WEB_PID=$!
 echo "[agentflow] Ready — server :${PORT:-3001}, web :3000"
 
 # Wait for either process to exit
-wait -n $SERVER_PID $WEB_PID
-EXIT_CODE=$?
+while kill -0 $SERVER_PID 2>/dev/null && kill -0 $WEB_PID 2>/dev/null; do
+  sleep 1
+done
 
 # Kill the other process
 kill $SERVER_PID $WEB_PID 2>/dev/null || true
-exit $EXIT_CODE
+exit 0

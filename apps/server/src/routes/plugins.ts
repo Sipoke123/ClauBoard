@@ -1,7 +1,8 @@
 import { Router } from "express";
 import type { PluginRegistry } from "../domain/plugin-registry.js";
+import type { EmitFn } from "../adapter/types.js";
 
-export function pluginsRouter(registry: PluginRegistry): Router {
+export function pluginsRouter(registry: PluginRegistry, emit: EmitFn): Router {
   const router = Router();
 
   /** List all registered plugins */
@@ -24,8 +25,16 @@ export function pluginsRouter(registry: PluginRegistry): Router {
       return res.status(400).json({ error: "agentId is required" });
     }
 
-    // The emit function is on the registry's context — we use the route-level emit
-    // This is handled by the caller wiring
+    emit({
+      id: `plugin-emit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      type: type as `plugin.${string}`,
+      ts: Date.now(),
+      agentId,
+      runId: runId ?? "",
+      taskId,
+      payload: payload ?? {},
+    });
+
     res.json({ accepted: true, type });
   });
 
