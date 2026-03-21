@@ -29,6 +29,7 @@ class Store {
   };
 
   private listeners = new Set<Listener>();
+  private seenEventIds = new Set<string>();
 
   getState(): StoreState {
     return this.state;
@@ -56,7 +57,9 @@ class Store {
   applyEvent(event: AgentEvent): void {
     const s = this.state;
 
-    // Always append to event log
+    // Deduplicate by event ID
+    if (this.seenEventIds.has(event.id)) return;
+    this.seenEventIds.add(event.id);
     const events = [...s.events, event].slice(-5000); // keep last 5000
 
     // Derive agent updates
