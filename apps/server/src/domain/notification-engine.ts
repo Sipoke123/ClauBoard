@@ -41,7 +41,7 @@ export interface RuleContext {
 
 let alertCounter = 0;
 function alertId(): string {
-  return `alert-${Date.now()}-${++alertCounter}`;
+  return `alert-${Date.now()}-${++alertCounter}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 const builtInRules: AlertRule[] = [

@@ -209,6 +209,7 @@ class Store {
       this.applyEvent(msg.data);
     } else if (msg.type === "alert") {
       const alert = msg.data as AlertData;
+      if (this.state.alerts.some((a) => a.id === alert.id)) return;
       const alerts = [...this.state.alerts, alert].slice(-100);
       this.state = { ...this.state, alerts };
       this.notify();
