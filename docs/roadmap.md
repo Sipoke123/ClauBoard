@@ -118,7 +118,7 @@
 - [x] Agent-to-agent context sharing: upstream run summary (files, tools, output) injected into dependent agent prompts
 - [ ] 3D office view (Three.js / R3F) — canvas view may suffice
 - [x] Failover: dependent agents launch even when upstream fails/stops (with context note in prompt)
-- [ ] Cloud deployment (Docker, fly.io)
+- [x] Docker deployment: multi-stage Dockerfile, docker-compose with mock profile, standalone Next.js output
 - [x] Notification engine: built-in rules (run failed, agent blocked, tool errors, long-running), WS push, UI alert bell with unread badge
 - [x] Event archival (move old events to timestamped archive files) + compaction (remove verbose events for terminal runs) + auto-compact threshold
 - [x] Plugin system: PluginRegistry with custom event types, notification rules, lifecycle hooks. Built-in metrics plugin

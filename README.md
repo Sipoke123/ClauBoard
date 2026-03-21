@@ -22,6 +22,7 @@ AgentFlow gives you a real-time dashboard for supervising Claude Code agents. In
 - **Notifications** — built-in alert rules (run failed, agent blocked, tool errors, long-running). Real-time push via WebSocket with bell icon and unread badge
 - **Event archival** — archive old events to timestamped files, compact verbose events for completed runs, auto-compact threshold
 - **Plugin system** — extend AgentFlow with custom event types, notification rules, and lifecycle hooks. Built-in metrics plugin included
+- **Docker ready** — multi-stage Dockerfile + docker-compose with mock profile. One command to deploy
 - **Dual storage** — JSONL (default) or SQLite (`--storage sqlite`) with WAL mode and indexed queries
 - **Virtual scrolling** — all tables and lists handle 50,000+ rows without lag via `@tanstack/react-virtual`
 
@@ -268,6 +269,28 @@ cd apps/server && npx tsx src/index.ts --mock
 cd apps/server && npx tsx src/index.ts --allowed-roots "/path/to/safe/dir"
 ```
 
+## Docker
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker compose build
+
+# Run in real mode
+docker compose up
+
+# Run in mock mode (6 demo agents)
+docker compose --profile mock up
+
+# Run detached with SQLite
+STORAGE=sqlite docker compose up -d
+```
+
+Ports: `3000` (UI) and `3001` (server). Data persisted to `./data/` volume.
+
+The image uses a multi-stage build (~150MB final) with standalone Next.js output and tini for proper signal handling.
+
 ## Commands
 
 | Command | What it does |
@@ -330,6 +353,7 @@ See [docs/architecture.md](docs/architecture.md) for the full system design.
 - Auto-compact threshold for hands-off maintenance
 - Plugin system with custom event types, notification rules, and lifecycle hooks
 - Built-in metrics plugin (tool calls, errors, run durations)
+- Docker deployment with multi-stage build, standalone Next.js, tini signal handling
 - Accessible: keyboard navigation on all interactive elements, aria-labels, focus-visible states
 - Theme-safe: all colors use CSS tokens, grid dots and gradients adapt to light/dark
 

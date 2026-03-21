@@ -88,8 +88,8 @@ function Features() {
     },
     {
       icon: Database,
-      title: "Extensible by Design",
-      description: "Plugin system for custom events and alerts. Dual storage (JSONL or SQLite), event archival, auto-compact. Build what you need.",
+      title: "Deploy Anywhere",
+      description: "Docker-ready with one command. Plugin system, dual storage (JSONL or SQLite), event archival. Extensible by design.",
     },
   ];
 
@@ -402,6 +402,7 @@ function WorksToday() {
     "Light and dark themes with full keyboard accessibility",
     "Try instantly with 6 mock agents — no Claude CLI required",
     "Plugin system — add custom event types, alerts, and hooks",
+    "Docker deployment — one command to build and run",
     "Export all agent data as JSON for analysis",
   ];
 
@@ -466,7 +467,7 @@ function GettingStarted() {
         <h2 className="text-2xl font-bold text-foreground mb-3">Get started in 2 minutes</h2>
         <p className="text-muted-fg text-sm">Clone, install, run. That is it.</p>
       </motion.div>
-      <motion.div {...stagger} className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+      <motion.div {...stagger} className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
         <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
           <h3 className="text-sm font-semibold text-foreground mb-1">Try it now</h3>
           <p className="text-xs text-muted-fg mb-4">No Claude CLI needed. Six demo agents show you everything.</p>
@@ -479,10 +480,14 @@ function GettingStarted() {
           <h3 className="text-sm font-semibold text-foreground mb-1">With real agents</h3>
           <p className="text-xs text-muted-fg mb-4">Connect your <code className="text-muted-fg">claude</code> CLI and run real tasks.</p>
           <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
-            <div className="text-muted-fg/60"># Terminal 1: UI</div>
-            <div><span className="text-muted-fg/60">$</span> cd apps/web && npm run dev</div>
-            <div className="text-muted-fg/60 mt-2"># Terminal 2: Server</div>
-            <div><span className="text-muted-fg/60">$</span> cd apps/server && npx tsx src/index.ts</div>
+            <div><span className="text-muted-fg/60">$</span> npm run dev</div>
+          </div>
+        </motion.div>
+        <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Docker</h3>
+          <p className="text-xs text-muted-fg mb-4">One command to build and deploy. Production-ready.</p>
+          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
+            <div><span className="text-muted-fg/60">$</span> docker compose up</div>
           </div>
         </motion.div>
       </motion.div>

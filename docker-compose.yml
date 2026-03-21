@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# AgentFlow — Docker Compose
+# ---------------------------------------------------------------------------
+#
+# Usage:
+#   docker compose up              # real mode
+#   docker compose up -d           # detached
+#   docker compose --profile mock up  # mock mode with demo agents
+#
+# Ports:
+#   3000 — Next.js UI
+#   3001 — Express + WebSocket server
+#
+# Data persisted to ./data/ volume
+# ---------------------------------------------------------------------------
+
+services:
+  agentflow:
+    build: .
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DATA_DIR=/app/data
+      - STORAGE=${STORAGE:-jsonl}
+      - ALLOWED_WORKSPACE_ROOTS=${ALLOWED_WORKSPACE_ROOTS:-}
+      - AUTO_COMPACT=${AUTO_COMPACT:-0}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  # Mock mode — starts with 6 demo agents
+  agentflow-mock:
+    build: .
+    profiles:
+      - mock
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DATA_DIR=/app/data
+      - MOCK_AGENTS=true
+      - STORAGE=${STORAGE:-jsonl}
+      - AUTO_COMPACT=${AUTO_COMPACT:-0}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

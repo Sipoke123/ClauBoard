@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.turbo/
+dist/
+data/
+*.log
+.env
+.env.local
+.git/
+.claude/
+docs/
+*.md
