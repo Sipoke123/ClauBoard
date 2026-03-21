@@ -51,12 +51,17 @@ export function HeroSection() {
                                         ...transitionVariants,
                                     }}
                                 >
-                                    <h1 className="mt-8 max-w-2xl text-balance text-5xl font-medium text-foreground md:text-6xl lg:mt-16">
+                                    <div className="mt-8 lg:mt-16 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border-base bg-surface/60 backdrop-blur-sm">
+                                        <span className="text-[11px] font-medium text-muted-fg uppercase tracking-wider">For</span>
+                                        <span className="text-[11px] font-semibold text-foreground">Claude Code Agents</span>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    </div>
+                                    <h1 className="mt-4 max-w-2xl text-balance text-5xl font-medium text-foreground md:text-6xl">
                                         Visual control plane for{' '}
                                         <span className="text-blue-400">AI agents</span>
                                     </h1>
                                     <p className="mt-8 max-w-2xl text-pretty text-lg text-muted-fg">
-                                        Launch, monitor, and coordinate multiple AI agents from a single operator surface.
+                                        Launch, monitor, and coordinate multiple Claude Code agents from a single operator surface.
                                         Replace terminal-hopping with a live office view of every agent, tool call, and file change.
                                     </p>
                                     <div className="mt-12 flex items-center gap-2">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Rocket, X, Users, LayoutGrid, Network } from "lucide-react";
+import { Rocket, X, Users, LayoutGrid, Network, Download } from "lucide-react";
 import { useStore } from "../../../lib/use-store";
 import { OfficeFloor } from "../../../components/office-floor";
 import { AgentWorkflowCanvas } from "../../../components/agent-workflow-canvas";
@@ -19,14 +20,47 @@ export default function OfficePage() {
   const [showLauncher, setShowLauncher] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("canvas");
 
+  const router = useRouter();
   const selectedAgent = agents.find((a) => a.id === selectedId);
 
   const working = agents.filter((a) => a.status === "working").length;
   const blocked = agents.filter((a) => a.status === "blocked").length;
   const errored = agents.filter((a) => a.status === "error").length;
 
+  function exportAgents() {
+    const agentRuns = new Map<string, typeof runs>();
+    for (const r of runs) {
+      const arr = agentRuns.get(r.agentId) ?? [];
+      arr.push(r);
+      agentRuns.set(r.agentId, arr);
+    }
+    const data = agents.map((a) => ({
+      id: a.id,
+      name: a.name,
+      role: a.role,
+      status: a.status,
+      runs: (agentRuns.get(a.id) ?? []).map((r) => ({
+        id: r.id,
+        status: r.status,
+        description: r.description,
+        prompt: r.config?.prompt,
+        startedAt: new Date(r.startedAt).toISOString(),
+        completedAt: r.completedAt ? new Date(r.completedAt).toISOString() : null,
+        error: r.error,
+      })),
+      events: events.filter((e) => e.agentId === a.id).length,
+    }));
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `agentflow-export-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen relative">
       {/* Office header bar */}
       <div className="flex items-center justify-between px-5 py-2.5 bg-surface border-b border-border-base shrink-0 backdrop-blur-sm">
         <div className="flex items-center gap-4">
@@ -47,38 +81,38 @@ export default function OfficePage() {
         </div>
         <div className="flex items-center gap-2">
           {/* View toggle */}
-          <div className="flex items-center rounded-lg border border-border-base bg-surface p-0.5">
+          <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
             <button
               onClick={() => setViewMode("canvas")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors",
+                "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
                 viewMode === "canvas" ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <Network size={12} /> Canvas
+              <Network size={11} /> Canvas
             </button>
             <button
               onClick={() => setViewMode("grid")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors",
+                "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
                 viewMode === "grid" ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <LayoutGrid size={12} /> Grid
+              <LayoutGrid size={11} /> Grid
             </button>
           </div>
           <button
             onClick={() => setShowLauncher(!showLauncher)}
-            className={buttonVariants({ variant: "primary", size: "sm" })}
+            className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-md text-[11px] font-medium border border-blue-500/30 bg-transparent text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all"
           >
-            <Rocket size={13} /> Launch Run
+            <Rocket size={11} /> Launch Run
           </button>
         </div>
       </div>
 
       {/* Main content */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        <div className="flex-1 min-w-0 min-h-0 p-4">
+        <div className="flex-1 min-w-0 min-h-0 p-4 relative">
           {viewMode === "canvas" ? (
             <AgentWorkflowCanvas
               agents={agents}
@@ -97,11 +131,21 @@ export default function OfficePage() {
                 events={events}
                 selectedAgentId={selectedId}
                 onSelectAgent={setSelectedId}
-                onOpenSession={(sessionId) => { window.location.href = `/sessions?selected=${sessionId}`; }}
+                onOpenSession={(sessionId) => { router.push(`/sessions?selected=${sessionId}`); }}
                 onLaunchRun={() => setShowLauncher(true)}
-                onNavigateToSessions={() => { window.location.href = "/sessions"; }}
+                onNavigateToSessions={() => { router.push("/sessions"); }}
               />
             </div>
+          )}
+
+          {/* Export button */}
+          {agents.length > 0 && (
+            <button
+              onClick={exportAgents}
+              className="absolute bottom-5 right-5 z-30 inline-flex items-center gap-1.5 h-7 px-3 rounded-lg text-[11px] font-medium border border-border-base bg-surface/90 text-muted-fg hover:text-foreground hover:border-border-base hover:bg-surface backdrop-blur-md transition-all"
+            >
+              <Download size={11} /> Export
+            </button>
           )}
         </div>
 

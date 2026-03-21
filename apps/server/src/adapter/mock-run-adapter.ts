@@ -3,10 +3,10 @@ import type { AgentAdapter, EmitFn } from "./types.js";
 
 let counter = 0;
 function uid(): string {
-  return `evt-${Date.now()}-${++counter}`;
+  return `evt-${Date.now()}-${++counter}-${Math.random().toString(36).slice(2, 6)}`;
 }
 function tid(): string {
-  return `task-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+  return `task-${Date.now()}-${++counter}-${Math.random().toString(36).slice(2, 6)}`;
 }
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];

@@ -6,14 +6,16 @@ A visual control plane for [Claude Code](https://docs.anthropic.com/en/docs/clau
 
 AgentFlow gives you a real-time dashboard for supervising Claude Code agents. Instead of switching between terminals and parsing raw output, you get:
 
-- **Workflow canvas** — draggable agent nodes with live connection lines showing data flow. Toggle to grid view
+- **Workflow canvas** — draggable agent nodes with live connection lines showing data flow and dependencies. Toggle to grid view
+- **Agent roles** — each agent shows its role (Frontend, Backend, QA, DevOps, Security, Docs) on the card
 - **Pipeline presets** — launch multi-agent pipelines (Parallel Analysis, Staged Pipeline, Review Team) with one click
-- **Session orchestration** — group agents into sessions with dependency chains. Visual pipeline with status-aware connections
-- **Run management** — launch and stop Claude Code agents from the UI sidebar
+- **Session orchestration** — group agents into sessions with dependency chains. If an agent is stopped, the chain blocks visually (red lines)
+- **Run management** — launch and stop Claude Code agents from the UI. Stop pauses auto-relaunch in mock mode
 - **Live event stream** — every tool call, file change, and text output in real time via WebSocket
 - **Inspection tools** — drill into any agent to see output, tool calls, file changes, and raw event timeline
-- **Light/Dark theme** — toggle between light and dark themes, persisted to localStorage
-- **Connection visualization** — lines between agents change color: green (active), purple (completed), red with X (blocked), gray (idle)
+- **Export** — export all agents and their run data as JSON from the office view
+- **Light/Dark theme** — toggle between themes, persisted to localStorage with no flash on navigation
+- **Connection visualization** — lines between agents: green (active), purple (completed), red with X (blocked), gray (idle). Legend in bottom-left corner
 
 All state is derived from an append-only event stream. The UI is a projection of server state — never the source of truth.
 
@@ -39,7 +41,7 @@ npm install
 
 ### Option 1: Mock mode (recommended for first run)
 
-No Claude Code CLI needed. Six simulated agents generate realistic events with auto-relaunching runs.
+No Claude Code CLI needed. Six simulated agents (Alice, Bob, Carlos, Diana, Eve, Linter) with roles generate realistic events. Two demo sessions are created automatically: a staged pipeline and a parallel session.
 
 ```bash
 npm run dev:mock
@@ -64,11 +66,11 @@ Open http://localhost:3000/office, click **Launch Run**, pick a preset or type a
 | URL | What |
 |-----|------|
 | http://localhost:3000 | Landing page |
-| http://localhost:3000/office | Office dashboard (main view) |
-| http://localhost:3000/sessions | Session management |
-| http://localhost:3000/runs | Run history |
+| http://localhost:3000/office | Office dashboard (canvas + grid views) |
+| http://localhost:3000/sessions | Session management with pipeline visualization |
+| http://localhost:3000/runs | Run history table |
 | http://localhost:3000/tasks | Task board |
-| http://localhost:3000/timeline | Event timeline |
+| http://localhost:3000/timeline | Event timeline table |
 
 ## Key workflows
 
@@ -77,7 +79,7 @@ Open http://localhost:3000/office, click **Launch Run**, pick a preset or type a
 1. Go to `/office` — agents appear on a draggable canvas with connection lines
 2. Click **Launch Run** — sidebar opens with Single Agent and Pipeline tabs
 3. Pick a preset or type a prompt
-4. Watch the agent node appear and update live with status, prompt, and activity
+4. Watch the agent node appear and update live with status, role, prompt, and activity
 5. Click or drag an agent to open the detail sidebar (Events / Output / Tools / Files tabs)
 
 ### Pipeline (multi-agent)
@@ -86,7 +88,7 @@ Open http://localhost:3000/office, click **Launch Run**, pick a preset or type a
 2. Pick a preset (Parallel Analysis Pipeline, Staged Pipeline, Review Team, Parallel Duo)
 3. Click **Launch** — all agents appear on the canvas with dependency connections
 4. Parallel agents run simultaneously; dependent agents wait for their prerequisites
-5. If an agent fails, dependents are skipped and connections turn red
+5. If an agent fails or is stopped, dependents are skipped and connections turn red
 
 ### Real-world example
 
@@ -102,9 +104,13 @@ Imp. Planner ───┘
 
 Available as the **Parallel Analysis Pipeline** preset in Launch Run → Pipeline.
 
+### Export agents
+
+Click **Export** in the bottom-right of the office view to download a JSON file with all agents, their runs, prompts, and event counts.
+
 ## Theme
 
-Toggle between light and dark themes using the switch in the sidebar. Your preference is saved to localStorage.
+Toggle between light and dark themes using the switch in the sidebar. Your preference is saved to localStorage and applied instantly on page load (no flash).
 
 ## Configuration
 
@@ -165,7 +171,7 @@ cd apps/server && npx tsx src/index.ts --allowed-roots "/path/to/safe/dir"
 |---------|-------------|
 | `npm install` | Install all workspace dependencies |
 | `npm run dev` | Start server (3001) + UI (3000) together |
-| `npm run dev:mock` | Start with six simulated agents |
+| `npm run dev:mock` | Start with six simulated agents and demo sessions |
 | `npm run build` | Build all packages |
 | `npm run type-check` | Typecheck all packages |
 | `npm run lint` | Lint all packages |
@@ -181,8 +187,10 @@ packages/shared/     TypeScript event types, API contracts, WS messages
 - **Event-sourced**: all state changes flow through 15 typed event types
 - **Adapter pattern**: agent runtimes implement `AgentAdapter` with `start(emit)` and `stop()`
 - **JSONL persistence**: events appended to file, replayed on restart
-- **WebSocket**: server pushes events to UI in real time; snapshot on connect
+- **WebSocket**: server pushes events + debounced snapshots to UI in real time
+- **Virtual scrolling**: `@tanstack/react-virtual` on all tables and lists — handles 50,000+ rows without lag
 - **CSS variable theming**: light/dark themes via `:root` and `.dark` class toggle
+- **Client-side navigation**: Next.js `<Link>` for instant page transitions
 
 See [docs/architecture.md](docs/architecture.md) for the full system design.
 
@@ -191,14 +199,20 @@ See [docs/architecture.md](docs/architecture.md) for the full system design.
 - Launch real Claude Code runs from the UI
 - Pipeline presets: Parallel Analysis (5+1), Staged Pipeline, Review Team, Parallel Duo
 - Workflow canvas with draggable nodes and dependency-based auto-layout
-- Grid view alternative for traditional card layout
+- Grid view alternative with unified card design
+- Agent roles displayed on cards and detail panel
 - Live event stream: tool calls, file changes, output, status transitions
-- Stop agents from detail panel
-- Session orchestration with dependency validation
-- Light/dark theme toggle with localStorage persistence
+- Stop agents from detail panel (pauses auto-relaunch in mock)
+- Session orchestration with dependency validation and real-time status updates
+- Demo sessions auto-created in mock mode (Feature Pipeline + Infrastructure & Docs)
+- Session deep-linking from Office → Sessions page
+- Light/dark theme toggle with flash-free persistence (works on both themes)
 - Connection line legend (active, completed, blocked, idle)
+- Export agents data as JSON
+- Virtualized tables on Runs, Timeline, Tasks, Agent Detail, and Session Activity tabs
+- Task board with 4 columns: Pending, In Progress, Completed, Failed
 - JSONL persistence with replay on restart
-- Mock adapter with 6 agents for realistic demos
+- Mock adapter with 6 role-based agents and deterministic prompt sequencing
 
 ## Limitations
 
@@ -224,6 +238,9 @@ See [docs/claude-code-adapter.md](docs/claude-code-adapter.md) for observability
 
 **Events persist across restarts**
 - By design. Delete `apps/server/data/events.jsonl` to start fresh.
+
+**Old agents appear after restart**
+- Delete `apps/server/data/events.jsonl` and restart the server.
 
 ## Documentation
 

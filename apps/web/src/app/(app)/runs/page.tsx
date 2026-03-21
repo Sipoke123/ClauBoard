@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { RotateCcw, StopCircle, Clock, Folder, Rocket } from "lucide-react";
+import { useRef, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { RotateCcw, StopCircle, Rocket } from "lucide-react";
 import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
-import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../../../lib/variants";
+import { statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../../../lib/variants";
 import type { Run } from "@repo/shared";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const ROW_HEIGHT = 40;
 
 function formatDuration(run: Run): string {
   if (!run.completedAt) return "running...";
@@ -17,58 +18,20 @@ function formatDuration(run: Run): string {
   return `${(ms / 1000).toFixed(1)}s`;
 }
 
-function RunRow({
-  run, agentName, onRerun, onStop,
-}: {
-  run: Run; agentName: string; onRerun: (run: Run) => void; onStop: (runId: string) => void;
-}) {
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex items-center gap-3 py-3 px-4 border-b border-border-base hover:bg-foreground/5 transition-colors"
-    >
-      <span className={cn(statusPillVariants({ status: run.status as any }), "w-20 justify-center")}>
-        {statusLabels[run.status] ?? run.status}
-      </span>
-      <span className="text-muted-fg text-sm w-24 shrink-0 truncate">{agentName}</span>
-      <span className="text-foreground/80 text-sm flex-1 truncate min-w-0">
-        {run.config?.prompt ?? run.description ?? run.id}
-      </span>
-      {run.config?.cwd && (
-        <span className="flex items-center gap-1 text-muted-fg/60 text-xs truncate max-w-40">
-          <Folder size={10} /> {run.config.cwd}
-        </span>
-      )}
-      <span className="flex items-center gap-1 text-muted-fg/60 text-xs w-16 shrink-0 text-right">
-        <Clock size={10} /> {formatDuration(run)}
-      </span>
-      <span className="text-muted-fg/60 text-xs w-32 shrink-0 text-right">
-        {new Date(run.startedAt).toLocaleString()}
-      </span>
-      <div className="flex gap-1 shrink-0 w-16 justify-end">
-        {run.status === "running" && (
-          <button onClick={() => onStop(run.id)} className={buttonVariants({ variant: "danger", size: "xs" })}>
-            <StopCircle size={10} />
-          </button>
-        )}
-        {run.config && run.status !== "running" && (
-          <button onClick={() => onRerun(run)} className={buttonVariants({ variant: "ghost", size: "xs" })}>
-            <RotateCcw size={10} />
-          </button>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
 export default function RunsPage() {
   const { runs, agents } = useStore();
   const [msg, setMsg] = useState<string | null>(null);
 
   const agentMap = new Map(agents.map((a) => [a.id, a.name]));
   const sortedRuns = [...runs].sort((a, b) => b.startedAt - a.startedAt);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: sortedRuns.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 20,
+  });
 
   async function handleRerun(run: Run) {
     if (!run.config) return;
@@ -91,22 +54,28 @@ export default function RunsPage() {
   return (
     <div className="flex flex-col h-full p-6">
       <div className="flex items-center justify-between mb-5 shrink-0">
-        <h2 className="text-lg font-semibold text-foreground">Run History</h2>
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-lg font-semibold text-foreground">Run History</h2>
+          <span className="text-xs text-muted-fg/60">{sortedRuns.length} runs</span>
+        </div>
         {msg && (
           <span className={cn("text-xs", msg.startsWith("Error") ? "text-red-400" : "text-emerald-400")}>{msg}</span>
         )}
       </div>
 
       <div className={cn(panelVariants({ variant: "surface" }), "flex flex-col min-h-0 flex-1 overflow-hidden")}>
-        <div className="flex gap-3 py-2 px-4 border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0">
-          <span className="w-20">Status</span>
-          <span className="w-24">Agent</span>
-          <span className="flex-1">Prompt</span>
-          <span className="w-16 text-right">Duration</span>
-          <span className="w-32 text-right">Started</span>
-          <span className="w-16" />
+        {/* Header */}
+        <div className="flex items-center border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0" style={{ height: ROW_HEIGHT }}>
+          <span className="w-24 px-4">Status</span>
+          <span className="w-28 px-4">Agent</span>
+          <span className="flex-1 px-4">Prompt</span>
+          <span className="w-24 px-4 text-right">Duration</span>
+          <span className="w-44 px-4 text-right">Started</span>
+          <span className="w-16 px-4" />
         </div>
-        <div className="flex-1 overflow-y-auto">
+
+        {/* Virtualized rows */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {sortedRuns.length === 0 ? (
             <div className="p-12 text-center space-y-2">
               <Rocket size={20} className="text-muted-fg/60 mx-auto" />
@@ -114,9 +83,47 @@ export default function RunsPage() {
               <div className="text-muted-fg/60 text-xs">Launch a run from the Office page to see it here.</div>
             </div>
           ) : (
-            sortedRuns.map((run) => (
-              <RunRow key={run.id} run={run} agentName={agentMap.get(run.agentId) ?? "—"} onRerun={handleRerun} onStop={handleStop} />
-            ))
+            <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
+              {virtualizer.getVirtualItems().map((vRow) => {
+                const run = sortedRuns[vRow.index];
+                const agentName = agentMap.get(run.agentId) ?? "—";
+                return (
+                  <div
+                    key={run.id}
+                    className="flex items-center border-b border-border-base hover:bg-foreground/5 transition-colors absolute w-full"
+                    style={{ height: ROW_HEIGHT, top: vRow.start }}
+                  >
+                    <span className="w-24 px-4">
+                      <span className={cn(statusPillVariants({ status: run.status as any }), "justify-center")}>
+                        {statusLabels[run.status] ?? run.status}
+                      </span>
+                    </span>
+                    <span className="w-28 px-4 text-muted-fg text-sm truncate">{agentName}</span>
+                    <span className="flex-1 px-4 text-foreground/80 text-sm truncate">
+                      {run.config?.prompt ?? run.description ?? run.id}
+                    </span>
+                    <span className="w-24 px-4 text-muted-fg/60 text-xs text-right whitespace-nowrap">
+                      {formatDuration(run)}
+                    </span>
+                    <span className="w-44 px-4 text-muted-fg/60 text-xs text-right whitespace-nowrap">
+                      {new Date(run.startedAt).toLocaleString()}
+                    </span>
+                    <span className="w-16 px-4 flex justify-end">
+                      {run.status === "running" && (
+                        <button onClick={() => handleStop(run.id)} className={buttonVariants({ variant: "danger", size: "xs" })}>
+                          <StopCircle size={10} />
+                        </button>
+                      )}
+                      {run.config && run.status !== "running" && (
+                        <button onClick={() => handleRerun(run)} className={buttonVariants({ variant: "ghost", size: "xs" })}>
+                          <RotateCcw size={10} />
+                        </button>
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

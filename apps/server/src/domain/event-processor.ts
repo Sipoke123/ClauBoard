@@ -33,7 +33,7 @@ export class EventProcessor {
   private derive(event: AgentEvent): void {
     switch (event.type) {
       case "agent.registered":
-        this.agents.register(event.agentId, event.payload.name);
+        this.agents.register(event.agentId, event.payload.name, (event as any).payload.role);
         break;
       case "agent.heartbeat":
         this.agents.heartbeat(event.agentId, event.payload.status);

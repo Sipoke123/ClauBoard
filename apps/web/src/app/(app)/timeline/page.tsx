@@ -1,23 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { Activity } from "lucide-react";
 import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
 import { panelVariants, inputVariants, getEventColor } from "../../../lib/variants";
 import type { AgentEvent } from "@repo/shared";
 
-function EventRow({ event, agentName }: { event: AgentEvent; agentName: string }) {
-  const color = getEventColor(event.type);
-  return (
-    <div className="flex items-start gap-3 py-2 px-3.5 border-b border-border-base text-xs font-mono hover:bg-foreground/5 transition-colors">
-      <span className="text-muted-fg/60 shrink-0 w-20">{new Date(event.ts).toLocaleTimeString()}</span>
-      <span className="text-muted-fg shrink-0 w-20 truncate">{agentName}</span>
-      <span className={cn("shrink-0 w-36", color)}>{event.type}</span>
-      <span className="text-muted-fg/60 truncate">{JSON.stringify((event as any).payload).slice(0, 120)}</span>
-    </div>
-  );
-}
+const ROW_HEIGHT = 32;
 
 export default function TimelinePage() {
   const { events, agents } = useStore();
@@ -30,7 +21,14 @@ export default function TimelinePage() {
   let filtered = [...events].reverse();
   if (typeFilter !== "all") filtered = filtered.filter((e) => e.type.startsWith(typeFilter));
   if (agentFilter !== "all") filtered = filtered.filter((e) => e.agentId === agentFilter);
-  filtered = filtered.slice(0, 200);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: filtered.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 20,
+  });
 
   return (
     <div className="flex flex-col h-full p-6">
@@ -64,13 +62,16 @@ export default function TimelinePage() {
       </div>
 
       <div className={cn(panelVariants({ variant: "surface" }), "flex flex-col min-h-0 flex-1 overflow-hidden")}>
-        <div className="flex gap-3 py-2 px-3.5 border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0">
-          <span className="w-20">Time</span>
-          <span className="w-20">Agent</span>
-          <span className="w-36">Type</span>
-          <span>Payload</span>
+        {/* Header */}
+        <div className="flex items-center border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0" style={{ height: ROW_HEIGHT }}>
+          <span className="w-24 px-4">Time</span>
+          <span className="w-28 px-4">Agent</span>
+          <span className="w-40 px-4">Type</span>
+          <span className="flex-1 px-4">Payload</span>
         </div>
-        <div className="flex-1 overflow-y-auto">
+
+        {/* Virtualized rows */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {filtered.length === 0 ? (
             <div className="p-12 text-center space-y-2">
               <Activity size={20} className="text-muted-fg/60 mx-auto" />
@@ -78,9 +79,24 @@ export default function TimelinePage() {
               <div className="text-muted-fg/60 text-xs">Events appear here as agents work. Launch a run to get started.</div>
             </div>
           ) : (
-            filtered.map((e) => (
-              <EventRow key={e.id} event={e} agentName={agentMap.get(e.agentId) ?? e.agentId} />
-            ))
+            <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const event = filtered[virtualRow.index];
+                const color = getEventColor(event.type);
+                return (
+                  <div
+                    key={event.id}
+                    className="flex items-center border-b border-border-base font-mono text-xs hover:bg-foreground/5 transition-colors absolute w-full"
+                    style={{ height: ROW_HEIGHT, top: virtualRow.start }}
+                  >
+                    <span className="w-24 px-4 text-muted-fg/60 whitespace-nowrap">{new Date(event.ts).toLocaleTimeString()}</span>
+                    <span className="w-28 px-4 text-muted-fg truncate">{agentMap.get(event.agentId) ?? event.agentId}</span>
+                    <span className={cn("w-40 px-4 whitespace-nowrap", color)}>{event.type}</span>
+                    <span className="flex-1 px-4 text-muted-fg/60 truncate">{JSON.stringify((event as any).payload).slice(0, 120)}</span>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

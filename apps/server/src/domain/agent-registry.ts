@@ -3,10 +3,11 @@ import type { Agent, AgentStatus } from "@repo/shared";
 export class AgentRegistry {
   private agents = new Map<string, Agent>();
 
-  register(id: string, name: string): void {
+  register(id: string, name: string, role?: string): void {
     this.agents.set(id, {
       id,
       name,
+      role,
       status: "idle",
       lastHeartbeat: Date.now(),
     });
@@ -45,6 +46,13 @@ export class AgentRegistry {
 
   get(id: string): Agent | undefined {
     return this.agents.get(id);
+  }
+
+  findByName(name: string): Agent | undefined {
+    for (const agent of this.agents.values()) {
+      if (agent.name === name) return agent;
+    }
+    return undefined;
   }
 
   all(): Agent[] {

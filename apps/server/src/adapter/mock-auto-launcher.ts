@@ -41,10 +41,6 @@ const MOCK_AGENTS = [
   ]},
 ];
 
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 /**
  * Mock auto-launcher: registers agents, launches runs, and automatically
  * relaunches when runs finish. Uses event-driven approach (no polling).
@@ -54,6 +50,7 @@ function pick<T>(arr: T[]): T {
 export class MockAutoLauncher {
   private pausedAgents = new Set<string>();
   private activeRunIds = new Map<string, string>();
+  private promptIndex = new Map<string, number>();
   private stopped = false;
 
   constructor(
@@ -77,7 +74,7 @@ export class MockAutoLauncher {
           ts: Date.now(),
           agentId: agent.id,
           runId: "",
-          payload: { name: agent.name },
+          payload: { name: agent.name, role: agent.role },
         });
       }
     }
@@ -157,10 +154,17 @@ export class MockAutoLauncher {
         ts: Date.now(),
         agentId: agent.id,
         runId: "",
-        payload: { name: agent.name },
+        payload: { name: agent.name, role: agent.role },
       });
       this.launchFor(agent);
     }
+  }
+
+  private nextPrompt(agent: typeof MOCK_AGENTS[number]): string {
+    const idx = this.promptIndex.get(agent.id) ?? 0;
+    const prompt = agent.prompts[idx % agent.prompts.length];
+    this.promptIndex.set(agent.id, idx + 1);
+    return prompt;
   }
 
   private launchFor(agent: typeof MOCK_AGENTS[number]): void {
@@ -169,7 +173,7 @@ export class MockAutoLauncher {
 
     try {
       const result = this.runLauncher.launch({
-        prompt: pick(agent.prompts),
+        prompt: this.nextPrompt(agent),
         agentName: agent.name,
         agentId: agent.id,
       });

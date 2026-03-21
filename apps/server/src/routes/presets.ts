@@ -20,25 +20,25 @@ export interface SessionPreset {
 
 const runPresets: RunPreset[] = [
   {
-    id: "hello",
-    label: "Hello World",
-    description: "Quick test — ask Claude to respond with a greeting",
-    prompt: "Say hello and confirm you are running inside Claude Code. Keep it brief.",
-    agentName: "Greeter",
-  },
-  {
     id: "read-project",
     label: "Explore Project",
-    description: "Read the project structure and summarize it",
+    description: "Read project files and summarize structure — read-only, no changes",
     prompt: "Read the top-level files in this project (package.json, README, etc.) and give me a brief summary of what this project is and how it is structured. Do not modify any files.",
     agentName: "Explorer",
   },
   {
     id: "lint-check",
-    label: "Run Lint Check",
-    description: "Run the linter and report results",
+    label: "Run Lint & Type Check",
+    description: "Run linter and TypeScript checks — reports errors, no fixes",
     prompt: "Run 'npm run lint' and 'npm run type-check' in this project. Report any errors or warnings. Do not fix anything, just report what you find.",
     agentName: "Linter",
+  },
+  {
+    id: "review-code",
+    label: "Code Review",
+    description: "Review recent changes for bugs, security issues, and improvements",
+    prompt: "Review the most recently changed files in this project. Look for bugs, security issues, and suggest improvements. Write your findings as a brief report. Do not modify any files.",
+    agentName: "Reviewer",
   },
 ];
 

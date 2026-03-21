@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Building2,
@@ -329,9 +330,9 @@ function GettingStarted() {
         </motion.div>
       </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10">
-        <a href="/office" className={cn(buttonVariants({ variant: "primary", size: "md" }), "h-10 px-6 text-sm")}>
+        <Link href="/office" className={cn(buttonVariants({ variant: "primary", size: "md" }), "h-10 px-6 text-sm")}>
           <Rocket size={14} /> Open the Dashboard
-        </a>
+        </Link>
       </motion.div>
     </section>
   );
@@ -348,7 +349,7 @@ function Footer() {
           AgentFlow
         </div>
         <div className="flex items-center gap-4">
-          <a href="/office" className="hover:text-muted-fg transition-colors">Dashboard</a>
+          <Link href="/office" className="hover:text-muted-fg transition-colors">Dashboard</Link>
           <a href="https://docs.anthropic.com/en/docs/claude-code" className="hover:text-muted-fg transition-colors" target="_blank" rel="noopener noreferrer">Claude Code Docs</a>
         </div>
       </div>

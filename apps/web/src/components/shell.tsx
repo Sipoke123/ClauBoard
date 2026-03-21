@@ -14,8 +14,7 @@ interface HealthData {
   activeRuns?: number;
 }
 
-export function Shell({ children }: { children: React.ReactNode }) {
-  useSocket();
+export function StatusBar() {
   const connected = useStoreSelector((s) => s.connected);
   const [health, setHealth] = useState<HealthData | null>(null);
 
@@ -37,45 +36,44 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const cwdRestricted = health?.cwdRestricted ?? false;
 
   return (
-    <>
-      <div className={cn(
-        "fixed bottom-3 left-3 z-50 flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium backdrop-blur-md border transition-colors",
-        connected
-          ? "bg-surface border-border-base text-muted-fg"
-          : "bg-red-950/80 border-red-500/20 text-red-400"
-      )}>
-        {connected ? <Wifi size={12} className="text-emerald-500" /> : <WifiOff size={12} className="animate-pulse" />}
-        {connected ? "Live" : "Reconnecting..."}
-        {connected && modeLabel && (
-          <>
-            <span className="text-muted-fg/50">·</span>
-            <span className={cn(
-              "flex items-center gap-1",
-              adapterMode === "mock" ? "text-amber-500/70" : "text-blue-400/70"
-            )}>
-              {adapterMode === "mock" ? <FlaskConical size={10} /> : <Radio size={10} />}
-              {modeLabel}
-            </span>
-          </>
-        )}
-        {connected && health && !cwdRestricted && adapterMode !== "mock" && (
-          <>
-            <span className="text-muted-fg/50">·</span>
-            <span className="flex items-center gap-1 text-amber-500/60" title="No allowed workspace roots configured — all paths accepted">
-              <ShieldAlert size={10} /> Open
-            </span>
-          </>
-        )}
-        {connected && cwdRestricted && (
-          <>
-            <span className="text-muted-fg/50">·</span>
-            <span className="flex items-center gap-1 text-emerald-500/50" title="Working directory restricted to allowed roots">
-              <ShieldCheck size={10} />
-            </span>
-          </>
-        )}
-      </div>
-      {children}
-    </>
+    <div className={cn(
+      "flex items-center justify-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] font-medium border transition-colors",
+      connected
+        ? "bg-surface border-border-base text-muted-fg"
+        : "bg-red-500/10 border-red-500/20 text-red-400"
+    )}>
+      {!connected && <><WifiOff size={12} className="animate-pulse" /> Reconnecting...</>}
+      {connected && modeLabel && (
+        <span className={cn(
+          "flex items-center gap-1",
+          adapterMode === "mock" ? "text-amber-500/70" : "text-blue-400/70"
+        )}>
+          {adapterMode === "mock" ? <FlaskConical size={10} /> : <Radio size={10} />}
+          {modeLabel}
+        </span>
+      )}
+      {connected && !modeLabel && <><Wifi size={12} className="text-emerald-500" /> Live</>}
+      {connected && health && !cwdRestricted && adapterMode !== "mock" && (
+        <>
+          <span className="text-muted-fg/50">·</span>
+          <span className="flex items-center gap-1 text-amber-500/60" title="No allowed workspace roots configured — all paths accepted">
+            <ShieldAlert size={10} /> Open
+          </span>
+        </>
+      )}
+      {connected && cwdRestricted && (
+        <>
+          <span className="text-muted-fg/50">·</span>
+          <span className="flex items-center gap-1 text-emerald-500/50" title="Working directory restricted to allowed roots">
+            <ShieldCheck size={10} />
+          </span>
+        </>
+      )}
+    </div>
   );
+}
+
+export function Shell({ children }: { children: React.ReactNode }) {
+  useSocket();
+  return <>{children}</>;
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { StopCircle, Wrench, FileCode, Zap, Terminal, CheckCircle, XCircle, Clock, AlertTriangle, Plus, Minus } from "lucide-react";
 import type { Agent, AgentEvent, Run, Task } from "@repo/shared";
 import { cn } from "../lib/cn";
@@ -10,7 +10,53 @@ import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, t
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 // ---------------------------------------------------------------------------
-// Sub-components
+// Virtualized list helper
+// ---------------------------------------------------------------------------
+
+function VirtualList<T>({
+  items,
+  rowHeight,
+  renderRow,
+  getKey,
+  emptyLabel,
+}: {
+  items: T[];
+  rowHeight: number;
+  renderRow: (item: T, index: number) => React.ReactNode;
+  getKey: (item: T, index: number) => string;
+  emptyLabel: string;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 15,
+  });
+
+  if (items.length === 0) {
+    return <div className="text-xs text-muted-fg p-6 text-center">{emptyLabel}</div>;
+  }
+
+  return (
+    <div ref={scrollRef} className="h-full overflow-y-auto">
+      <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
+        {virtualizer.getVirtualItems().map((vRow) => (
+          <div
+            key={getKey(items[vRow.index], vRow.index)}
+            className="absolute w-full"
+            style={{ height: vRow.size, top: vRow.start }}
+          >
+            {renderRow(items[vRow.index], vRow.index)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Row renderers
 // ---------------------------------------------------------------------------
 
 function ToolCallRow({ invoked, result }: { invoked: AgentEvent; result?: AgentEvent }) {
@@ -20,7 +66,7 @@ function ToolCallRow({ invoked, result }: { invoked: AgentEvent; result?: AgentE
   const failed = result?.type === "tool.error";
 
   return (
-    <div className="border-b border-border-subtle py-2.5 px-3 text-xs font-mono">
+    <div className="border-b border-border-subtle py-2.5 px-3 text-xs font-mono h-full">
       <div className="flex items-center gap-2">
         <Wrench size={10} className="text-orange-400/70 shrink-0" />
         <span className="text-orange-400 font-semibold">{inv.payload.tool}</span>
@@ -30,19 +76,28 @@ function ToolCallRow({ invoked, result }: { invoked: AgentEvent; result?: AgentE
         {!result && <span className={cn(statusPillVariants({ status: "running" }), "animate-pulse")}>running</span>}
       </div>
       <div className="text-muted-fg mt-1 truncate pl-5">{inv.payload.input}</div>
-      {res?.payload?.output && <div className="text-muted-fg mt-1 truncate pl-5">{res.payload.output}</div>}
-      {res?.payload?.error && <div className="text-red-400 mt-1 truncate pl-5">{res.payload.error}</div>}
     </div>
   );
 }
 
-function TextOutputBlock({ event }: { event: AgentEvent }) {
+function RawEventRow({ event }: { event: AgentEvent }) {
+  const color = getEventColor(event.type);
+  return (
+    <div className="flex gap-3 text-xs py-1.5 px-3 font-mono border-b border-border-subtle hover:bg-foreground/[0.02] h-full items-center">
+      <span className="text-muted-fg shrink-0">{new Date(event.ts).toLocaleTimeString()}</span>
+      <span className={cn("shrink-0", color)}>{event.type}</span>
+      <span className="text-muted-fg truncate">{JSON.stringify((event as any).payload).slice(0, 80)}</span>
+    </div>
+  );
+}
+
+function TextOutputRow({ event }: { event: AgentEvent }) {
   const p = (event as any).payload;
   const isStderr = p.stream === "stderr";
   return (
     <div className={cn(
-      "py-2 px-3 text-xs whitespace-pre-wrap font-mono leading-relaxed",
-      isStderr ? "text-red-300/80 bg-red-950/20" : "text-foreground"
+      "py-1.5 px-3 text-xs whitespace-pre-wrap font-mono leading-relaxed border-b border-border-subtle h-full",
+      isStderr ? "text-red-400 bg-red-500/10" : "text-foreground"
     )}>
       {p.text}
     </div>
@@ -57,20 +112,9 @@ function FileChangeRow({ event }: { event: AgentEvent }) {
     delete: <XCircle size={10} className="text-red-400" />,
   };
   return (
-    <div className="flex items-center gap-2 py-1.5 px-3 text-xs font-mono border-b border-border-subtle">
+    <div className="flex items-center gap-2 py-1.5 px-3 text-xs font-mono border-b border-border-subtle h-full">
       {icons[p.action] ?? null}
       <span className="text-cyan-400 truncate">{p.path}</span>
-    </div>
-  );
-}
-
-function RawEventRow({ event }: { event: AgentEvent }) {
-  const color = getEventColor(event.type);
-  return (
-    <div className="flex gap-3 text-xs py-1.5 px-3 font-mono border-b border-border-subtle hover:bg-foreground/[0.02]">
-      <span className="text-muted-fg shrink-0">{new Date(event.ts).toLocaleTimeString()}</span>
-      <span className={cn("shrink-0", color)}>{event.type}</span>
-      <span className="text-muted-fg truncate">{JSON.stringify((event as any).payload).slice(0, 100)}</span>
     </div>
   );
 }
@@ -113,12 +157,12 @@ export function AgentDetail({
 
   // Header glow by status
   const headerGlow: Record<string, string> = {
-    working: "border-emerald-500/30 bg-emerald-950/20",
-    blocked: "border-amber-500/30 bg-amber-950/20",
-    error: "border-red-500/30 bg-red-950/20",
+    working: "border-emerald-500/30 bg-emerald-500/5",
+    blocked: "border-amber-500/30 bg-amber-500/5",
+    error: "border-red-500/30 bg-red-500/5",
     idle: "border-border-base bg-surface/60",
     offline: "border-border-subtle bg-surface/40",
-    paused: "border-amber-500/20 bg-amber-950/10",
+    paused: "border-amber-500/20 bg-amber-500/5",
   };
 
   const tabs: { id: Tab; label: string; count: number; icon: React.ReactNode }[] = [
@@ -132,10 +176,19 @@ export function AgentDetail({
     <div className="flex flex-col h-full space-y-4">
       {/* Agent header */}
       <div className={cn("p-4 rounded-xl border", headerGlow[displayStatus] ?? headerGlow.offline)}>
+        {/* Name + role + status dot */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className={statusDotVariants({ status: displayStatus as any, size: "lg" })} />
-            <h3 className="text-base font-semibold text-foreground">{agent.name}</h3>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-semibold text-foreground leading-none">{agent.name}</h3>
+                <span className={statusPillVariants({ status: displayStatus as any })}>
+                  {statusLabels[displayStatus] ?? displayStatus}
+                </span>
+              </div>
+              {agent.role && <div className="text-[10px] text-muted-fg/50 uppercase tracking-wider leading-none mt-1">{agent.role}</div>}
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {(displayStatus === "working" || displayStatus === "blocked") && (
@@ -148,7 +201,7 @@ export function AgentDetail({
                 disabled={stopping}
                 className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-md text-[11px] font-medium border border-red-500/30 bg-transparent text-red-400 hover:bg-red-500/10 hover:border-red-500/50 transition-all disabled:opacity-40"
               >
-                <StopCircle size={10} /> {stopping ? "Stopping" : "Stop"}
+                <StopCircle size={10} /> {stopping ? "..." : "Stop"}
               </button>
             )}
             {isPaused && (
@@ -161,27 +214,24 @@ export function AgentDetail({
                 <Zap size={10} /> Resume
               </button>
             )}
-            <span className={statusPillVariants({ status: displayStatus as any })}>
-              {statusLabels[displayStatus] ?? displayStatus}
-            </span>
           </div>
         </div>
-        {agent.status === "blocked" && agent.blockedReason && (
-          <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-400/80">
-            <AlertTriangle size={11} /> {agent.blockedReason}
-          </div>
-        )}
+        {/* Current task */}
         {(currentRun ?? lastRun) && (
           <div className="mt-2 text-xs text-muted-fg truncate">
-            {currentRun ? "Run: " : "Last: "}
-            {(currentRun ?? lastRun).description ?? (currentRun ?? lastRun).id}
+            {(currentRun ?? lastRun)?.config?.prompt ?? (currentRun ?? lastRun)?.description ?? (currentRun ?? lastRun)?.id}
+          </div>
+        )}
+        {agent.status === "blocked" && agent.blockedReason && (
+          <div className="flex items-center gap-1.5 mt-1.5 text-xs text-amber-400/80">
+            <AlertTriangle size={11} /> {agent.blockedReason}
           </div>
         )}
         {lastRun?.error && <div className="mt-1 text-xs text-red-400/80 truncate">{lastRun.error}</div>}
       </div>
 
       {/* Metrics strip */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2 shrink-0">
         {[
           { label: "Runs", value: agentRuns.length, icon: <Zap size={11} className="text-muted-fg" /> },
           { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircle size={11} className="text-muted-fg" /> },
@@ -210,33 +260,45 @@ export function AgentDetail({
           ))}
         </div>
 
-        <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 overflow-y-auto")}>
+        <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
           {activeTab === "events" && (
-            agentEvents.length === 0
-              ? <Empty label="No events yet" />
-              : agentEvents.slice(-50).map((e) => <RawEventRow key={e.id} event={e} />)
+            <VirtualList
+              items={[...agentEvents].reverse()}
+              rowHeight={30}
+              getKey={(e) => e.id}
+              emptyLabel="No events yet"
+              renderRow={(e) => <RawEventRow event={e} />}
+            />
           )}
           {activeTab === "output" && (
-            textEvents.length === 0
-              ? <Empty label="No output yet" />
-              : textEvents.map((e) => <TextOutputBlock key={e.id} event={e} />)
+            <VirtualList
+              items={textEvents}
+              rowHeight={36}
+              getKey={(e) => e.id}
+              emptyLabel="No output yet"
+              renderRow={(e) => <TextOutputRow event={e} />}
+            />
           )}
           {activeTab === "tools" && (
-            toolPairs.length === 0
-              ? <Empty label="No tool calls yet" />
-              : toolPairs.map((p) => <ToolCallRow key={p.invoked.id} invoked={p.invoked} result={p.result} />)
+            <VirtualList
+              items={toolPairs}
+              rowHeight={52}
+              getKey={(p) => p.invoked.id}
+              emptyLabel="No tool calls yet"
+              renderRow={(p) => <ToolCallRow invoked={p.invoked} result={p.result} />}
+            />
           )}
           {activeTab === "files" && (
-            fileEvents.length === 0
-              ? <Empty label="No file changes detected" />
-              : fileEvents.map((e) => <FileChangeRow key={e.id} event={e} />)
+            <VirtualList
+              items={fileEvents}
+              rowHeight={30}
+              getKey={(e) => e.id}
+              emptyLabel="No file changes detected"
+              renderRow={(e) => <FileChangeRow event={e} />}
+            />
           )}
         </div>
       </div>
     </div>
   );
-}
-
-function Empty({ label }: { label: string }) {
-  return <div className="text-xs text-muted-fg p-6 text-center">{label}</div>;
 }

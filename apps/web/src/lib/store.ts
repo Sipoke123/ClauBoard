@@ -57,7 +57,7 @@ class Store {
     const s = this.state;
 
     // Always append to event log
-    const events = [...s.events, event].slice(-500); // keep last 500
+    const events = [...s.events, event].slice(-5000); // keep last 5000
 
     // Derive agent updates
     let agents = [...s.agents];
@@ -71,6 +71,7 @@ class Store {
           agents.push({
             id: event.agentId,
             name: event.payload.name,
+            role: (event as any).payload.role,
             status: "idle",
             lastHeartbeat: event.ts,
           });

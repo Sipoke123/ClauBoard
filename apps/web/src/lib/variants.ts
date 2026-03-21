@@ -67,7 +67,7 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary: "bg-blue-600 text-white hover:bg-blue-500 shadow-sm shadow-blue-900/30",
-        danger: "bg-red-600/80 text-red-100 hover:bg-red-500 shadow-sm shadow-red-900/20",
+        danger: "bg-transparent text-red-400 border border-red-500/40 hover:bg-red-500/10 hover:border-red-500/60",
         ghost: "text-muted-fg hover:text-foreground hover:bg-foreground/5",
         outline: "border border-border-base text-muted-fg hover:bg-foreground/5 hover:border-foreground/20",
       },

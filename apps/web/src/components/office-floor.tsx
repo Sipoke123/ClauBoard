@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Square, AlertTriangle, HelpCircle, StopCircle, Play, ExternalLink, Wrench, FileCode, Zap, Users, Rocket, Layers } from "lucide-react";
+import { Square, AlertTriangle, HelpCircle, StopCircle, Play, ExternalLink, Wrench, FileCode, Zap, Users, Rocket, Layers, Code, Terminal, FileSearch, Cpu, Shield, User } from "lucide-react";
 import type { Agent, AgentEvent, Run, Session } from "@repo/shared";
 import { cn } from "../lib/cn";
 import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../lib/variants";
@@ -12,6 +12,19 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 // ---------------------------------------------------------------------------
 // Desk border glow by status
 // ---------------------------------------------------------------------------
+
+const agentIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  Alice: Code, Bob: Terminal, Linter: FileSearch, Carlos: Cpu, Diana: Shield, Eve: FileCode,
+};
+
+const iconColors: Record<string, string> = {
+  working: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
+  idle: "border-emerald-500/30 bg-emerald-500/5 text-emerald-400",
+  error: "border-red-500/40 bg-red-500/10 text-red-400",
+  blocked: "border-amber-500/40 bg-amber-500/10 text-amber-400",
+  offline: "border-border-subtle bg-muted text-muted-fg",
+  paused: "border-amber-500/30 bg-amber-500/10 text-amber-400",
+};
 
 const deskGlow: Record<string, string> = {
   working: "border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.08)]",
@@ -118,53 +131,51 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
       onClick={onClick}
       onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       className={cn(
-        "relative w-full text-left rounded-xl border transition-all cursor-pointer",
+        "relative w-full h-[120px] text-left rounded-xl border transition-all cursor-pointer",
         glow,
         selected
           ? "ring-2 ring-blue-500/60 ring-offset-1 ring-offset-background bg-muted/60"
           : "bg-surface/70 hover:bg-muted/50 hover:shadow-lg",
       )}
     >
-      {/* Gradient overlay */}
       <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none" />
 
-      <div className="relative p-3 space-y-2">
-        {/* Header */}
-        <div className="flex items-center gap-2">
+      <div className="relative p-3 h-full flex flex-col">
+        {/* Header: icon + name + status */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
+            iconColors[displayStatus] ?? iconColors.offline,
+          )}>
+            {(() => { const Icon = agentIcons[agent.name] ?? User; return <Icon className="h-4.5 w-4.5" />; })()}
+          </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 mb-0.5">
+            <div className="flex items-center gap-1.5">
+              <h3 className="truncate text-xs font-semibold text-foreground leading-none">{agent.name}</h3>
               <span className={statusDotVariants({ status: displayStatus as any, size: "sm" })} />
-              <span className="text-[9px] uppercase tracking-wider text-muted-fg font-medium">
-                {statusLabels[displayStatus] ?? displayStatus}
-              </span>
             </div>
-            <h3 className="truncate text-xs font-semibold text-foreground">
-              {agent.name}
-            </h3>
+            {agent.role && <div className="text-[9px] text-muted-fg/50 uppercase tracking-wider leading-none mt-1">{agent.role}</div>}
           </div>
         </div>
 
-        {/* Task */}
-        <p className="text-[10px] leading-relaxed text-muted-fg truncate">
-          {run?.config?.prompt ?? run?.description ?? "No active task"}
-        </p>
-
-        {/* Live activity */}
-        {lastActivity && (agent.status === "working" || agent.status === "blocked") && (
-          <p className="text-[10px] font-mono text-muted-fg truncate">
-            {lastActivity}
+        {/* Middle: task + activity */}
+        <div className="flex-1 min-h-0 mt-2 space-y-0.5">
+          <p className="text-[10px] text-muted-fg truncate">
+            {run?.config?.prompt ?? run?.description ?? "Idle"}
           </p>
-        )}
+          {lastActivity && (agent.status === "working" || agent.status === "blocked") && (
+            <p className="text-[10px] font-mono text-muted-fg/60 truncate">{lastActivity}</p>
+          )}
+          {agent.status === "blocked" && agent.blockedReason && (
+            <p className="text-[10px] text-amber-400/80 truncate">{agent.blockedReason}</p>
+          )}
+          {run?.error && (
+            <p className="text-[10px] text-red-400/80 truncate">{run.error}</p>
+          )}
+        </div>
 
-        {agent.status === "blocked" && agent.blockedReason && (
-          <div className="text-[10px] text-amber-400/80 truncate">{agent.blockedReason}</div>
-        )}
-        {run?.error && (
-          <div className="text-[10px] text-red-400/80 truncate">{run.error}</div>
-        )}
-
-        {/* Footer metrics */}
-        <div className="flex items-center justify-between">
+        {/* Footer: metrics pinned to bottom */}
+        <div className="flex items-center justify-between shrink-0 pt-1">
           <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
               <span className="flex items-center gap-1 text-orange-400/60">
@@ -183,9 +194,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
             )}
           </div>
           {run && (
-            <div className="flex items-center gap-1 text-[9px] text-muted-fg">
-              <span className="uppercase tracking-wider">{run?.status ?? "idle"}</span>
-            </div>
+            <span className="text-[9px] text-muted-fg uppercase tracking-wider">{statusLabels[displayStatus] ?? displayStatus}</span>
           )}
         </div>
       </div>

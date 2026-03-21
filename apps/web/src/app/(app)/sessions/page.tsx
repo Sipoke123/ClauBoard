@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layers, Plus, X, StopCircle, Wrench, FileCode, Zap, ArrowRight, AlertTriangle, Users, Sparkles } from "lucide-react";
 import { useStore } from "../../../lib/use-store";
@@ -137,7 +138,7 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
       <button type="button" onClick={addAgent} className={buttonVariants({ variant: "ghost", size: "xs" })}><Plus size={10} /> Add agent</button>
 
       {hasDeps && !graphResult.valid && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-950/20 border border-red-500/20 text-xs text-red-400">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/5 border border-red-500/20 text-xs text-red-400">
           <AlertTriangle size={12} /> {graphResult.error}
         </div>
       )}
@@ -178,8 +179,8 @@ function SessionCard({ session, selected, onClick, onStop }: {
   const hasDeps = agents.some((a) => a.dependsOn.length > 0);
 
   return (
-    <button onClick={onClick} className={cn(
-      "w-full text-left p-4 rounded-xl border transition-all duration-150",
+    <div onClick={onClick} role="button" tabIndex={0} className={cn(
+      "w-full text-left p-4 rounded-xl border transition-all duration-150 cursor-pointer",
       selected ? "border-blue-500/40 bg-muted/60 shadow-lg shadow-blue-900/10" : "border-border-base bg-surface/60 hover:bg-muted/40 hover:border-border-base"
     )}>
       <div className="flex items-center justify-between mb-1.5">
@@ -205,7 +206,7 @@ function SessionCard({ session, selected, onClick, onStop }: {
           <StopCircle size={10} /> Stop All
         </button>
       )}
-    </button>
+    </div>
   );
 }
 
@@ -230,7 +231,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
     let f = sessionEvents;
     if (agentFilter !== "all") f = f.filter((e) => e.agentId === agentFilter);
     if (typeFilter !== "all") f = f.filter((e) => e.type.startsWith(typeFilter));
-    return f.slice(0, 200);
+    return f;
   }, [sessionEvents, agentFilter, typeFilter]);
 
   const toolsSummary = useMemo(() => {
@@ -261,9 +262,9 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
   const typeGroups = ["all", "agent.", "run.", "task.", "tool.", "terminal.", "file."];
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className={cn(panelVariants({ variant: "surface" }), "p-4")}>
+      <div className={cn(panelVariants({ variant: "surface" }), "p-4 shrink-0")}>
         <div className="flex items-center justify-between">
           <h3 className="text-base font-semibold text-foreground">{session.name}</h3>
           <span className={statusPillVariants({ status: session.status as any })}>{statusLabels[session.status]}</span>
@@ -272,16 +273,16 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
       </div>
 
       {/* Tabs */}
-      <div>
-        <div className="flex gap-1 mb-3">
-          {tabs.map((tab) => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={tabVariants({ active: activeTab === tab.id })}>
-              {tab.icon} {tab.label}
-              {tab.count != null && tab.count > 0 && <span className="text-muted-fg ml-0.5">{tab.count}</span>}
-            </button>
-          ))}
-        </div>
+      <div className="flex gap-1 my-3 shrink-0">
+        {tabs.map((tab) => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={tabVariants({ active: activeTab === tab.id })}>
+            {tab.icon} {tab.label}
+            {tab.count != null && tab.count > 0 && <span className="text-muted-fg ml-0.5">{tab.count}</span>}
+          </button>
+        ))}
+      </div>
 
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
         {/* PIPELINE */}
         {activeTab === "pipeline" && (() => {
           const stageMap = computeStages(session.specs);
@@ -300,9 +301,9 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                       const evts = sa.runId ? sessionEvents.filter((e) => e.agentId === (run?.agentId ?? "")) : [];
                       const tools = evts.filter((e) => e.type === "tool.invoked").length;
                       const headerGlow: Record<string, string> = {
-                        running: "border-emerald-500/30 bg-emerald-950/10", completed: "border-border-base bg-surface/40",
-                        failed: "border-red-500/30 bg-red-950/10", waiting: "border-border-subtle bg-surface/30",
-                        stopped: "border-amber-500/20 bg-amber-950/10", skipped: "border-border-subtle bg-surface/20 opacity-60",
+                        running: "border-emerald-500/30 bg-emerald-500/5", completed: "border-border-base bg-surface/40",
+                        failed: "border-red-500/30 bg-red-500/5", waiting: "border-border-subtle bg-surface/30",
+                        stopped: "border-amber-500/20 bg-amber-500/5", skipped: "border-border-subtle bg-surface/20 opacity-60",
                       };
                       return (
                         <motion.div key={sa.agentName} layout initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
@@ -349,8 +350,8 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
 
         {/* ACTIVITY */}
         {activeTab === "activity" && (
-          <div>
-            <div className="flex gap-2 mb-2">
+          <div className="flex flex-col flex-1 min-h-0">
+            <div className="flex gap-2 mb-2 shrink-0">
               <select value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} className={cn(inputVariants({ size: "sm" }), "w-auto")}>
                 <option value="all">All agents</option>
                 {sessionRuns.map((r) => <option key={r.agentId} value={r.agentId}>{agentMap.get(r.agentId)?.name ?? r.agentId}</option>)}
@@ -360,19 +361,30 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
               </select>
               <span className="text-[10px] text-muted-fg self-center ml-auto">{filteredEvents.length} events</span>
             </div>
-            <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl overflow-hidden")}>
-              <div className="flex gap-3 py-1.5 px-3.5 border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
-                <span className="w-16">Time</span><span className="w-20">Agent</span><span className="w-32">Type</span><span className="flex-1">Payload</span>
-              </div>
-              <div className="max-h-80 overflow-y-auto">
-                {filteredEvents.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No events match filters</div> : filteredEvents.map((e) => (
-                  <div key={e.id} className="flex items-start gap-3 py-1.5 px-3.5 border-b border-border-subtle text-xs font-mono hover:bg-foreground/[0.02]">
-                    <span className="text-muted-fg shrink-0 w-16">{new Date(e.ts).toLocaleTimeString()}</span>
-                    <span className="text-muted-fg shrink-0 w-20 truncate">{agentMap.get(e.agentId)?.name ?? "?"}</span>
-                    <span className={cn("shrink-0 w-32", getEventColor(e.type))}>{e.type}</span>
-                    <span className="text-muted-fg truncate">{JSON.stringify((e as any).payload).slice(0, 100)}</span>
-                  </div>
-                ))}
+            <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
+              <div className="h-full overflow-y-auto">
+                {filteredEvents.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No events match filters</div> : (
+                  <table className="w-full">
+                    <thead className="sticky top-0 bg-surface z-10">
+                      <tr className="border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
+                        <th className="py-1.5 px-3.5 text-left w-20">Time</th>
+                        <th className="py-1.5 px-3.5 text-left w-24">Agent</th>
+                        <th className="py-1.5 px-3.5 text-left w-36">Type</th>
+                        <th className="py-1.5 px-3.5 text-left">Payload</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEvents.map((e) => (
+                        <tr key={e.id} className="border-b border-border-subtle text-xs font-mono hover:bg-foreground/[0.02]">
+                          <td className="py-1.5 px-3.5 text-muted-fg whitespace-nowrap">{new Date(e.ts).toLocaleTimeString()}</td>
+                          <td className="py-1.5 px-3.5 text-muted-fg truncate max-w-[100px]">{agentMap.get(e.agentId)?.name ?? "?"}</td>
+                          <td className={cn("py-1.5 px-3.5 whitespace-nowrap", getEventColor(e.type))}>{e.type}</td>
+                          <td className="py-1.5 px-3.5 text-muted-fg truncate max-w-[300px]">{JSON.stringify((e as any).payload).slice(0, 100)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
@@ -380,39 +392,61 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
 
         {/* TOOLS */}
         {activeTab === "tools" && (
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl overflow-hidden")}>
-            {toolsSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No tool calls yet</div> : <>
-              <div className="flex gap-3 py-1.5 px-3.5 border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
-                <span className="w-28">Tool</span><span className="w-16 text-right">Calls</span><span className="w-16 text-right">Errors</span><span className="flex-1">Used by</span>
-              </div>
-              {toolsSummary.map((t) => (
-                <div key={t.name} className="flex items-center gap-3 py-2 px-3.5 border-b border-border-subtle text-xs">
-                  <span className="text-orange-400 font-medium w-28">{t.name}</span>
-                  <span className="text-muted-fg w-16 text-right">{t.count}</span>
-                  <span className={cn("w-16 text-right", t.errors > 0 ? "text-red-400" : "text-muted-fg")}>{t.errors}</span>
-                  <div className="flex gap-1 flex-1 flex-wrap">{t.agents.map((aid) => <span key={aid} className={statusPillVariants({ status: "idle" })}>{agentMap.get(aid)?.name ?? "?"}</span>)}</div>
-                </div>
-              ))}
-            </>}
+          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
+            <div className="h-full overflow-y-auto">
+              {toolsSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No tool calls yet</div> : (
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-surface z-10">
+                    <tr className="border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
+                      <th className="py-1.5 px-3.5 text-left w-32">Tool</th>
+                      <th className="py-1.5 px-3.5 text-right w-20">Calls</th>
+                      <th className="py-1.5 px-3.5 text-right w-20">Errors</th>
+                      <th className="py-1.5 px-3.5 text-left">Used by</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {toolsSummary.map((t) => (
+                      <tr key={t.name} className="border-b border-border-subtle text-xs">
+                        <td className="py-2 px-3.5 text-orange-400 font-medium">{t.name}</td>
+                        <td className="py-2 px-3.5 text-muted-fg text-right">{t.count}</td>
+                        <td className={cn("py-2 px-3.5 text-right", t.errors > 0 ? "text-red-400" : "text-muted-fg")}>{t.errors}</td>
+                        <td className="py-2 px-3.5"><div className="flex gap-1 flex-wrap">{t.agents.map((aid) => <span key={aid} className={statusPillVariants({ status: "idle" })}>{agentMap.get(aid)?.name ?? "?"}</span>)}</div></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         )}
 
         {/* FILES */}
         {activeTab === "files" && (
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl overflow-hidden")}>
-            {fileSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No file changes detected</div> : <>
-              <div className="flex gap-3 py-1.5 px-3.5 border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
-                <span className="w-14">Action</span><span className="flex-1">Path</span><span className="w-20">Agent</span><span className="w-16">Time</span>
-              </div>
-              {fileSummary.map((f) => (
-                <div key={f.path} className="flex items-center gap-3 py-1.5 px-3.5 border-b border-border-subtle text-xs font-mono">
-                  <span className={cn("w-14", f.action === "create" ? "text-emerald-400" : f.action === "delete" ? "text-red-400" : "text-amber-400")}>{f.action}</span>
-                  <span className="text-cyan-400 truncate flex-1">{f.path}</span>
-                  <span className="text-muted-fg w-20 truncate">{agentMap.get(f.agent)?.name ?? "?"}</span>
-                  <span className="text-muted-fg w-16">{new Date(f.ts).toLocaleTimeString()}</span>
-                </div>
-              ))}
-            </>}
+          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl flex-1 min-h-0 overflow-hidden")}>
+            <div className="h-full overflow-y-auto">
+              {fileSummary.length === 0 ? <div className="text-xs text-muted-fg p-6 text-center">No file changes detected</div> : (
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-surface z-10">
+                    <tr className="border-b border-border-base text-[10px] font-semibold text-muted-fg uppercase tracking-wider">
+                      <th className="py-1.5 px-3.5 text-left w-20">Action</th>
+                      <th className="py-1.5 px-3.5 text-left">Path</th>
+                      <th className="py-1.5 px-3.5 text-left w-24">Agent</th>
+                      <th className="py-1.5 px-3.5 text-left w-24">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fileSummary.map((f) => (
+                      <tr key={f.path} className="border-b border-border-subtle text-xs font-mono">
+                        <td className={cn("py-1.5 px-3.5", f.action === "create" ? "text-emerald-400" : f.action === "delete" ? "text-red-400" : "text-amber-400")}>{f.action}</td>
+                        <td className="py-1.5 px-3.5 text-cyan-400 truncate max-w-[300px]">{f.path}</td>
+                        <td className="py-1.5 px-3.5 text-muted-fg truncate max-w-[100px]">{agentMap.get(f.agent)?.name ?? "?"}</td>
+                        <td className="py-1.5 px-3.5 text-muted-fg whitespace-nowrap">{new Date(f.ts).toLocaleTimeString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -424,9 +458,10 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
 // Main page
 // ---------------------------------------------------------------------------
 
-export default function SessionsPage() {
+function SessionsPageInner() {
+  const searchParams = useSearchParams();
   const { sessions, runs, agents, events } = useStore();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(searchParams.get("selected"));
   const [showCreate, setShowCreate] = useState(false);
   const [sessionPresets, setSessionPresets] = useState<SessionPreset[]>([]);
 
@@ -444,7 +479,7 @@ export default function SessionsPage() {
   }
 
   return (
-    <div className="flex gap-6 h-full p-6">
+    <div className="flex gap-6 h-full p-6 overflow-hidden">
       <div className="w-80 shrink-0 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -485,20 +520,19 @@ export default function SessionsPage() {
         )}
       </div>
 
-      <div className="flex-1 min-w-0">
-        {selectedSession ? (
+      {selectedSession && (
+        <div className="flex-1 min-w-0">
           <SessionDetail session={selectedSession} runs={runs} agents={agents} events={events} />
-        ) : (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center space-y-2">
-              <Users size={20} className="text-muted-fg/50 mx-auto" />
-              <div className="text-muted-fg text-sm">
-                {sessions.length > 0 ? "Select a session to inspect its agents and activity" : "Create a session to coordinate multiple AI agents"}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function SessionsPage() {
+  return (
+    <Suspense>
+      <SessionsPageInner />
+    </Suspense>
   );
 }

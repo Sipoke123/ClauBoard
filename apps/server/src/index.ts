@@ -50,6 +50,16 @@ let gateway: WsGateway;
 let orchestrator: SessionOrchestrator;
 let mockAutoLauncher: MockAutoLauncherType | null = null;
 
+// -- Debounced snapshot broadcast --
+let snapshotTimer: ReturnType<typeof setTimeout> | null = null;
+function scheduleSnapshot(): void {
+  if (snapshotTimer) return;
+  snapshotTimer = setTimeout(() => {
+    snapshotTimer = null;
+    gateway?.broadcastSnapshot();
+  }, 300);
+}
+
 // -- Shared emit function --
 function emit(event: AgentEvent): void {
   processor.process(event);
@@ -58,6 +68,8 @@ function emit(event: AgentEvent): void {
   // Notify orchestrator when runs finish
   if (event.type === "run.completed" || event.type === "run.failed" || event.type === "run.stopped") {
     orchestrator.onRunFinished(event.runId);
+    // Debounced snapshot broadcast for session state updates
+    scheduleSnapshot();
     // Notify mock auto-launcher so it can relaunch
     mockAutoLauncher?.onRunFinished(event.runId, event.agentId);
   }
@@ -121,6 +133,46 @@ if (adapterMode === "mock") {
   const { MockAutoLauncher } = await import("./adapter/mock-auto-launcher.js");
   mockAutoLauncher = new MockAutoLauncher(runLauncher, runManager, agentRegistry, emit);
   mockAutoLauncher.start();
+
+  // Create demo sessions using main mock agents (after they're registered)
+  if (sessionManager.all().length === 0) {
+    setTimeout(() => {
+      // Pipeline session: Alice & Bob do work → Linter reviews
+      const pipelineSpecs = [
+        { agentName: "Alice", prompt: "Refactor auth middleware and add rate limiting", dependsOn: [] as string[] },
+        { agentName: "Bob", prompt: "Migrate database schema and update API docs", dependsOn: [] as string[] },
+        { agentName: "Linter", prompt: "Run lint and type-check on all changes from Alice and Bob", dependsOn: ["Alice", "Bob"] },
+      ];
+      const pipelineId = `session-${Date.now()}`;
+      sessionManager.create(pipelineId, "Feature Pipeline", pipelineSpecs);
+      const pSession = sessionManager.get(pipelineId)!;
+      // Reuse existing mock agent IDs
+      for (const sa of pSession.agents!) {
+        const mockAgent = agentRegistry.findByName(sa.agentName);
+        if (mockAgent) sa.agentId = mockAgent.id;
+      }
+      orchestrator.launchInitialWave(pipelineId);
+      console.log("[mock] created demo Feature Pipeline session");
+
+      // Parallel session: Carlos, Diana, Eve work independently
+      setTimeout(() => {
+        const parallelSpecs = [
+          { agentName: "Carlos", prompt: "Set up Docker multi-stage build and CI pipeline", dependsOn: [] as string[] },
+          { agentName: "Diana", prompt: "Audit auth flow and check dependencies for CVEs", dependsOn: [] as string[] },
+          { agentName: "Eve", prompt: "Write getting started guide and update changelog", dependsOn: [] as string[] },
+        ];
+        const parallelId = `session-${Date.now()}`;
+        sessionManager.create(parallelId, "Infrastructure & Docs", parallelSpecs);
+        const parSession = sessionManager.get(parallelId)!;
+        for (const sa of parSession.agents!) {
+          const mockAgent = agentRegistry.findByName(sa.agentName);
+          if (mockAgent) sa.agentId = mockAgent.id;
+        }
+        orchestrator.launchInitialWave(parallelId);
+        console.log("[mock] created demo Infrastructure & Docs session");
+      }, 2000);
+    }, 2000); // wait for mock agents to be registered
+  }
 } else if (adapterMode === "claude") {
   const { ClaudeCodeAdapter } = await import("./adapter/claude-code-adapter.js");
   const adapter = new ClaudeCodeAdapter({

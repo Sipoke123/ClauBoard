@@ -17,7 +17,7 @@ export interface AgentEventBase {
 
 export interface AgentRegisteredEvent extends AgentEventBase {
   type: "agent.registered";
-  payload: { name: string };
+  payload: { name: string; role?: string };
 }
 
 export interface AgentHeartbeatEvent extends AgentEventBase {
@@ -142,6 +142,7 @@ export type AgentStatus = "idle" | "working" | "error" | "blocked" | "offline";
 export interface Agent {
   id: string;
   name: string;
+  role?: string;
   status: AgentStatus;
   currentRunId?: string;
   currentTaskId?: string;

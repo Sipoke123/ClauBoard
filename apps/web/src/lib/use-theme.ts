@@ -4,6 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 
 type Theme = "light" | "dark";
 
+function applyTheme(t: Theme) {
+  const d = document.documentElement;
+  d.classList.remove("dark", "light");
+  d.classList.add(t);
+}
+
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>("dark");
 
@@ -11,14 +17,14 @@ export function useTheme() {
     const saved = localStorage.getItem("agentflow-theme") as Theme | null;
     const initial = saved ?? "dark";
     setTheme(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
+    applyTheme(initial);
   }, []);
 
   const toggle = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
       localStorage.setItem("agentflow-theme", next);
-      document.documentElement.classList.toggle("dark", next === "dark");
+      applyTheme(next);
       return next;
     });
   }, []);

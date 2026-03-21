@@ -161,53 +161,47 @@ function AgentNodeCard({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-xl border backdrop-blur transition-all",
+        "relative w-full h-[120px] overflow-hidden rounded-xl border backdrop-blur transition-all",
         agentColors[displayStatus] ?? agentColors.offline,
         isDragging ? "border-2" : "hover:shadow-lg",
       )}
     >
-      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
 
-      <div className="relative p-3 space-y-2">
-        {/* Header */}
-        <div className="flex items-center gap-2">
+      <div className="relative p-3 h-full flex flex-col">
+        {/* Header: icon + name + status */}
+        <div className="flex items-center gap-2.5 shrink-0">
           <div
             className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
               iconColors[displayStatus] ?? iconColors.offline,
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4.5 w-4.5" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 mb-0.5">
+            <div className="flex items-center gap-1.5">
+              <h3 className="truncate text-xs font-semibold text-foreground leading-none">{agent.name}</h3>
               <span className={statusDotVariants({ status: displayStatus as any, size: "sm" })} />
-              <span className="text-[9px] uppercase tracking-wider text-muted-fg font-medium">
-                {statusLabels[displayStatus] ?? displayStatus}
-              </span>
             </div>
-            <h3 className="truncate text-xs font-semibold text-foreground">
-              {agent.name}
-            </h3>
+            {agent.role && <div className="text-[9px] text-muted-fg/50 uppercase tracking-wider leading-none mt-1">{agent.role}</div>}
           </div>
-
         </div>
 
-        {/* Task */}
-        <p className="text-[10px] leading-relaxed text-muted-fg truncate">
-          {run?.config?.prompt ?? run?.description ?? "No active task"}
-        </p>
-
-        {/* Live activity */}
-        {lastActivity && (agent.status === "working" || agent.status === "blocked") && (
-          <p className="text-[10px] font-mono text-muted-fg truncate">
-            {lastActivity}
+        {/* Middle: task + activity (fills remaining space) */}
+        <div className="flex-1 min-h-0 mt-2 space-y-0.5">
+          <p className="text-[10px] text-muted-fg truncate">
+            {run?.config?.prompt ?? run?.description ?? "Idle"}
           </p>
-        )}
+          {lastActivity && (agent.status === "working" || agent.status === "blocked") && (
+            <p className="text-[10px] font-mono text-muted-fg/60 truncate">
+              {lastActivity}
+            </p>
+          )}
+        </div>
 
-        {/* Footer metrics */}
-        <div className="flex items-center justify-between">
+        {/* Footer: metrics pinned to bottom */}
+        <div className="flex items-center justify-between shrink-0 pt-1">
           <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
               <span className="flex items-center gap-1 text-orange-400/60">
@@ -226,12 +220,9 @@ function AgentNodeCard({
             )}
           </div>
           {node.run && (
-            <div className="flex items-center gap-1 text-[9px] text-muted-fg">
-              <ArrowRight className="h-2.5 w-2.5" />
-              <span className="uppercase tracking-wider">
-                {run?.status ?? "idle"}
-              </span>
-            </div>
+            <span className="text-[9px] text-muted-fg uppercase tracking-wider">
+              {statusLabels[displayStatus] ?? displayStatus}
+            </span>
           )}
         </div>
       </div>
@@ -607,8 +598,8 @@ export function AgentWorkflowCanvas({
         }}
         className="relative flex-1 overflow-auto rounded-xl border border-border-subtle bg-background/40"
         style={{
-          backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-          backgroundSize: "24px 24px",
+          backgroundImage: `radial-gradient(circle, var(--grid-dot) 1px, transparent 1px)`,
+          backgroundSize: "20px 20px",
         }}
       >
         <div
