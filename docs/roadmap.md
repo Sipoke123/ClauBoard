@@ -121,7 +121,7 @@
 - [ ] Cloud deployment (Docker, fly.io)
 - [x] Notification engine: built-in rules (run failed, agent blocked, tool errors, long-running), WS push, UI alert bell with unread badge
 - [x] Event archival (move old events to timestamped archive files) + compaction (remove verbose events for terminal runs) + auto-compact threshold
-- [ ] Plugin system for custom event types
+- [x] Plugin system: PluginRegistry with custom event types, notification rules, lifecycle hooks. Built-in metrics plugin
 
 ## Risks
 

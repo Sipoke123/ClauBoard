@@ -142,6 +142,7 @@ export const eventTypeColor: Record<string, string> = {
   "tool.": "text-amber-400",
   "terminal.": "text-muted-fg",
   "file.": "text-cyan-400",
+  "plugin.": "text-pink-400",
 };
 
 export function getEventColor(type: string): string {

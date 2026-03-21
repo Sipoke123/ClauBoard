@@ -21,8 +21,11 @@ import { sessionsRouter } from "./routes/sessions.js";
 import { presetsRouter } from "./routes/presets.js";
 import { adminRouter } from "./routes/admin.js";
 import { notificationsRouter } from "./routes/notifications.js";
+import { pluginsRouter } from "./routes/plugins.js";
 import { EventArchiver } from "./domain/event-archiver.js";
 import { NotificationEngine } from "./domain/notification-engine.js";
+import { PluginRegistry } from "./domain/plugin-registry.js";
+import { metricsPlugin } from "./plugins/metrics-plugin.js";
 import type { AgentEvent } from "@repo/shared";
 import type { MockAutoLauncher as MockAutoLauncherType } from "./adapter/mock-auto-launcher.js";
 
@@ -52,6 +55,7 @@ let gateway: WsGateway;
 let orchestrator: SessionOrchestrator;
 let mockAutoLauncher: MockAutoLauncherType | null = null;
 let notificationEngine: NotificationEngine | null = null;
+let pluginRegistry: PluginRegistry | null = null;
 
 // -- Debounced snapshot broadcast --
 let snapshotTimer: ReturnType<typeof setTimeout> | null = null;
@@ -68,6 +72,7 @@ function emit(event: AgentEvent): void {
   processor.process(event);
   gateway.broadcast(event);
   notificationEngine?.evaluate(event);
+  pluginRegistry?.onEvent(event);
 
   // Notify orchestrator when runs finish
   if (event.type === "run.completed" || event.type === "run.failed" || event.type === "run.stopped") {
@@ -160,6 +165,11 @@ notificationEngine.onAlert((alert) => {
   }
 });
 app.use("/api", notificationsRouter(notificationEngine));
+
+// -- Plugins --
+pluginRegistry = new PluginRegistry(emit);
+pluginRegistry.register(metricsPlugin, { intervalMs: 60000 });
+app.use("/api", pluginsRouter(pluginRegistry));
 
 // -- Mock auto-launcher --
 if (adapterMode === "mock") {

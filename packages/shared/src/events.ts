@@ -105,6 +105,18 @@ export interface FileChangedEvent extends AgentEventBase {
   payload: { path: string; action: "create" | "edit" | "delete" };
 }
 
+// -- Custom / plugin events -------------------------------------------------
+
+/**
+ * Generic event for plugin-defined types.
+ * Convention: type = "plugin.<pluginName>.<action>"
+ * Payload is arbitrary JSON — plugins define their own schema.
+ */
+export interface PluginEvent extends AgentEventBase {
+  type: `plugin.${string}`;
+  payload: Record<string, unknown>;
+}
+
 // -- Discriminated union ----------------------------------------------------
 
 export type AgentEvent =
@@ -123,7 +135,8 @@ export type AgentEvent =
   | ToolResultEvent
   | ToolErrorEvent
   | TerminalOutputEvent
-  | FileChangedEvent;
+  | FileChangedEvent
+  | PluginEvent;
 
 export type AgentEventType = AgentEvent["type"];
 

@@ -88,8 +88,8 @@ function Features() {
     },
     {
       icon: Database,
-      title: "Built for Scale",
-      description: "Start with simple file storage, switch to SQLite for production. Archive old events, auto-compact, zero downtime.",
+      title: "Extensible by Design",
+      description: "Plugin system for custom events and alerts. Dual storage (JSONL or SQLite), event archival, auto-compact. Build what you need.",
     },
   ];
 
@@ -401,6 +401,7 @@ function WorksToday() {
     "SQLite or JSONL storage — switch with one flag, no migration needed",
     "Light and dark themes with full keyboard accessibility",
     "Try instantly with 6 mock agents — no Claude CLI required",
+    "Plugin system — add custom event types, alerts, and hooks",
     "Export all agent data as JSON for analysis",
   ];
 

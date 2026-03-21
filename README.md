@@ -21,6 +21,7 @@ AgentFlow gives you a real-time dashboard for supervising Claude Code agents. In
 - **Failover** — if an upstream agent fails, dependents still launch with a warning instead of being blocked
 - **Notifications** — built-in alert rules (run failed, agent blocked, tool errors, long-running). Real-time push via WebSocket with bell icon and unread badge
 - **Event archival** — archive old events to timestamped files, compact verbose events for completed runs, auto-compact threshold
+- **Plugin system** — extend AgentFlow with custom event types, notification rules, and lifecycle hooks. Built-in metrics plugin included
 - **Dual storage** — JSONL (default) or SQLite (`--storage sqlite`) with WAL mode and indexed queries
 - **Virtual scrolling** — all tables and lists handle 50,000+ rows without lag via `@tanstack/react-virtual`
 
@@ -161,6 +162,37 @@ curl -X POST http://localhost:3001/api/admin/compact
 
 Auto-compact: set `--auto-compact 10000` to automatically compact when event count exceeds the threshold.
 
+### Plugins
+
+Extend AgentFlow with custom event types, notification rules, and hooks:
+
+```ts
+import type { PluginDefinition } from "./domain/plugin-registry.js";
+
+const myPlugin: PluginDefinition = {
+  id: "cost-tracker",
+  name: "Cost Tracker",
+  version: "1.0.0",
+  eventTypes: [
+    { type: "plugin.cost.update", label: "Cost Update", color: "text-pink-400" },
+  ],
+  onEvent(event) {
+    if (event.type === "run.completed") {
+      // Track costs per agent
+    }
+  },
+  onRegister(ctx) {
+    // Emit custom events via ctx.emit()
+  },
+};
+```
+
+API:
+- `GET /api/plugins` — list registered plugins
+- `GET /api/plugins/event-types` — all custom event types
+
+The built-in **metrics plugin** tracks tool call rates, error rates, and run durations, emitting `plugin.metrics.snapshot` every 60 seconds.
+
 ## Theme
 
 Toggle between light and dark themes using the switch in the sidebar or on the landing page footer. The palette uses Claude-inspired warm amber accents throughout. Your preference is saved to localStorage and applied instantly on page load (no flash).
@@ -296,6 +328,8 @@ See [docs/architecture.md](docs/architecture.md) for the full system design.
 - Alert bell in office header with severity colors and unread badge
 - Event archival (move old events to archive files) and compaction (remove verbose events)
 - Auto-compact threshold for hands-off maintenance
+- Plugin system with custom event types, notification rules, and lifecycle hooks
+- Built-in metrics plugin (tool calls, errors, run durations)
 - Accessible: keyboard navigation on all interactive elements, aria-labels, focus-visible states
 - Theme-safe: all colors use CSS tokens, grid dots and gradients adapt to light/dark
 
