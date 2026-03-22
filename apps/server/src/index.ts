@@ -265,16 +265,37 @@ if (adapterMode === "mock") {
 // -- Reverse proxy to Next.js in Docker (production) --
 if (process.env.NODE_ENV === "production") {
   const http = await import("node:http");
-  const webPort = process.env.WEB_PORT ?? "3000";
+  const webPort = Number(process.env.WEB_PORT ?? "3000");
+
+  // Wait for Next.js to be ready before accepting proxy requests
+  let nextReady = false;
+  const checkNextReady = () => {
+    http.get({ hostname: "127.0.0.1", port: webPort, path: "/", timeout: 2000 }, (res) => {
+      nextReady = true;
+      res.resume();
+      console.log(`[server] Next.js is ready on :${webPort}`);
+    }).on("error", () => {
+      setTimeout(checkNextReady, 500);
+    });
+  };
+  setTimeout(checkNextReady, 1000);
+
   app.use((req, res) => {
+    if (!nextReady) {
+      res.status(503).end("Starting up, please refresh in a few seconds...");
+      return;
+    }
+    const headers = { ...req.headers, host: `127.0.0.1:${webPort}` };
     const proxyReq = http.request(
-      { hostname: "127.0.0.1", port: Number(webPort), path: req.url, method: req.method, headers: req.headers },
+      { hostname: "127.0.0.1", port: webPort, path: req.url, method: req.method, headers },
       (proxyRes) => {
         res.writeHead(proxyRes.statusCode ?? 200, proxyRes.headers);
         proxyRes.pipe(res);
       },
     );
-    proxyReq.on("error", () => res.status(502).end("Next.js unavailable"));
+    proxyReq.on("error", () => {
+      if (!res.headersSent) res.status(502).end("Next.js unavailable");
+    });
     req.pipe(proxyReq);
   });
   console.log(`[server] proxying non-API requests to Next.js on :${webPort}`);
