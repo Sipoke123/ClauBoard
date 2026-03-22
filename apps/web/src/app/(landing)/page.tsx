@@ -14,7 +14,6 @@ import {
   CheckIcon,
   CommandLineIcon,
   ArrowsRightLeftIcon,
-  BoltIcon,
   CircleStackIcon,
   WifiIcon,
   ServerIcon,
@@ -480,15 +479,14 @@ function Footer() {
             <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-emerald-600/5 blur-2xl" />
           </div>
 
-          {/* Quick Links */}
+          {/* Product */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Quick Links</h3>
+            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Product</h3>
             <nav className="space-y-2.5 text-sm">
-              <Link href="/office" className="block text-muted-fg hover:text-foreground transition-colors">Dashboard</Link>
-              <Link href="/sessions" className="block text-muted-fg hover:text-foreground transition-colors">Sessions</Link>
-              <Link href="/runs" className="block text-muted-fg hover:text-foreground transition-colors">Runs</Link>
-              <Link href="/tasks" className="block text-muted-fg hover:text-foreground transition-colors">Tasks</Link>
-              <Link href="/timeline" className="block text-muted-fg hover:text-foreground transition-colors">Timeline</Link>
+              <Link href="/#features" className="block text-muted-fg hover:text-foreground transition-colors">Features</Link>
+              <Link href="/#architecture" className="block text-muted-fg hover:text-foreground transition-colors">Architecture</Link>
+              <Link href="/#getting-started" className="block text-muted-fg hover:text-foreground transition-colors">Get Started</Link>
+              <Link href="/docs" className="block text-muted-fg hover:text-foreground transition-colors">Documentation</Link>
             </nav>
           </div>
 
@@ -496,34 +494,20 @@ function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Resources</h3>
             <nav className="space-y-2.5 text-sm">
-              <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">Claude Code Docs</a>
               <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">GitHub Repository</a>
-              <Link href="#features" className="block text-muted-fg hover:text-foreground transition-colors">Features</Link>
-              <Link href="#architecture" className="block text-muted-fg hover:text-foreground transition-colors">Architecture</Link>
-              <Link href="#getting-started" className="block text-muted-fg hover:text-foreground transition-colors">Get Started</Link>
+              <a href="https://github.com/Sipoke123/AgentFlow/issues" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">Report Issues</a>
+              <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">Claude Code Docs</a>
+              <a href="https://github.com/Sipoke123/AgentFlow/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">AGPL-3.0 License</a>
             </nav>
           </div>
 
-          {/* Follow & Social */}
+          {/* Connect */}
           <div className="relative">
             <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Connect</h3>
             <div className="mb-6 flex space-x-3">
-              {[
-                { icon: GlobeAltIcon, label: "Website", href: "#" },
-                { icon: CodeBracketIcon, label: "GitHub", href: "https://github.com/Sipoke123/AgentFlow" },
-                { icon: BoltIcon, label: "API", href: "https://docs.anthropic.com/en/docs/claude-code" },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={social.label}
-                  className="w-9 h-9 rounded-full border border-border-base bg-surface flex items-center justify-center text-muted-fg hover:text-foreground hover:border-foreground/20 hover:bg-foreground/5 transition-all"
-                >
-                  <social.icon className="h-4 w-4" />
-                </a>
-              ))}
+              <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" title="GitHub" className="w-9 h-9 rounded-full border border-border-base bg-surface flex items-center justify-center text-muted-fg hover:text-foreground hover:border-foreground/20 hover:bg-foreground/5 transition-all">
+                <CodeBracketIcon className="h-4 w-4" />
+              </a>
             </div>
             <ThemeToggle />
           </div>
