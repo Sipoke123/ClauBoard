@@ -55,8 +55,6 @@ Real-time operational visibility into multi-agent Claude Code sessions, replacin
 
 ## Non-goals (initial)
 
-- Multi-tenant SaaS deployment
 - Agent-to-agent direct communication UI
-- Heavy 3D office with physics/animation
 - Built-in code editor or IDE replacement
 - Production monitoring / alerting / PagerDuty integration

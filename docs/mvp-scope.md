@@ -37,11 +37,10 @@
 
 ## Post-MVP
 
-- 3D office view (Three.js / R3F) with agent avatars
 - Agent replay: step through a completed run's events
-- Persistent storage (SQLite or Postgres)
-- Claude Code adapter (real agent integration)
-- Multi-agent collaboration / handoff visualization
+- Multi-provider support (Cursor, Copilot, Devin)
+- Authentication and multi-user support
+- Webhook integrations (Slack, Discord)
 - Notification / alert rules
 - Authentication & multi-user
 - Cloud deployment (Docker, fly.io)
