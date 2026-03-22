@@ -3,7 +3,7 @@
 // See docs/backend-architecture.md for route table
 // ---------------------------------------------------------------------------
 
-import type { Agent, AgentEvent, AgentSpec, Run, Session, Task } from "./events";
+import type { Agent, AgentEvent, AgentSpec, Run, Session, Task } from "./events.js";
 
 // -- Health -----------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-import type { AgentSpec } from "./events";
+import type { AgentSpec } from "./events.js";
 
 // ---------------------------------------------------------------------------
 // Dependency graph validation and topological sorting

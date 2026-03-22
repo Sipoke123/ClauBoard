@@ -3,7 +3,7 @@
 // See docs/architecture.md for WS protocol
 // ---------------------------------------------------------------------------
 
-import type { Agent, AgentEvent, Run, Session, Task } from "./events";
+import type { Agent, AgentEvent, Run, Session, Task } from "./events.js";
 
 // -- Server → Client --------------------------------------------------------
 
