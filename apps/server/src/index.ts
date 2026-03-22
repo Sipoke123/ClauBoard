@@ -1,3 +1,6 @@
+import { setMaxListeners } from "node:events";
+setMaxListeners(50);
+
 import express from "express";
 import cors from "cors";
 import { config, getAdapterMode } from "./config.js";
