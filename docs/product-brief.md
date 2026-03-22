@@ -4,7 +4,7 @@
 
 ## One-liner
 
-**AgentFlow** — visual control plane for AI coding agents: operators see runs, tasks, tools, terminals, and events in one place.
+**ClauBoard** — visual control plane for AI coding agents: operators see runs, tasks, tools, terminals, and events in one place.
 
 ## Problem
 

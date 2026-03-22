@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# AgentFlow — multi-stage Docker build
+# ClauBoard — multi-stage Docker build
 # Stage 1: install deps + build
 # Stage 2: production image (server + pre-built Next.js)
 # ---------------------------------------------------------------------------

@@ -20,11 +20,11 @@ export class SqliteEventStore {
 
   /**
    * Initialize SQLite persistence.
-   * @param dataDir - directory for agentflow.db (created if missing)
+   * @param dataDir - directory for clauboard.db (created if missing)
    */
   initPersistence(dataDir: string): void {
     fs.mkdirSync(dataDir, { recursive: true });
-    const dbPath = path.join(dataDir, "agentflow.db");
+    const dbPath = path.join(dataDir, "clauboard.db");
 
     this.db = new Database(dbPath);
     this.db.pragma("journal_mode = WAL");

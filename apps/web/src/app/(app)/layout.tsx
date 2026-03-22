@@ -48,8 +48,8 @@ export default function AppLayout({
         )}>
           <div className="flex items-center justify-between">
             <Link href="/" className={cn("flex items-center gap-2.5 px-1 group", collapsed && "justify-center px-0")}>
-              <img src="/logo.svg" alt="AgentFlow" className="w-6 h-6 shrink-0" />
-              {!collapsed && <h1 className="text-sm font-semibold tracking-tight text-foreground group-hover:opacity-80 transition-colors">AgentFlow</h1>}
+              <img src="/logo.svg" alt="ClauBoard" className="w-6 h-6 shrink-0" />
+              {!collapsed && <h1 className="text-sm font-semibold tracking-tight text-foreground group-hover:opacity-80 transition-colors">ClauBoard</h1>}
             </Link>
             {!collapsed && (
               <button onClick={() => setCollapsed(true)} className="p-1 rounded-md text-muted-fg hover:text-foreground hover:bg-foreground/[0.06] transition-colors" title="Collapse sidebar">

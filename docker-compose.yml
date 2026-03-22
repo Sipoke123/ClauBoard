@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# AgentFlow — Docker Compose
+# ClauBoard — Docker Compose
 # ---------------------------------------------------------------------------
 #
 # Usage:
@@ -15,7 +15,7 @@
 # ---------------------------------------------------------------------------
 
 services:
-  agentflow:
+  clauboard:
     build: .
     ports:
       - "3000:3000"
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
 
   # Mock mode — starts with 6 demo agents
-  agentflow-mock:
+  clauboard-mock:
     build: .
     profiles:
       - mock

@@ -221,7 +221,7 @@ function OpenSource() {
       icon: CodeBracketIcon,
       title: "Community",
       description: "AGPL-3.0 licensed. Fork it, extend it, contribute back. Built in the open for the developer community.",
-      detail: "github.com/Sipoke123/AgentFlow",
+      detail: "github.com/Sipoke123/ClauBoard",
     },
   ];
 
@@ -256,7 +256,7 @@ function OpenSource() {
       </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10 flex items-center justify-center gap-3 flex-wrap">
         <a
-          href="https://github.com/Sipoke123/AgentFlow"
+          href="https://github.com/Sipoke123/ClauBoard"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all"
@@ -351,8 +351,8 @@ function GettingStarted() {
           <div className="space-y-4">
             <div>
               <span className="text-gray-400 dark:text-gray-500">&#35; Clone and install</span>
-              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">git clone https://github.com/Sipoke123/AgentFlow.git</span></div>
-              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">cd AgentFlow && npm install</span></div>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">git clone https://github.com/Sipoke123/ClauBoard.git</span></div>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">cd ClauBoard && npm install</span></div>
             </div>
             <div>
               <span className="text-gray-400 dark:text-gray-500">&#35; Quick start with demo agents</span>

@@ -159,7 +159,7 @@ export function HeroSection() {
 const menuItems = [
     { name: 'Features', href: '/#features' },
     { name: 'Docs', href: '/docs' },
-    { name: 'Community', href: 'https://github.com/Sipoke123/AgentFlow', external: true },
+    { name: 'Community', href: 'https://github.com/Sipoke123/ClauBoard', external: true },
     { name: 'Get Started', href: '/#getting-started' },
 ]
 
@@ -188,8 +188,8 @@ export const HeroHeader = () => {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center gap-2.5">
-                                <img src="/logo.svg" alt="AgentFlow" className="w-6 h-6" />
-                                <span className="text-sm font-semibold tracking-tight text-foreground">AgentFlow</span>
+                                <img src="/logo.svg" alt="ClauBoard" className="w-6 h-6" />
+                                <span className="text-sm font-semibold tracking-tight text-foreground">ClauBoard</span>
                             </Link>
 
                             <button

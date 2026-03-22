@@ -11,7 +11,7 @@ const sections = [
     id: "visual-workspace",
     icon: BuildingOffice2Icon,
     title: "Visual Workspace",
-    description: "The heart of AgentFlow — a draggable canvas where every agent is a card you can move, inspect, and control.",
+    description: "The heart of ClauBoard — a draggable canvas where every agent is a card you can move, inspect, and control.",
     details: [
       "Drag agents freely on the canvas to organize your workspace",
       "Connection lines between agents show dependencies and data flow",
@@ -107,7 +107,7 @@ const sections = [
     id: "plugins",
     icon: PuzzlePieceIcon,
     title: "Plugin System",
-    description: "Extend AgentFlow with custom event types, notification rules, and processing hooks.",
+    description: "Extend ClauBoard with custom event types, notification rules, and processing hooks.",
     details: [
       "Plugins define: name, version, custom event types, notification rules, and lifecycle hooks",
       "onRegister: initialize plugin state when loaded",
@@ -167,11 +167,11 @@ export default function DocsPage() {
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Documentation</h1>
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-            Everything you need to know about AgentFlow — from first launch to production deployment.
+            Everything you need to know about ClauBoard — from first launch to production deployment.
           </p>
           <p className="mt-3 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
-            AgentFlow is free and open-source under the AGPL-3.0 License.{" "}
-            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:opacity-80 transition-opacity">View on GitHub</a>
+            ClauBoard is free and open-source under the AGPL-3.0 License.{" "}
+            <a href="https://github.com/Sipoke123/ClauBoard" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:opacity-80 transition-opacity">View on GitHub</a>
           </p>
         </div>
 
@@ -225,8 +225,8 @@ export default function DocsPage() {
               <div className="space-y-4">
                 <div>
                   <span className="text-gray-400 dark:text-gray-500">&#35; Clone and install</span>
-                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">git clone https://github.com/Sipoke123/AgentFlow.git</span></div>
-                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">cd AgentFlow && npm install</span></div>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">git clone https://github.com/Sipoke123/ClauBoard.git</span></div>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">cd ClauBoard && npm install</span></div>
                 </div>
                 <div>
                   <span className="text-gray-400 dark:text-gray-500">&#35; Quick start with demo agents</span>

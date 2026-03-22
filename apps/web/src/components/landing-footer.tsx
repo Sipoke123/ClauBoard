@@ -51,9 +51,9 @@ export function LandingFooter() {
 
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border-base pt-8 text-center md:flex-row">
-          <span className="text-sm text-muted-fg/50">&copy; 2026 AgentFlow. Free &amp; Open Source.</span>
+          <span className="text-sm text-muted-fg/50">&copy; 2026 ClauBoard. Free &amp; Open Source.</span>
           <nav className="flex gap-4 text-sm text-muted-fg/50">
-            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="hover:text-muted-fg transition-colors">GitHub</a>
+            <a href="https://github.com/Sipoke123/ClauBoard" target="_blank" rel="noopener noreferrer" className="hover:text-muted-fg transition-colors">GitHub</a>
             <span>AGPL-3.0</span>
           </nav>
         </div>

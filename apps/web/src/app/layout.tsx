@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AgentFlow",
+  title: "ClauBoard",
   description: "Visual control plane for AI coding agents",
 };
 
@@ -16,7 +16,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('agentflow-theme');var d=document.documentElement;if(t==='light'){d.className='light'}else{d.className='dark'}}catch(e){document.documentElement.className='dark'}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('clauboard-theme');var d=document.documentElement;if(t==='light'){d.className='light'}else{d.className='dark'}}catch(e){document.documentElement.className='dark'}})()`,
           }}
         />
       </head>

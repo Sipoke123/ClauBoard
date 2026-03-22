@@ -1,4 +1,4 @@
-# AgentFlow
+# ClauBoard
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-emerald.svg)](./LICENSE)
 
@@ -6,7 +6,7 @@ A **free, open-source** visual control plane for [Claude Code](https://docs.anth
 
 ## What it does
 
-AgentFlow gives you a real-time dashboard for supervising Claude Code agents. Instead of switching between terminals and parsing raw output, you get:
+ClauBoard gives you a real-time dashboard for supervising Claude Code agents. Instead of switching between terminals and parsing raw output, you get:
 
 - **Workflow canvas** — draggable agent nodes with live connection lines showing data flow and dependencies. Toggle to grid view
 - **Agent roles** — each agent shows its role (Frontend, Backend, QA, DevOps, Security, Docs) on the card
@@ -23,7 +23,7 @@ AgentFlow gives you a real-time dashboard for supervising Claude Code agents. In
 - **Failover** — if an upstream agent fails, dependents still launch with a warning instead of being blocked
 - **Notifications** — built-in alert rules (run failed, agent blocked, tool errors, long-running). Real-time push via WebSocket with bell icon and unread badge
 - **Event archival** — archive old events to timestamped files, compact verbose events for completed runs, auto-compact threshold
-- **Plugin system** — extend AgentFlow with custom event types, notification rules, and lifecycle hooks. Built-in metrics plugin included
+- **Plugin system** — extend ClauBoard with custom event types, notification rules, and lifecycle hooks. Built-in metrics plugin included
 - **Docker ready** — multi-stage Dockerfile + docker-compose with mock profile. One command to deploy
 - **Dual storage** — JSONL (default) or SQLite (`--storage sqlite`) with WAL mode and indexed queries
 - **Virtual scrolling** — all tables and lists handle 50,000+ rows without lag via `@tanstack/react-virtual`
@@ -45,8 +45,8 @@ Mock mode works without the Claude CLI.
 ## Quick start
 
 ```bash
-git clone https://github.com/Sipoke123/AgentFlow.git
-cd AgentFlow
+git clone https://github.com/Sipoke123/ClauBoard.git
+cd ClauBoard
 npm install
 ```
 
@@ -167,7 +167,7 @@ Auto-compact: set `--auto-compact 10000` to automatically compact when event cou
 
 ### Plugins
 
-Extend AgentFlow with custom event types, notification rules, and hooks:
+Extend ClauBoard with custom event types, notification rules, and hooks:
 
 ```ts
 import type { PluginDefinition } from "./domain/plugin-registry.js";
@@ -235,7 +235,7 @@ The UI status bar shows a shield icon indicating whether restrictions are active
 
 **JSONL (default)** — events appended to `apps/server/data/events.jsonl`. Simple, human-readable, easy to debug.
 
-**SQLite** — events stored in `apps/server/data/agentflow.db`. WAL mode, indexed queries, better for production and large datasets.
+**SQLite** — events stored in `apps/server/data/clauboard.db`. WAL mode, indexed queries, better for production and large datasets.
 
 ```bash
 # Use SQLite
@@ -252,7 +252,7 @@ On server restart, events are replayed from the chosen backend to rebuild state.
 rm apps/server/data/events.jsonl
 
 # SQLite
-rm apps/server/data/agentflow.db
+rm apps/server/data/clauboard.db
 ```
 
 ## Running the server and UI separately
@@ -434,4 +434,4 @@ AGPL-3.0 License — see [LICENSE](./LICENSE) for details.
 
 For commercial licensing (proprietary use without AGPL obligations), contact us via GitHub.
 
-Copyright (c) 2026 AgentFlow
+Copyright (c) 2026 ClauBoard

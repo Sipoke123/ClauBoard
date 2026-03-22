@@ -1,6 +1,6 @@
 # Demo Guide
 
-How to run a smooth, repeatable demo of the AgentFlow control plane.
+How to run a smooth, repeatable demo of the ClauBoard control plane.
 
 ## Prerequisites
 
