@@ -347,7 +347,7 @@ function GettingStarted() {
           <span className="w-3 h-3 rounded-full bg-green-500/80" />
           <span className="ml-2 text-sm text-gray-400 dark:text-gray-500 font-mono">terminal</span>
         </div>
-        <div className="p-6 font-mono text-sm">
+        <div className="p-6 font-mono text-sm break-all">
           <div className="space-y-4">
             <div>
               <span className="text-gray-400 dark:text-gray-500">&#35; Clone and install</span>

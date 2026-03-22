@@ -134,8 +134,8 @@ export function HeroSection() {
                                 <span className="text-[10px] uppercase tracking-wider text-muted-fg">WebSocket</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">1 cmd</span>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">To Deploy</span>
+                                <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">Docker</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Ready</span>
                             </div>
                         </div>
                     </div>
@@ -219,6 +219,9 @@ export const HeroHeader = () => {
                                     </li>
                                 ))}
                             </ul>
+                            <div className="mt-6 flex justify-center">
+                                <ThemeToggle />
+                            </div>
                         </div>
                     </div>
                 </div>
