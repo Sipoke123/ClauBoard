@@ -18,7 +18,12 @@ export default function TimelinePage() {
   const agentMap = new Map(agents.map((a) => [a.id, a.name]));
   const typeGroups = ["all", "agent.", "run.", "task.", "tool.", "terminal.", "file."];
 
-  let filtered = [...events].reverse();
+  const seen = new Set<string>();
+  let filtered = [...events].reverse().filter((e) => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    return true;
+  });
   if (typeFilter !== "all") filtered = filtered.filter((e) => e.type.startsWith(typeFilter));
   if (agentFilter !== "all") filtered = filtered.filter((e) => e.agentId === agentFilter);
 
