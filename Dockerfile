@@ -13,7 +13,7 @@ FROM base AS deps
 COPY package.json package-lock.json turbo.json tsconfig.base.json ./
 COPY apps/server/package.json apps/server/tsconfig.json apps/server/
 COPY apps/web/package.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/
-COPY packages/shared/package.json packages/shared/tsconfig.json packages/shared/
+COPY packages/shared/package.json packages/shared/tsconfig.json packages/shared/tsconfig.build.json packages/shared/
 RUN npm ci
 
 # -- Build all packages --
@@ -21,6 +21,7 @@ FROM deps AS build
 COPY packages/shared/src packages/shared/src
 COPY apps/server/src apps/server/src
 COPY apps/web/src apps/web/src
+COPY apps/web/public apps/web/public
 COPY apps/web/next-env.d.ts apps/web/
 
 # Build shared types, server, and Next.js
@@ -48,6 +49,7 @@ RUN npm ci --omit=dev
 COPY --from=build /app/apps/server/dist apps/server/dist
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static apps/web/.next/static
+COPY --from=build /app/apps/web/public apps/web/public
 COPY --from=build /app/packages/shared packages/shared
 
 # Data directory for persistence

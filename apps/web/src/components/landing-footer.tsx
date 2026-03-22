@@ -44,7 +44,7 @@ export function LandingFooter() {
               Get notified about new features, agent patterns, and product updates.
             </p>
             {status === "success" ? (
-              <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Thanks! You're subscribed.</p>
+              <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Thanks! You&apos;re subscribed.</p>
             ) : (
               <form className="relative" onSubmit={handleSubscribe}>
                 <input

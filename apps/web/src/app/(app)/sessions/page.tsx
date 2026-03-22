@@ -301,7 +301,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
   const agentMap = new Map(agents.map((a) => [a.id, a]));
   const sessionAgents = session.agents ?? [];
   const sessionRuns = session.runIds.map((id) => runs.find((r) => r.id === id)).filter(Boolean) as Run[];
-  const sessionAgentIds = new Set(sessionRuns.map((r) => r.agentId));
+  const sessionAgentIds = useMemo(() => new Set(sessionRuns.map((r) => r.agentId)), [sessionRuns]);
 
   const sessionEvents = useMemo(() => events.filter((e) => sessionAgentIds.has(e.agentId)).sort((a, b) => b.ts - a.ts), [events, sessionAgentIds]);
   const filteredEvents = useMemo(() => {

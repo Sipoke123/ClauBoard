@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
+
+function getTheme(): Theme {
+  if (typeof window === "undefined") return "dark";
+  return (localStorage.getItem("clauboard-theme") as Theme) ?? "dark";
+}
 
 function applyTheme(t: Theme) {
   const d = document.documentElement;
@@ -11,14 +16,12 @@ function applyTheme(t: Theme) {
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>(getTheme);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("clauboard-theme") as Theme | null;
-    const initial = saved ?? "dark";
-    setTheme(initial);
-    applyTheme(initial);
-  }, []);
+  // Apply on mount (client only)
+  if (typeof window !== "undefined") {
+    applyTheme(theme);
+  }
 
   const toggle = useCallback(() => {
     setTheme((prev) => {
