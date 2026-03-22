@@ -121,20 +121,20 @@ export function HeroSection() {
                         </div>
                         <div className="group-hover:blur-sm mx-auto mt-12 grid max-w-3xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-foreground">15</span>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Event Types</span>
+                                <span className="text-2xl sm:text-3xl font-bold text-foreground">15</span>
+                                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-fg">Event Types</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-foreground">50k+</span>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Events / No Lag</span>
+                                <span className="text-2xl sm:text-3xl font-bold text-foreground">50k+</span>
+                                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-fg">Events / No Lag</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-foreground">Live</span>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">WebSocket</span>
+                                <span className="text-2xl sm:text-3xl font-bold text-foreground">Live</span>
+                                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-fg">WebSocket</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">Docker</span>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-fg">Ready</span>
+                                <span className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">Docker</span>
+                                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-fg">Ready</span>
                             </div>
                         </div>
                     </div>
