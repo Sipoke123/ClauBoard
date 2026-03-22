@@ -17,11 +17,10 @@ import {
   GlobeAltIcon,
   CodeBracketIcon,
   CubeIcon,
-  PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { cn } from "../../lib/cn";
 import { HeroSection } from "../../components/hero-section";
-import { ThemeToggle } from "../../components/ui/theme-toggle";
+import { LandingFooter } from "../../components/landing-footer";
 
 // ---------------------------------------------------------------------------
 // Animation helpers
@@ -125,10 +124,10 @@ function Features() {
     <section id="features" className="py-16 md:py-32">
       <div className="mx-auto w-full max-w-6xl space-y-8 px-6">
         <motion.div {...blurIn} className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl lg:text-5xl xl:font-extrabold">
+          <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">
             Everything you need
           </h2>
-          <p className="text-muted-fg mt-4 text-sm tracking-wide text-balance md:text-base">
+          <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">
             From launching a single agent to orchestrating a team — one tool does it all.
           </p>
         </motion.div>
@@ -262,7 +261,7 @@ function OpenSource() {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all"
         >
-          <CodeBracketIcon className="w-4 h-4" /> View on GitHub
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> View on GitHub
         </a>
       </motion.div>
     </section>
@@ -341,32 +340,42 @@ function GettingStarted() {
         <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Get started in 2 minutes</h2>
         <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Clone, install, run. That is it.</p>
       </motion.div>
-      <motion.div {...stagger} className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-3">
-        <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">Quick Start</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">No Claude CLI needed. Six demo agents show you everything.</p>
-          <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
-            <div><span className="text-gray-400 dark:text-gray-500">$</span> npm install</div>
-            <div><span className="text-gray-400 dark:text-gray-500">$</span> npm run dev:mock</div>
+      <motion.div {...fadeUp} className="max-w-2xl mx-auto rounded-xl border border-gray-200/80 dark:border-white/10 bg-white dark:bg-white/[0.02] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(255,255,255,0.02)]">
+        <div className="flex items-center gap-2 px-4 py-3 bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-200/80 dark:border-white/10">
+          <span className="w-3 h-3 rounded-full bg-red-500/80" />
+          <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
+          <span className="w-3 h-3 rounded-full bg-green-500/80" />
+          <span className="ml-2 text-sm text-gray-400 dark:text-gray-500 font-mono">terminal</span>
+        </div>
+        <div className="p-6 font-mono text-sm">
+          <div className="space-y-4">
+            <div>
+              <span className="text-gray-400 dark:text-gray-500">&#35; Clone and install</span>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">git clone https://github.com/Sipoke123/AgentFlow.git</span></div>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">cd AgentFlow && npm install</span></div>
+            </div>
+            <div>
+              <span className="text-gray-400 dark:text-gray-500">&#35; Quick start with demo agents</span>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">npm run dev:mock</span></div>
+            </div>
+            <div>
+              <span className="text-gray-400 dark:text-gray-500">&#35; Or with real Claude Code agents</span>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">npm run dev</span></div>
+              <span className="text-gray-400 dark:text-gray-500">&#35; With SQLite storage</span>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">STORAGE=sqlite npm run dev</span></div>
+            </div>
+            <div>
+              <span className="text-gray-400 dark:text-gray-500">&#35; Or use Docker</span>
+              <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">docker compose up</span></div>
+            </div>
+            <div className="pt-2">
+              <span className="text-cyan-500 dark:text-cyan-400">Open http://localhost:3000 in your browser</span>
+            </div>
           </div>
-        </motion.div>
-        <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">With real agents</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Connect your <code className="text-gray-600 dark:text-gray-300">claude</code> CLI and run real tasks.</p>
-          <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
-            <div><span className="text-gray-400 dark:text-gray-500">$</span> npm run dev</div>
-          </div>
-        </motion.div>
-        <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">Docker</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">One command to build and deploy. Production-ready.</p>
-          <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
-            <div><span className="text-gray-400 dark:text-gray-500">$</span> docker compose up</div>
-          </div>
-        </motion.div>
+        </div>
       </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10">
-        <Link href="/office" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all">
+        <Link href="/office" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium bg-card border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-surface hover:border-emerald-500/60 transition-all">
           <RocketLaunchIcon className="w-4 h-4" /> Try it Now
         </Link>
       </motion.div>
@@ -374,83 +383,6 @@ function GettingStarted() {
   );
 }
 
-function Footer() {
-  const [email, setEmail] = React.useState("");
-
-  return (
-    <footer className="relative border-t border-border-base bg-background text-foreground transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-6 py-12 md:px-8">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Newsletter */}
-          <div className="relative">
-            <h2 className="mb-4 text-2xl font-bold tracking-tight text-foreground">Stay in the loop</h2>
-            <p className="mb-6 text-sm text-muted-fg">
-              Get notified about new features, agent patterns, and product updates.
-            </p>
-            <form className="relative" onSubmit={(e) => { e.preventDefault(); setEmail(""); }}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full h-10 rounded-lg border border-border-base bg-surface-inset px-3 pr-12 text-sm text-foreground placeholder:text-muted-fg/50 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/15 transition-colors"
-              />
-              <button
-                type="submit"
-                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all hover:bg-emerald-500/10 hover:border-emerald-500/60 hover:scale-105"
-              >
-                <PaperAirplaneIcon className="h-3.5 w-3.5" />
-              </button>
-            </form>
-            <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-emerald-600/5 blur-2xl" />
-          </div>
-
-          {/* Product */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Product</h3>
-            <nav className="space-y-2.5 text-sm">
-              <Link href="/#features" className="block text-muted-fg hover:text-foreground transition-colors">Features</Link>
-              <Link href="/#architecture" className="block text-muted-fg hover:text-foreground transition-colors">Architecture</Link>
-              <Link href="/#getting-started" className="block text-muted-fg hover:text-foreground transition-colors">Get Started</Link>
-              <Link href="/docs" className="block text-muted-fg hover:text-foreground transition-colors">Documentation</Link>
-            </nav>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Resources</h3>
-            <nav className="space-y-2.5 text-sm">
-              <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">GitHub Repository</a>
-              <a href="https://github.com/Sipoke123/AgentFlow/issues" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">Report Issues</a>
-              <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">Claude Code Docs</a>
-              <a href="https://github.com/Sipoke123/AgentFlow/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className="block text-muted-fg hover:text-foreground transition-colors">AGPL-3.0 License</a>
-            </nav>
-          </div>
-
-          {/* Connect */}
-          <div className="relative">
-            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Connect</h3>
-            <div className="mb-6 flex space-x-3">
-              <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" title="GitHub" className="w-9 h-9 rounded-full border border-border-base bg-surface flex items-center justify-center text-muted-fg hover:text-foreground hover:border-foreground/20 hover:bg-foreground/5 transition-all">
-                <CodeBracketIcon className="h-4 w-4" />
-              </a>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border-base pt-8 text-center md:flex-row">
-          <span className="text-sm text-muted-fg/50">&copy; 2026 AgentFlow. Free &amp; Open Source.</span>
-          <nav className="flex gap-4 text-sm text-muted-fg/50">
-            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="hover:text-muted-fg transition-colors">GitHub</a>
-            <span>AGPL-3.0</span>
-          </nav>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Page
@@ -475,7 +407,7 @@ export default function LandingPage() {
       <Architecture />
       <OpenSource />
       <GettingStarted />
-      <Footer />
+      <LandingFooter />
     </div>
   );
 }

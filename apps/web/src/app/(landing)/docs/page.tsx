@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftIcon, BuildingOffice2Icon, Square3Stack3DIcon, PlayIcon, ChartBarIcon, ArrowsRightLeftIcon, CircleStackIcon, BellIcon, PuzzlePieceIcon, RocketLaunchIcon, ShieldCheckIcon, GlobeAltIcon, CodeBracketIcon, BoltIcon, PaperAirplaneIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { BuildingOffice2Icon, Square3Stack3DIcon, PlayIcon, ChartBarIcon, ArrowsRightLeftIcon, CircleStackIcon, BellIcon, PuzzlePieceIcon, RocketLaunchIcon, ShieldCheckIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { HeroHeader } from "../../../components/hero-section";
-import { ThemeToggle } from "../../../components/ui/theme-toggle";
+import { LandingFooter } from "../../../components/landing-footer";
 
 const sections = [
   {
@@ -191,7 +191,7 @@ export default function DocsPage() {
         {/* Sections */}
         <div className="space-y-16">
           {sections.map((s) => (
-            <section key={s.id} id={s.id} className="scroll-mt-8">
+            <section key={s.id} id={s.id} className="scroll-mt-24">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-emerald-600/[0.08] border border-emerald-500/15 flex items-center justify-center">
                   <s.icon className="w-[18px] h-[18px] text-emerald-600 dark:text-emerald-400" />
@@ -212,91 +212,46 @@ export default function DocsPage() {
         </div>
 
         {/* Quick Start */}
-        <section className="mt-20 p-8 rounded-2xl border border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Quick Start</h2>
-          <div className="space-y-4 text-sm text-gray-600 dark:text-gray-300 font-mono">
-            <div>
-              <span className="text-gray-400 dark:text-gray-500"># Clone and install</span>
-              <pre className="mt-1 bg-black/5 dark:bg-white/5 rounded-lg p-3">git clone https://github.com/Sipoke123/AgentFlow.git{"\n"}cd AgentFlow{"\n"}npm install</pre>
+        <section className="mt-20">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Quick Start</h2>
+          <div className="rounded-xl border border-gray-200/80 dark:border-white/10 bg-white dark:bg-white/[0.02] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(255,255,255,0.02)]">
+            <div className="flex items-center gap-2 px-4 py-3 bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-200/80 dark:border-white/10">
+              <span className="w-3 h-3 rounded-full bg-red-500/80" />
+              <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
+              <span className="w-3 h-3 rounded-full bg-green-500/80" />
+              <span className="ml-2 text-sm text-gray-400 dark:text-gray-500 font-mono">terminal</span>
             </div>
-            <div>
-              <span className="text-gray-400 dark:text-gray-500"># Mock mode (no Claude CLI needed)</span>
-              <pre className="mt-1 bg-black/5 dark:bg-white/5 rounded-lg p-3">npm run dev:mock</pre>
-            </div>
-            <div>
-              <span className="text-gray-400 dark:text-gray-500"># Real mode (requires Claude Code CLI)</span>
-              <pre className="mt-1 bg-black/5 dark:bg-white/5 rounded-lg p-3">cd apps/web && npm run dev          # Terminal 1{"\n"}cd apps/server && npx tsx src/index.ts --claude &quot;Your prompt&quot;  # Terminal 2</pre>
-            </div>
-            <div>
-              <span className="text-gray-400 dark:text-gray-500"># Docker</span>
-              <pre className="mt-1 bg-black/5 dark:bg-white/5 rounded-lg p-3">docker compose up</pre>
+            <div className="p-6 font-mono text-sm">
+              <div className="space-y-4">
+                <div>
+                  <span className="text-gray-400 dark:text-gray-500">&#35; Clone and install</span>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">git clone https://github.com/Sipoke123/AgentFlow.git</span></div>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">cd AgentFlow && npm install</span></div>
+                </div>
+                <div>
+                  <span className="text-gray-400 dark:text-gray-500">&#35; Quick start with demo agents</span>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">npm run dev:mock</span></div>
+                </div>
+                <div>
+                  <span className="text-gray-400 dark:text-gray-500">&#35; Or with real Claude Code agents</span>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">npm run dev</span></div>
+                  <span className="text-gray-400 dark:text-gray-500">&#35; With SQLite storage</span>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">STORAGE=sqlite npm run dev</span></div>
+                </div>
+                <div>
+                  <span className="text-gray-400 dark:text-gray-500">&#35; Or use Docker</span>
+                  <div className="flex items-start gap-2"><span className="text-emerald-500 select-none">$</span><span className="text-gray-800 dark:text-gray-200">docker compose up</span></div>
+                </div>
+                <div className="pt-2">
+                  <span className="text-cyan-500 dark:text-cyan-400">Open http://localhost:3000 in your browser</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
       </div>
-      <DocsFooter />
+      <LandingFooter />
     </div>
-  );
-}
-
-function DocsFooter() {
-  const [email, setEmail] = React.useState("");
-  return (
-    <footer className="relative border-t border-gray-100 dark:border-white/10 bg-white dark:bg-black text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-6 py-12 md:px-8">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          <div className="relative">
-            <h2 className="mb-4 text-2xl font-bold tracking-tight">Stay in the loop</h2>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">Get notified about new features and product updates.</p>
-            <form className="relative" onSubmit={(e) => { e.preventDefault(); setEmail(""); }}>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="w-full h-10 rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 pr-12 text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/15 transition-colors" />
-              <button type="submit" className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all hover:bg-emerald-500/10 hover:border-emerald-500/60 hover:scale-105">
-                <PaperAirplaneIcon className="h-3.5 w-3.5" />
-              </button>
-            </form>
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Quick Links</h3>
-            <nav className="space-y-2.5 text-sm">
-              <Link href="/office" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Dashboard</Link>
-              <Link href="/sessions" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Sessions</Link>
-              <Link href="/runs" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Runs</Link>
-              <Link href="/docs" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Docs</Link>
-            </nav>
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Resources</h3>
-            <nav className="space-y-2.5 text-sm">
-              <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener noreferrer" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Claude Code Docs</a>
-              <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">GitHub</a>
-              <Link href="/#features" className="block text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Features</Link>
-            </nav>
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Connect</h3>
-            <div className="mb-6 flex space-x-3">
-              {[
-                { icon: GlobeAltIcon, label: "Website", href: "/" },
-                { icon: CodeBracketIcon, label: "GitHub", href: "https://github.com/Sipoke123/AgentFlow" },
-                { icon: BoltIcon, label: "API", href: "https://docs.anthropic.com/en/docs/claude-code" },
-              ].map((s) => (
-                <a key={s.label} href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" title={s.label} className="w-9 h-9 rounded-full border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-white/20 transition-all">
-                  <s.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-100 dark:border-white/10 pt-8 text-center md:flex-row">
-          <span className="text-sm text-gray-400 dark:text-gray-500">&copy; 2026 AgentFlow. Free &amp; Open Source.</span>
-          <nav className="flex gap-4 text-sm text-gray-400 dark:text-gray-500">
-            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">GitHub</a>
-            <span>AGPL-3.0 License</span>
-          </nav>
-        </div>
-      </div>
-    </footer>
   );
 }

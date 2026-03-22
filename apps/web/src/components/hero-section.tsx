@@ -7,6 +7,7 @@ import { Button } from './ui/button'
 import { AnimatedGroup } from './ui/animated-group'
 import { cn } from '../lib/cn'
 import { useScroll } from 'motion/react'
+import { ThemeToggle } from './ui/theme-toggle'
 
 const transitionVariants = {
     item: {
@@ -200,7 +201,7 @@ export const HeroHeader = () => {
                             </button>
                         </div>
 
-                        <div className="hidden lg:flex">
+                        <div className="hidden lg:flex items-center gap-8">
                             <ul className="flex gap-8 text-sm">
                                 {menuItems.map((item, index) => (
                                     <li key={index}>
@@ -213,6 +214,7 @@ export const HeroHeader = () => {
                                     </li>
                                 ))}
                             </ul>
+                            <ThemeToggle className="scale-75" />
                         </div>
 
                         <div className="bg-card group-data-[state=active]:block mb-6 hidden w-full rounded-3xl border border-border-base p-6 shadow-2xl shadow-panel-shadow lg:hidden">
