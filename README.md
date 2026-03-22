@@ -65,11 +65,9 @@ Open `/office` → **Launch Run** → pick a preset or type a prompt. The agent 
 **Launch Run** → **Pipeline** tab → pick a preset. Agents appear with dependency connections. Parallel agents run simultaneously; dependents wait for prerequisites.
 
 ```
-Analytics ──────┐
-Diagnostics ────┤
-Config Auditor ─┼──→ Report Aggregator
-Code Analyst ───┤
-Imp. Planner ───┘
+Frontend ────┐
+Backend  ────┼──→ Code Review ──→ Deploy
+Database ────┘
 ```
 
 ### Interactive messaging

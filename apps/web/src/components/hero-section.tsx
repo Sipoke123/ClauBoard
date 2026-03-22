@@ -57,7 +57,7 @@ export function HeroSection() {
                                         <span className="text-emerald-600 dark:text-emerald-400">AI agents</span>
                                     </h1>
                                     <p className="mt-8 max-w-2xl text-pretty text-lg text-muted-fg">
-                                        Stop switching between terminals. Launch multiple <span className="font-semibold text-[#D97706]">Claude Code</span> agents,
+                                        Stop switching between terminals. Launch multiple <span className="font-medium">Claude Code</span> agents,
                                         build pipelines, and watch everything happen live — tool calls, file changes,
                                         results — all on one screen. <span className="font-medium text-foreground">Free and open-source.</span>
                                     </p>
