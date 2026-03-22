@@ -408,6 +408,14 @@ See [docs/claude-code-adapter.md](docs/claude-code-adapter.md) for observability
 - **Performance**: `@tanstack/react-virtual` for virtual scrolling
 - **Persistence**: JSONL (default) or SQLite via `better-sqlite3`
 
+## Known Limitations
+
+We're transparent about what's not done yet:
+
+- **Local only** — Runs on localhost. Authentication and multi-user support are on the roadmap.
+- **Trusted environment required** — Uses `--dangerously-skip-permissions` for non-interactive agent runs. Run in development environments only.
+- **File detection is approximate** — Catches Edit/Write tool calls but may miss files changed via Bash commands.
+
 ## Contributing
 
 Contributions are welcome. The project is AGPL-3.0 licensed and open to anyone.

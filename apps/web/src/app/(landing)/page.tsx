@@ -12,7 +12,6 @@ import {
   RocketLaunchIcon,
   ArrowRightIcon,
   CheckIcon,
-  ExclamationTriangleIcon,
   CommandLineIcon,
   ArrowsRightLeftIcon,
   BoltIcon,
@@ -409,76 +408,6 @@ function Architecture() {
   );
 }
 
-function WorksToday() {
-  const items = [
-    "Launch and manage real Claude Code agents from the browser",
-    "Build multi-agent pipelines with automatic failover",
-    "Send messages to running agents — redirect or clarify mid-task",
-    "Agents pass context to each other: files, tools, output summaries",
-    "Live event feed with virtual scrolling — handles 50k+ events smoothly",
-    "Drag-and-drop canvas with live connection status between agents",
-    "Notification alerts when agents fail, get blocked, or run too long",
-    "SQLite or JSONL storage — switch with one flag, no migration needed",
-    "Light and dark themes with full keyboard accessibility",
-    "Try instantly with 6 mock agents — no Claude CLI required",
-    "Plugin system — add custom event types, alerts, and hooks",
-    "Docker deployment — one command to build and run",
-    "Export all agent data as JSON for analysis",
-  ];
-
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Shipped and working</h2>
-        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Everything below is live in the current build.</p>
-      </motion.div>
-      <motion.div {...stagger} className="max-w-2xl mx-auto">
-        <div className="p-6 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03]">
-          <ul className="space-y-3">
-            {items.map((item) => (
-              <motion.li key={item} {...fadeUpChild} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300 leading-snug">
-                <CheckIcon className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                {item}
-              </motion.li>
-            ))}
-          </ul>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function Limitations() {
-  const items = [
-    { text: "Local only for now", detail: "Runs on localhost — auth and multi-user coming soon" },
-    { text: "Needs trusted environment", detail: "Uses --dangerously-skip-permissions for non-interactive agent runs" },
-    { text: "File detection is approximate", detail: "Catches Edit/Write tools but may miss files changed via Bash" },
-  ];
-
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Known limitations</h2>
-        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">We are working on these. Transparency matters.</p>
-      </motion.div>
-      <motion.div {...stagger} className="max-w-2xl mx-auto">
-        <div className="p-6 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03]">
-          <ul className="space-y-3">
-            {items.map((item) => (
-              <motion.li key={item.text} {...fadeUpChild} className="flex items-start gap-3 text-sm">
-                <ExclamationTriangleIcon className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                <div>
-                  <span className="text-gray-900 dark:text-gray-100 font-medium">{item.text}</span>
-                  <span className="text-gray-500 dark:text-gray-400"> — {item.detail}</span>
-                </div>
-              </motion.li>
-            ))}
-          </ul>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
 
 function GettingStarted() {
   return (
@@ -636,8 +565,6 @@ export default function LandingPage() {
       <Workflows />
       <OpenSource />
       <Architecture />
-      <WorksToday />
-      <Limitations />
       <GettingStarted />
       <Footer />
     </div>

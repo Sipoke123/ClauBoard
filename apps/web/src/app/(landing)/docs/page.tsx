@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftIcon, BuildingOffice2Icon, Square3Stack3DIcon, PlayIcon, ChartBarIcon, ArrowsRightLeftIcon, CircleStackIcon, BellIcon, PuzzlePieceIcon, RocketLaunchIcon, ShieldCheckIcon, GlobeAltIcon, CodeBracketIcon, BoltIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, BuildingOffice2Icon, Square3Stack3DIcon, PlayIcon, ChartBarIcon, ArrowsRightLeftIcon, CircleStackIcon, BellIcon, PuzzlePieceIcon, RocketLaunchIcon, ShieldCheckIcon, GlobeAltIcon, CodeBracketIcon, BoltIcon, PaperAirplaneIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { HeroHeader } from "../../../components/hero-section";
 import { ThemeToggle } from "../../../components/ui/theme-toggle";
@@ -143,6 +143,18 @@ const sections = [
       "Events are local-only (JSONL/SQLite in data/ directory) — no cloud dependency",
       "WebSocket connections authenticated via session token (when auth is enabled)",
       "Environment variables for all configuration — no config files to leak",
+    ],
+  },
+  {
+    id: "limitations",
+    icon: ExclamationTriangleIcon,
+    title: "Known Limitations",
+    description: "We're transparent about what's not done yet. These are actively being worked on.",
+    details: [
+      "Local only — runs on localhost. Authentication and multi-user support are on the roadmap",
+      "Trusted environment required — uses --dangerously-skip-permissions for non-interactive agent runs. Run in development environments only",
+      "File detection is approximate — catches Edit/Write tool calls but may miss files changed via Bash commands",
+      "Single Claude Code provider — support for Cursor, Copilot, and other agents is planned",
     ],
   },
 ];
