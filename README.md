@@ -1,6 +1,8 @@
 # AgentFlow
 
-A visual control plane for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) agents. Launch, monitor, and coordinate multiple AI agents from a single operator surface.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-emerald.svg)](./LICENSE)
+
+A **free, open-source** visual control plane for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) agents. Launch, monitor, and coordinate multiple AI agents from a single operator surface. Self-host it — no subscriptions, no limits, no cloud dependency.
 
 ## What it does
 
@@ -405,3 +407,23 @@ See [docs/claude-code-adapter.md](docs/claude-code-adapter.md) for observability
 - **Theming**: CSS custom properties with Claude amber accent palette
 - **Performance**: `@tanstack/react-virtual` for virtual scrolling
 - **Persistence**: JSONL (default) or SQLite via `better-sqlite3`
+
+## Contributing
+
+Contributions are welcome. The project is AGPL-3.0 licensed and open to anyone.
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b my-feature`
+3. Make your changes — keep the diff small and focused
+4. Run `npm run type-check && npm run lint` to verify
+5. Open a pull request against `main`
+
+Please follow the existing code style and keep changes incremental. For large changes, open an issue first to discuss the approach.
+
+## License
+
+AGPL-3.0 License — see [LICENSE](./LICENSE) for details.
+
+For commercial licensing (proprietary use without AGPL obligations), contact us via GitHub.
+
+Copyright (c) 2026 AgentFlow

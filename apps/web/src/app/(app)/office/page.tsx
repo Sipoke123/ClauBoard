@@ -13,6 +13,7 @@ import { cn } from "../../../lib/cn";
 import { buttonVariants, statusPillVariants } from "../../../lib/variants";
 import type { AlertData } from "../../../lib/store";
 
+
 type ViewMode = "grid" | "canvas";
 
 export default function OfficePage() {
@@ -106,7 +107,7 @@ export default function OfficePage() {
               <Squares2X2Icon className="w-[11px] h-[11px]" /> Grid
             </button>
           </div>
-          <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
+<div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
             <button
               onClick={() => setShowLauncher(!showLauncher)}
               className={cn(

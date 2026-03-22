@@ -58,13 +58,13 @@ export function HeroSection() {
                                     <p className="mt-8 max-w-2xl text-pretty text-lg text-muted-fg">
                                         Stop switching between terminals. Launch multiple <span className="font-semibold text-[#D97706]">Claude Code</span> agents,
                                         build pipelines, and watch everything happen live — tool calls, file changes,
-                                        results — all on one screen.
+                                        results — all on one screen. <span className="font-medium text-foreground">Free and open-source.</span>
                                     </p>
                                     <div className="mt-12 flex items-center gap-2">
                                         <Button
                                             asChild
                                             size="lg"
-                                            className="rounded-xl px-5 text-base bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60">
+                                            className="rounded-xl px-5 text-base bg-card border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-surface hover:border-emerald-500/60">
                                             <Link href="/office" className="flex items-center gap-2">
                                                 <RocketLaunchIcon className="w-4 h-4" />
                                                 <span className="text-nowrap">Open Dashboard</span>
@@ -157,7 +157,7 @@ export function HeroSection() {
 
 const menuItems = [
     { name: 'Features', href: '/#features' },
-    { name: 'Pricing', href: '/#pricing' },
+    { name: 'Community', href: 'https://github.com/Sipoke123/AgentFlow' },
     { name: 'Docs', href: '/docs' },
     { name: 'Get Started', href: '/#getting-started' },
 ]
@@ -233,7 +233,7 @@ export const HeroHeader = () => {
                                     asChild
                                     variant="outline"
                                     size="sm"
-                                    className="border-border-base bg-transparent text-foreground/80 hover:bg-foreground/5 hover:text-foreground">
+                                    className="border-border-base bg-card text-foreground/80 hover:bg-surface hover:text-foreground">
                                     <Link href="#getting-started">
                                         <span>Get Started</span>
                                     </Link>
@@ -241,7 +241,7 @@ export const HeroHeader = () => {
                                 <Button
                                     asChild
                                     size="sm"
-                                    className="bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60">
+                                    className="bg-card border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-surface hover:border-emerald-500/60">
                                     <Link href="/office">
                                         <span>Dashboard</span>
                                     </Link>

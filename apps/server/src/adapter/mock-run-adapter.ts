@@ -214,7 +214,7 @@ export class MockRunAdapter implements AgentAdapter {
         emit({
           id: uid(), type: "run.completed", ts: Date.now(),
           agentId, runId,
-          payload: { summary: prompt + " — completed" },
+          payload: { summary: `Completed in ${Math.floor(10000 + Math.random() * 180000)}ms ($${(0.15 + Math.random() * 1.2).toFixed(4)})` },
         });
       } else {
         emit({

@@ -33,6 +33,8 @@ interface AgentNode {
   toolCount: number;
   fileCount: number;
   lastActivity?: string;
+  cost?: number;
+  terminalLines: string[];
 }
 
 interface AgentConnection {
@@ -168,7 +170,7 @@ function AgentNodeCard({
   node: AgentNode;
   isDragging: boolean;
 }) {
-  const { agent, run, eventCount, toolCount, fileCount, lastActivity } = node;
+  const { agent, run, eventCount, toolCount, fileCount, lastActivity, cost, terminalLines } = node;
   const isPaused = agent.status === "idle" && run?.status === "stopped";
   const displayStatus = isPaused ? "paused" : agent.status;
   const Icon = agentIcons[agent.name] ?? UserIcon;
@@ -184,7 +186,7 @@ function AgentNodeCard({
       <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent" />
 
       <div className="relative p-3 h-full flex flex-col">
-        {/* Header: icon + name + status */}
+        {/* Header: icon + name + status + cost */}
         <div className="flex items-center gap-2.5 shrink-0">
           <div
             className={cn(
@@ -203,7 +205,7 @@ function AgentNodeCard({
           </div>
         </div>
 
-        {/* Middle: task + activity (fills remaining space) */}
+        {/* Middle: task + activity */}
         <div className="flex-1 min-h-0 mt-2 space-y-0.5">
           <p className="text-[10px] text-muted-fg truncate">
             {run?.config?.prompt ?? run?.description ?? "Idle"}
@@ -369,6 +371,28 @@ function buildNodes(
       if (ev.type === "task.created") { lastActivity = p.title; break; }
     }
 
+    // Extract cost from completed runs
+    let cost = 0;
+    for (const r of agentRuns) {
+      if (r.description) {
+        const m = r.description.match(/\$(\d+\.?\d*)/);
+        if (m) cost += parseFloat(m[1]);
+      }
+      if ((r as any).cost) cost += (r as any).cost;
+    }
+
+    // Collect last 3 terminal output lines
+    const terminalLines: string[] = [];
+    for (let j = agentEvents.length - 1; j >= 0 && terminalLines.length < 3; j--) {
+      const ev = agentEvents[j];
+      const p = (ev as any).payload;
+      if (ev.type === "terminal.output" && p?.text) {
+        terminalLines.unshift(p.text.trim().slice(0, 80));
+      } else if (ev.type === "tool.result" && p?.output) {
+        terminalLines.unshift(`→ ${p.output}`.slice(0, 80));
+      }
+    }
+
     const defaultPos = autoLayout.get(agent.id) ?? { x: 60, y: 60 };
 
     return {
@@ -380,6 +404,8 @@ function buildNodes(
       toolCount: agentEvents.filter((e) => e.type === "tool.invoked").length,
       fileCount: agentEvents.filter((e) => e.type === "file.changed").length,
       lastActivity,
+      cost: cost > 0 ? cost : undefined,
+      terminalLines,
     };
   });
 }

@@ -157,6 +157,10 @@ export default function DocsPage() {
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
             Everything you need to know about AgentFlow — from first launch to production deployment.
           </p>
+          <p className="mt-3 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+            AgentFlow is free and open-source under the AGPL-3.0 License.{" "}
+            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:opacity-80 transition-opacity">View on GitHub</a>
+          </p>
         </div>
 
         {/* Table of Contents */}
@@ -274,10 +278,10 @@ function DocsFooter() {
           </div>
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-100 dark:border-white/10 pt-8 text-center md:flex-row">
-          <span className="text-sm text-gray-400 dark:text-gray-500">&copy; {new Date().getFullYear()} AgentFlow. All rights reserved.</span>
+          <span className="text-sm text-gray-400 dark:text-gray-500">&copy; 2026 AgentFlow. Free &amp; Open Source.</span>
           <nav className="flex gap-4 text-sm text-gray-400 dark:text-gray-500">
-            <Link href="#" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Terms of Service</Link>
+            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">GitHub</a>
+            <span>AGPL-3.0 License</span>
           </nav>
         </div>
       </div>

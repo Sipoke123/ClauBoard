@@ -23,9 +23,6 @@ import {
   CodeBracketIcon,
   CubeIcon,
   PaperAirplaneIcon,
-  MinusIcon,
-  TrophyIcon,
-  UsersIcon,
 } from "@heroicons/react/24/outline";
 import { cn } from "../../lib/cn";
 import { buttonVariants, panelVariants } from "../../lib/variants";
@@ -277,148 +274,72 @@ function Workflows() {
   );
 }
 
-function Pricing() {
-  const plans = [
+function OpenSource() {
+  const cards = [
     {
-      name: "Free",
-      price: "$0",
-      period: "forever",
-      description: "Get started with the basics",
-      icon: RocketLaunchIcon,
-      featured: false,
-      features: [
-        { text: "Up to 3 agents", included: true },
-        { text: "1 pipeline preset", included: true },
-        { text: "JSONL storage", included: true },
-        { text: "Canvas & Grid views", included: true },
-        { text: "Community support", included: true },
-        { text: "Sessions", included: false },
-        { text: "Notifications", included: false },
-        { text: "SQLite storage", included: false },
-        { text: "Interactive messaging", included: false },
-      ],
-      cta: "Get Started",
-      ctaHref: "/office",
+      icon: ServerIcon,
+      title: "Self-Hosted",
+      description: "Run on your own machine. Full control over your data and agents. No external services required.",
+      detail: "npm run dev",
     },
     {
-      name: "Pro",
-      price: "$29",
-      period: "/month",
-      description: "For power users and small teams",
-      icon: TrophyIcon,
-      featured: true,
-      features: [
-        { text: "Up to 10 agents", included: true },
-        { text: "Unlimited pipelines", included: true },
-        { text: "SQLite storage", included: true },
-        { text: "Sessions & orchestration", included: true },
-        { text: "Notifications & alerts", included: true },
-        { text: "Interactive messaging", included: true },
-        { text: "Context sharing", included: true },
-        { text: "Event archival", included: true },
-        { text: "Email support", included: true },
-      ],
-      cta: "Start Free Trial",
-      ctaHref: "/office",
+      icon: CheckIcon,
+      title: "No Limits",
+      description: "Unlimited agents, sessions, and pipelines. No artificial restrictions — use every feature from day one.",
+      detail: "Everything included",
     },
     {
-      name: "Team",
-      price: "$99",
-      period: "/month",
-      description: "For teams running agents at scale",
-      icon: UsersIcon,
-      featured: false,
-      features: [
-        { text: "Unlimited agents", included: true },
-        { text: "Unlimited pipelines", included: true },
-        { text: "SQLite + Cloud backup", included: true },
-        { text: "All Pro features", included: true },
-        { text: "Multi-user access", included: true },
-        { text: "Role-based permissions", included: true },
-        { text: "API access", included: true },
-        { text: "Custom alert rules", included: true },
-        { text: "Priority support", included: true },
-      ],
-      cta: "Contact Sales",
-      ctaHref: "#",
+      icon: CodeBracketIcon,
+      title: "Community",
+      description: "MIT licensed. Fork it, extend it, contribute back. Built in the open for the developer community.",
+      detail: "github.com/Sipoke123/AgentFlow",
     },
   ];
 
   return (
     <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Simple, transparent pricing</h2>
-        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Start free. Upgrade when you need more agents or features.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Free &amp; Open Source</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">No subscriptions. No limits. Self-host and own your data.</p>
       </motion.div>
       <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-        {plans.map((plan) => {
-          const Icon = plan.icon;
+        {cards.map((card) => {
+          const Icon = card.icon;
           return (
             <motion.div
-              key={plan.name}
+              key={card.title}
               {...fadeUpChild}
-              className={cn(
-                "group relative p-6 rounded-xl border bg-white dark:bg-white/[0.03] transition-all duration-300 hover:-translate-y-0.5",
-                plan.featured
-                  ? "border-emerald-300/50 dark:border-emerald-500/20 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(255,255,255,0.03)]"
-                  : "border-gray-100/80 dark:border-white/10 hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)]",
-              )}
+              className="group relative p-6 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)]"
             >
-              {plan.featured && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold uppercase tracking-wider">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-
               <div className="flex items-center gap-2.5 mb-4">
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center",
-                  plan.featured
-                    ? "bg-emerald-500/10 text-emerald-500"
-                    : "bg-black/5 dark:bg-white/10 text-gray-600 dark:text-gray-300",
-                )}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-500/10 text-emerald-500">
                   <Icon className="w-4 h-4" />
                 </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">{plan.name}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{plan.description}</p>
-                </div>
+                <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">{card.title}</h3>
               </div>
-
-              <div className="mb-6">
-                <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">{plan.price}</span>
-                <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{plan.period}</span>
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-snug mb-6">{card.description}</p>
+              <div className="font-mono text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 border border-emerald-500/15 rounded-lg px-3 py-2">
+                {card.detail}
               </div>
-
-              <ul className="space-y-2.5 mb-6">
-                {plan.features.map((f) => (
-                  <li key={f.text} className="flex items-center gap-2.5 text-sm">
-                    {f.included ? (
-                      <CheckIcon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                    ) : (
-                      <MinusIcon className="w-3.5 h-3.5 text-gray-300 dark:text-gray-600 shrink-0" />
-                    )}
-                    <span className={f.included ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-600"}>{f.text}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href={plan.ctaHref}
-                className={cn(
-                  "block w-full text-center py-2.5 rounded-lg text-sm font-medium transition-all",
-                  plan.featured
-                    ? "border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60"
-                    : "border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02]",
-                )}
-              >
-                {plan.cta}
-              </Link>
             </motion.div>
           );
         })}
+      </motion.div>
+      <motion.div {...fadeUp} className="text-center mt-10 flex items-center justify-center gap-3 flex-wrap">
+        <Link
+          href="#getting-started"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all"
+        >
+          <RocketLaunchIcon className="w-4 h-4" /> Get Started
+        </Link>
+        <a
+          href="https://github.com/Sipoke123/AgentFlow"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all"
+        >
+          <CodeBracketIcon className="w-4 h-4" /> View on GitHub
+        </a>
       </motion.div>
     </section>
   );
@@ -681,10 +602,10 @@ function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border-base pt-8 text-center md:flex-row">
-          <span className="text-sm text-muted-fg/50">&copy; {new Date().getFullYear()} AgentFlow. All rights reserved.</span>
+          <span className="text-sm text-muted-fg/50">&copy; 2026 AgentFlow. Free &amp; Open Source.</span>
           <nav className="flex gap-4 text-sm text-muted-fg/50">
-            <Link href="#" className="hover:text-muted-fg transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-muted-fg transition-colors">Terms of Service</Link>
+            <a href="https://github.com/Sipoke123/AgentFlow" target="_blank" rel="noopener noreferrer" className="hover:text-muted-fg transition-colors">GitHub</a>
+            <span>AGPL-3.0</span>
           </nav>
         </div>
       </div>
@@ -713,7 +634,7 @@ export default function LandingPage() {
       </div>
       <Features />
       <Workflows />
-      <Pricing />
+      <OpenSource />
       <Architecture />
       <WorksToday />
       <Limitations />
