@@ -1,12 +1,23 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline"
 import { cn } from "../../lib/cn"
 import { useTheme } from "../../lib/use-theme"
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggle } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const isDark = theme === "dark"
+
+  // Render a placeholder with same dimensions until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className={cn("flex w-16 h-8 p-1 rounded-full bg-surface border border-border-base opacity-0", className)} />
+    )
+  }
 
   return (
     <div
