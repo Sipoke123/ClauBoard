@@ -6,7 +6,6 @@ import { ChevronRightIcon, Bars3Icon, XMarkIcon, RocketLaunchIcon, CommandLineIc
 import { Button } from './ui/button'
 import { AnimatedGroup } from './ui/animated-group'
 import { cn } from '../lib/cn'
-import { useScroll } from 'motion/react'
 import { ThemeToggle } from './ui/theme-toggle'
 
 const transitionVariants = {
@@ -156,20 +155,18 @@ export const HeroHeader = () => {
     const [menuState, setMenuState] = React.useState(false)
     const [scrolled, setScrolled] = React.useState(false)
 
-    const { scrollYProgress } = useScroll()
-
     React.useEffect(() => {
-        const unsubscribe = scrollYProgress.on('change', (latest) => {
-            setScrolled(latest > 0.05)
-        })
-        return () => unsubscribe()
-    }, [scrollYProgress])
+        const onScroll = () => setScrolled(window.scrollY > 20)
+        onScroll()
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
 
     return (
         <header>
             <nav
                 data-state={menuState && 'active'}
-                className={cn('group fixed z-20 w-full border-b transition-colors duration-150', scrolled ? 'bg-nav-bg backdrop-blur-xl border-border-base' : 'border-transparent')}>
+                className={cn('group fixed z-20 w-full border-b transition-all duration-300', scrolled ? 'bg-nav-bg backdrop-blur-xl border-border-base' : 'border-transparent')}>
                 <div className="mx-auto max-w-5xl px-6 transition-all duration-300">
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="flex w-full items-center justify-between lg:w-auto">

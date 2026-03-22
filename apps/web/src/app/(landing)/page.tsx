@@ -184,7 +184,7 @@ function Features() {
                       </span>
                     ))}
                   </div>
-                  <Link href={`/docs#${item.docId}`} className="text-xs text-gray-500 dark:text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-emerald-600 dark:hover:text-emerald-400">
+                  <Link href={`/docs#${item.docId}`} className="text-xs text-gray-500 dark:text-gray-400 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:text-emerald-600 dark:hover:text-emerald-400">
                     Learn more →
                   </Link>
                 </div>
