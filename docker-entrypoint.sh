@@ -12,7 +12,7 @@ cd /app/apps/server && PORT=$API_PORT node dist/index.js "$@" &
 SERVER_PID=$!
 
 echo "[clauboard] Starting web on port ${WEB_PORT}..."
-cd /app && PORT=$WEB_PORT node apps/web/server.js &
+cd /app && PORT=$WEB_PORT HOSTNAME=0.0.0.0 node apps/web/server.js &
 WEB_PID=$!
 
 echo "[clauboard] Ready — API :${API_PORT} (external), web :${WEB_PORT} (internal)"
