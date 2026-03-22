@@ -23,6 +23,7 @@ COPY apps/server/src apps/server/src
 COPY apps/web/src apps/web/src
 COPY apps/web/public apps/web/public
 COPY apps/web/next-env.d.ts apps/web/
+COPY apps/web/server-proxy.js apps/web/
 
 # Build shared types, server, and Next.js
 RUN npx turbo run build
