@@ -699,7 +699,18 @@ function Footer() {
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
-      <HeroSection />
+      <div className="relative">
+        <HeroSection />
+        <div
+          className="absolute inset-0 -z-10 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(circle, var(--grid-dot) 1px, transparent 1px)`,
+            backgroundSize: "20px 20px",
+            maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+          }}
+        />
+      </div>
       <Features />
       <Workflows />
       <Pricing />
