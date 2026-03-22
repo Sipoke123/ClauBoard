@@ -262,6 +262,24 @@ if (adapterMode === "mock") {
   console.log(`[server] claude adapter started for single-run mode`);
 }
 
+// -- Reverse proxy to Next.js in Docker (production) --
+if (process.env.NODE_ENV === "production") {
+  const http = await import("node:http");
+  const webPort = process.env.WEB_PORT ?? "3000";
+  app.use((req, res) => {
+    const proxyReq = http.request(
+      { hostname: "127.0.0.1", port: Number(webPort), path: req.url, method: req.method, headers: req.headers },
+      (proxyRes) => {
+        res.writeHead(proxyRes.statusCode ?? 200, proxyRes.headers);
+        proxyRes.pipe(res);
+      },
+    );
+    proxyReq.on("error", () => res.status(502).end("Next.js unavailable"));
+    req.pipe(proxyReq);
+  });
+  console.log(`[server] proxying non-API requests to Next.js on :${webPort}`);
+}
+
 // -- Shutdown --
 function shutdown() {
   console.log("[server] shutting down...");
