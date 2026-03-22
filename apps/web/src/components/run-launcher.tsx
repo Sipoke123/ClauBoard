@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Rocket, CheckCircle, AlertCircle, Sparkles, Users, GitBranch } from "lucide-react";
+import { RocketLaunchIcon, CheckCircleIcon, ExclamationCircleIcon, SparklesIcon, UsersIcon, ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 import { cn } from "../lib/cn";
 import { buttonVariants, inputVariants, panelVariants } from "../lib/variants";
 
@@ -158,7 +158,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
               : "text-muted-fg hover:text-foreground"
           )}
         >
-          <Rocket size={11} /> Single Agent
+          <RocketLaunchIcon className="w-[11px] h-[11px]" /> Single Agent
         </button>
         <button
           onClick={() => setTab("pipeline")}
@@ -169,7 +169,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
               : "text-muted-fg hover:text-foreground"
           )}
         >
-          <GitBranch size={11} /> Pipeline
+          <ArrowsRightLeftIcon className="w-[11px] h-[11px]" /> Pipeline
         </button>
       </div>
 
@@ -180,7 +180,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
           {showPresets && presets.length > 0 && !prompt && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={11} className="text-muted-fg" />
+                <SparklesIcon className="w-[11px] h-[11px] text-muted-fg" />
                 <span className="text-[10px] text-muted-fg font-medium uppercase tracking-wider">Quick Launch</span>
               </div>
                 <div className="flex gap-2 flex-wrap">
@@ -206,7 +206,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                         disabled={launching}
                         className={cn(buttonVariants({ variant: "primary", size: "xs" }), "mt-1.5 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity")}
                       >
-                        <Rocket size={10} /> Quick Launch
+                        <RocketLaunchIcon className="w-2.5 h-2.5" /> Quick Launch
                       </button>
                     </div>
                   ))}
@@ -245,7 +245,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                 disabled={launching || !prompt.trim()}
                 className={buttonVariants({ variant: "primary", size: "sm" })}
               >
-                <Rocket size={13} />
+                <RocketLaunchIcon className="w-[13px] h-[13px]" />
                 {launching ? "Launching..." : "Launch"}
               </button>
               {prompt && (
@@ -266,7 +266,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
       {tab === "pipeline" && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <Users size={11} className="text-muted-fg" />
+            <UsersIcon className="w-[11px] h-[11px] text-muted-fg" />
             <span className="text-[10px] text-muted-fg font-medium uppercase tracking-wider">Pipeline Presets</span>
           </div>
           <div className="space-y-2">
@@ -322,7 +322,7 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
                         "shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
                       )}
                     >
-                      <Rocket size={12} />
+                      <RocketLaunchIcon className="w-3 h-3" />
                       {launching ? "..." : "Launch"}
                     </button>
                   </div>
@@ -338,12 +338,12 @@ export function RunLauncher({ onClose }: { onClose?: () => void } = {}) {
         <div className="flex items-center gap-2">
           {error && (
             <span className="flex items-center gap-1 text-xs text-red-400">
-              <AlertCircle size={11} /> {error}
+              <ExclamationCircleIcon className="w-[11px] h-[11px]" /> {error}
             </span>
           )}
           {lastLaunch && (
             <span className="flex items-center gap-1 text-xs text-emerald-400">
-              <CheckCircle size={11} /> {lastLaunch}
+              <CheckCircleIcon className="w-[11px] h-[11px]" /> {lastLaunch}
             </span>
           )}
         </div>

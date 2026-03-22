@@ -1,6 +1,6 @@
 "use client"
 
-import { Moon, Sun } from "lucide-react"
+import { MoonIcon, SunIcon } from "@heroicons/react/24/outline"
 import { cn } from "../../lib/cn"
 import { useTheme } from "../../lib/use-theme"
 
@@ -30,9 +30,9 @@ export function ThemeToggle({ className }: { className?: string }) {
           )}
         >
           {isDark ? (
-            <Moon className="w-4 h-4 text-foreground" strokeWidth={1.5} />
+            <MoonIcon className="w-4 h-4 text-foreground" />
           ) : (
-            <Sun className="w-4 h-4 text-foreground" strokeWidth={1.5} />
+            <SunIcon className="w-4 h-4 text-foreground" />
           )}
         </div>
         <div
@@ -42,9 +42,9 @@ export function ThemeToggle({ className }: { className?: string }) {
           )}
         >
           {isDark ? (
-            <Sun className="w-4 h-4 text-muted-fg" strokeWidth={1.5} />
+            <SunIcon className="w-4 h-4 text-muted-fg" />
           ) : (
-            <Moon className="w-4 h-4 text-muted-fg" strokeWidth={1.5} />
+            <MoonIcon className="w-4 h-4 text-muted-fg" />
           )}
         </div>
       </div>

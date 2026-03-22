@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ListChecks, Loader2, CheckCircle2, XCircle, Clock, AlertTriangle } from "lucide-react";
+import { ClipboardDocumentListIcon, ArrowPathIcon, CheckCircleIcon, XCircleIcon, ClockIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
 import { statusDotVariants } from "../../../lib/variants";
@@ -12,28 +12,28 @@ const columns: { status: TaskStatus; label: string; icon: React.ReactNode; dotCo
   {
     status: "pending",
     label: "Pending",
-    icon: <Clock size={14} />,
+    icon: <ClockIcon className="w-[14px] h-[14px]" />,
     dotColor: "text-muted-fg",
     headerBorder: "border-border-base",
   },
   {
     status: "in_progress",
     label: "In Progress",
-    icon: <Loader2 size={14} className="animate-spin" />,
+    icon: <ArrowPathIcon className="w-[14px] h-[14px] animate-spin" />,
     dotColor: "text-blue-400",
     headerBorder: "border-blue-500/50",
   },
   {
     status: "completed",
     label: "Completed",
-    icon: <CheckCircle2 size={14} />,
+    icon: <CheckCircleIcon className="w-[14px] h-[14px]" />,
     dotColor: "text-emerald-400",
     headerBorder: "border-emerald-500/50",
   },
   {
     status: "failed",
     label: "Failed",
-    icon: <XCircle size={14} />,
+    icon: <XCircleIcon className="w-[14px] h-[14px]" />,
     dotColor: "text-red-400",
     headerBorder: "border-red-500/50",
   },
@@ -95,7 +95,7 @@ function VirtualTaskColumn({ tasks, agentMap }: { tasks: Task[]; agentMap: Map<s
                 </div>
                 {task.error && (
                   <div className="flex items-center gap-1 mt-1">
-                    <AlertTriangle size={10} className="text-red-400 shrink-0" />
+                    <ExclamationTriangleIcon className="w-2.5 h-2.5 text-red-400 shrink-0" />
                     <span className="text-[10px] text-red-400/80 truncate">{task.error}</span>
                   </div>
                 )}
@@ -115,7 +115,7 @@ export default function TasksPage() {
   return (
     <div className="flex flex-col h-full p-6">
       <div className="flex items-center gap-2.5 mb-5 shrink-0">
-        <ListChecks size={18} className="text-muted-fg" />
+        <ClipboardDocumentListIcon className="w-[18px] h-[18px] text-muted-fg" />
         <h2 className="text-lg font-semibold text-foreground">Task Board</h2>
         <span className="ml-1 text-xs text-muted-fg/50 tabular-nums">{tasks.length} tasks</span>
       </div>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Rocket, X, Users, LayoutGrid, Network, Download, Bell } from "lucide-react";
+import { RocketLaunchIcon, XMarkIcon, UsersIcon, Squares2X2Icon, SignalIcon, ArrowDownTrayIcon, BellIcon } from "@heroicons/react/24/outline";
 import { useStore, useStoreSelector } from "../../../lib/use-store";
 import { OfficeFloor } from "../../../components/office-floor";
 import { AgentWorkflowCanvas } from "../../../components/agent-workflow-canvas";
@@ -73,7 +73,7 @@ export default function OfficePage() {
           <div className="flex items-center gap-2">
             {agents.length > 0 && (
               <span className="flex items-center gap-1.5 text-xs text-muted-fg">
-                <Users size={12} /> {agents.length}
+                <UsersIcon className="w-3 h-3" /> {agents.length}
               </span>
             )}
             {working > 0 && <span className={statusPillVariants({ status: "working" })}>{working} active</span>}
@@ -94,7 +94,7 @@ export default function OfficePage() {
                 viewMode === "canvas" ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <Network size={11} /> Canvas
+              <SignalIcon className="w-[11px] h-[11px]" /> Canvas
             </button>
             <button
               onClick={() => setViewMode("grid")}
@@ -103,7 +103,7 @@ export default function OfficePage() {
                 viewMode === "grid" ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <LayoutGrid size={11} /> Grid
+              <Squares2X2Icon className="w-[11px] h-[11px]" /> Grid
             </button>
           </div>
           <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
@@ -114,7 +114,7 @@ export default function OfficePage() {
                 showLauncher ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <Rocket size={11} /> Launch Run
+              <RocketLaunchIcon className="w-[11px] h-[11px]" /> Launch Run
             </button>
           </div>
           {/* Alerts */}
@@ -127,7 +127,7 @@ export default function OfficePage() {
                   showAlerts ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
                 )}
               >
-                <Bell size={11} />
+                <BellIcon className="w-[11px] h-[11px]" />
                 Alerts
               {unreadAlerts > 0 && (
                 <span className="flex items-center justify-center min-w-[16px] h-4 rounded-full bg-red-500 text-white text-[9px] font-bold px-1">
@@ -173,7 +173,7 @@ export default function OfficePage() {
 
       {/* Main content */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        <div className="flex-1 min-w-0 min-h-0 p-4 relative">
+        <div className="flex-1 min-w-0 min-h-0 p-4 relative" onClick={() => showAlerts && setShowAlerts(false)}>
           {viewMode === "canvas" ? (
             <AgentWorkflowCanvas
               agents={agents}
@@ -205,7 +205,7 @@ export default function OfficePage() {
               onClick={exportAgents}
               className="absolute bottom-5 right-5 z-30 inline-flex items-center gap-1.5 h-7 px-3 rounded-lg text-[11px] font-medium border border-border-base bg-surface/90 text-muted-fg hover:text-foreground hover:border-border-base hover:bg-surface backdrop-blur-md transition-all"
             >
-              <Download size={11} /> Export
+              <ArrowDownTrayIcon className="w-[11px] h-[11px]" /> Export
             </button>
           )}
         </div>
@@ -227,7 +227,7 @@ export default function OfficePage() {
                     <div className="flex items-center justify-between mb-5 shrink-0">
                       <h3 className="text-xs font-semibold text-muted-fg uppercase tracking-wider">Launch Run</h3>
                       <button onClick={() => setShowLauncher(false)} className={buttonVariants({ variant: "ghost", size: "xs" })}>
-                        <X size={12} /> Close
+                        <XMarkIcon className="w-3 h-3" /> Close
                       </button>
                     </div>
                     <RunLauncher onClose={() => setShowLauncher(false)} />
@@ -237,7 +237,7 @@ export default function OfficePage() {
                     <div className="flex items-center justify-between mb-5 shrink-0">
                       <h3 className="text-xs font-semibold text-muted-fg uppercase tracking-wider">Agent Detail</h3>
                       <button onClick={() => setSelectedId(null)} className={buttonVariants({ variant: "ghost", size: "xs" })}>
-                        <X size={12} /> Close
+                        <XMarkIcon className="w-3 h-3" /> Close
                       </button>
                     </div>
                     <div className="flex-1 min-h-0">

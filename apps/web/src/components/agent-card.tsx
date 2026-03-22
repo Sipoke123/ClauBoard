@@ -32,7 +32,7 @@ export function AgentCard({
       onClick={onClick}
       className={`w-full text-left p-4 rounded-lg border transition-colors ${
         selected
-          ? "border-amber-500 bg-gray-800"
+          ? "border-emerald-500 bg-gray-800"
           : "border-gray-800 bg-gray-900 hover:border-gray-700"
       }`}
     >

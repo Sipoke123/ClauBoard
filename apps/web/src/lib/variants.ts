@@ -66,7 +66,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-transparent border border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/60",
+        primary: "bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60",
         danger: "bg-transparent text-red-400 border border-red-500/40 hover:bg-red-500/10 hover:border-red-500/60",
         ghost: "text-muted-fg hover:text-foreground hover:bg-foreground/5",
         outline: "border border-border-base text-muted-fg hover:bg-foreground/5 hover:border-foreground/20",
@@ -102,7 +102,7 @@ export const panelVariants = cva("rounded-2xl border", {
 // ---------------------------------------------------------------------------
 
 export const inputVariants = cva(
-  "w-full bg-input-bg border border-input-border text-foreground placeholder:text-muted-fg focus:outline-none focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 transition-colors",
+  "w-full bg-input-bg border border-input-border text-foreground placeholder:text-muted-fg focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/15 transition-colors",
   {
     variants: {
       size: {
@@ -136,10 +136,10 @@ export const tabVariants = cva(
 // ---------------------------------------------------------------------------
 
 export const eventTypeColor: Record<string, string> = {
-  "agent.": "text-amber-400",
+  "agent.": "text-emerald-400",
   "run.": "text-purple-400",
   "task.": "text-emerald-400",
-  "tool.": "text-amber-400",
+  "tool.": "text-emerald-400",
   "terminal.": "text-muted-fg",
   "file.": "text-cyan-400",
   "plugin.": "text-pink-400",

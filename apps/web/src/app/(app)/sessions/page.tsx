@@ -4,7 +4,8 @@ import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { motion, AnimatePresence } from "framer-motion";
-import { Layers, Plus, X, StopCircle, Wrench, FileCode, Zap, ArrowRight, AlertTriangle, Users, Sparkles, ChevronRight } from "lucide-react";
+import { Square3Stack3DIcon, PlusIcon, XMarkIcon, WrenchIcon, CodeBracketIcon, BoltIcon, ArrowRightIcon, ExclamationTriangleIcon, UsersIcon, SparklesIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { StopIcon } from "@heroicons/react/24/solid";
 import { useStore } from "../../../lib/use-store";
 import type { Session, Run, Agent, AgentEvent, SessionAgent } from "@repo/shared";
 import { validateDependencyGraph, computeStages } from "@repo/shared";
@@ -95,7 +96,7 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
       {presets.length > 0 && !name && specs.every((s) => !s.prompt) && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Sparkles size={11} className="text-muted-fg" />
+            <SparklesIcon className="w-[11px] h-[11px] text-muted-fg" />
             <span className="text-[10px] text-muted-fg font-medium uppercase tracking-wider">Presets</span>
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -117,7 +118,7 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
             <div key={idx} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-3 space-y-2")}>
               <div className="flex items-center justify-between">
                 <input type="text" value={spec.agentName} onChange={(e) => updateSpec(idx, "agentName", e.target.value)} className="bg-transparent border-none text-sm font-medium text-foreground focus:outline-none w-32" />
-                {specs.length > 1 && <button type="button" onClick={() => removeAgent(idx)} className={buttonVariants({ variant: "ghost", size: "xs" })}><X size={10} /></button>}
+                {specs.length > 1 && <button type="button" onClick={() => removeAgent(idx)} className={buttonVariants({ variant: "ghost", size: "xs" })}><XMarkIcon className="w-2.5 h-2.5" /></button>}
               </div>
               <textarea value={spec.prompt} onChange={(e) => updateSpec(idx, "prompt", e.target.value)} placeholder={`Prompt for ${spec.agentName}...`} rows={2} className={cn(inputVariants({ size: "sm" }), "resize-none")} />
               <input type="text" value={spec.cwd} onChange={(e) => updateSpec(idx, "cwd", e.target.value)} placeholder="Working directory (optional)" className={inputVariants({ size: "sm" })} />
@@ -136,11 +137,11 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
           );
         })}
       </div>
-      <button type="button" onClick={addAgent} className={buttonVariants({ variant: "ghost", size: "xs" })}><Plus size={10} /> Add agent</button>
+      <button type="button" onClick={addAgent} className={buttonVariants({ variant: "ghost", size: "xs" })}><PlusIcon className="w-2.5 h-2.5" /> Add agent</button>
 
       {hasDeps && !graphResult.valid && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/5 border border-red-500/20 text-xs text-red-400">
-          <AlertTriangle size={12} /> {graphResult.error}
+          <ExclamationTriangleIcon className="w-3 h-3" /> {graphResult.error}
         </div>
       )}
       {hasDeps && graphResult.valid && graphResult.stages && (
@@ -149,7 +150,7 @@ function CreateSessionForm({ onCreated, presets }: { onCreated: () => void; pres
           <div className="flex items-center gap-1.5 flex-wrap">
             {graphResult.stages.map((stage, i) => (
               <div key={i} className="flex items-center gap-1.5">
-                {i > 0 && <ArrowRight size={10} className="text-muted-fg/50" />}
+                {i > 0 && <ArrowRightIcon className="w-2.5 h-2.5 text-muted-fg/50" />}
                 <div className="flex gap-1">{stage.map((n) => <span key={n} className={statusPillVariants({ status: "active" })}>{n}</span>)}</div>
               </div>
             ))}
@@ -201,7 +202,7 @@ function SessionCard({ session, selected, onClick, onStop }: {
           <span className={statusDotVariants({ status: session.status as any, size: "md" })} />
           <span className="font-semibold text-sm text-foreground truncate">{session.name}</span>
         </div>
-        <ChevronRight size={14} className={cn("text-muted-fg/40 shrink-0 transition-transform", selected && "rotate-90")} />
+        <ChevronRightIcon className={cn("w-[14px] h-[14px] text-muted-fg/40 shrink-0 transition-transform", selected && "rotate-90")} />
       </div>
 
       {/* Stats row */}
@@ -229,7 +230,7 @@ function SessionCard({ session, selected, onClick, onStop }: {
         <div className="mt-3 pt-2 border-t border-border-subtle">
           <button onClick={(e) => { e.stopPropagation(); onStop(); }}
             className={cn(buttonVariants({ variant: "danger", size: "xs" }))}>
-            <StopCircle size={10} /> Stop All
+            <StopIcon className="w-2.5 h-2.5" /> Stop All
           </button>
         </div>
       )}
@@ -330,10 +331,10 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
   const fileChanges = sessionEvents.filter((e) => e.type === "file.changed").length;
 
   const tabs: { id: DetailTab; label: string; count?: number; icon: React.ReactNode }[] = [
-    { id: "pipeline", label: hasDeps ? "Pipeline" : "Agents", count: sessionAgents.length, icon: <Users size={11} /> },
-    { id: "activity", label: "Activity", count: sessionEvents.length, icon: <Zap size={11} /> },
-    { id: "tools", label: "Tools", count: toolCalls, icon: <Wrench size={11} /> },
-    { id: "files", label: "Files", count: fileChanges, icon: <FileCode size={11} /> },
+    { id: "pipeline", label: hasDeps ? "Pipeline" : "Agents", count: sessionAgents.length, icon: <UsersIcon className="w-[11px] h-[11px]" /> },
+    { id: "activity", label: "Activity", count: sessionEvents.length, icon: <BoltIcon className="w-[11px] h-[11px]" /> },
+    { id: "tools", label: "Tools", count: toolCalls, icon: <WrenchIcon className="w-[11px] h-[11px]" /> },
+    { id: "files", label: "Files", count: fileChanges, icon: <CodeBracketIcon className="w-[11px] h-[11px]" /> },
   ];
   const typeGroups = ["all", "agent.", "run.", "task.", "tool.", "terminal.", "file."];
 
@@ -423,7 +424,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                     })}
                   </div>
                   {si < maxStage && (
-                    <div className="flex items-center self-center pt-8"><ArrowRight size={16} className="text-muted-fg/30" /></div>
+                    <div className="flex items-center self-center pt-8"><ArrowRightIcon className="w-4 h-4 text-muted-fg/30" /></div>
                   )}
                 </div>
               ))}
@@ -459,7 +460,7 @@ function SessionDetail({ session, runs, agents, events }: { session: Session; ru
                   {toolsSummary.map((t) => (
                     <div key={t.name} className="flex items-center gap-4 px-4 py-3 hover:bg-foreground/[0.02] transition-colors">
                       <div className="flex items-center gap-2 w-36">
-                        <Wrench size={12} className="text-amber-400/60 shrink-0" />
+                        <WrenchIcon className="w-3 h-3 text-amber-400/60 shrink-0" />
                         <span className="text-sm font-medium text-foreground truncate">{t.name}</span>
                       </div>
                       <div className="flex items-center gap-4 text-xs text-muted-fg">
@@ -536,12 +537,12 @@ function SessionsPageInner() {
       <div className="w-80 shrink-0 flex flex-col min-h-0">
         <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="flex items-center gap-2">
-            <Layers size={16} className="text-muted-fg" />
+            <Square3Stack3DIcon className="w-4 h-4 text-muted-fg" />
             <h2 className="text-base font-semibold text-foreground">Sessions</h2>
             {sessions.length > 0 && <span className="text-xs text-muted-fg/50 tabular-nums">{sessions.length}</span>}
           </div>
           <button onClick={() => setShowCreate(!showCreate)} className={buttonVariants({ variant: showCreate ? "ghost" : "outline", size: "xs" })}>
-            {showCreate ? <><X size={10} /> Cancel</> : <><Plus size={10} /> New</>}
+            {showCreate ? <><XMarkIcon className="w-2.5 h-2.5" /> Cancel</> : <><PlusIcon className="w-2.5 h-2.5" /> New</>}
           </button>
         </div>
 
@@ -557,11 +558,11 @@ function SessionsPageInner() {
 
         {sessions.length === 0 && !showCreate ? (
           <div className="border border-dashed border-border-base rounded-xl p-8 text-center space-y-3">
-            <Layers size={28} className="text-muted-fg/30 mx-auto" />
+            <Square3Stack3DIcon className="w-7 h-7 text-muted-fg/30 mx-auto" />
             <div className="text-foreground/80 text-sm font-medium">No sessions yet</div>
             <div className="text-muted-fg/60 text-xs leading-relaxed max-w-[220px] mx-auto">Sessions let you group and coordinate multiple AI agents with dependency chains.</div>
             <button onClick={() => setShowCreate(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
-              <Plus size={11} /> Create your first session
+              <PlusIcon className="w-[11px] h-[11px]" /> Create your first session
             </button>
           </div>
         ) : (
@@ -582,7 +583,7 @@ function SessionsPageInner() {
       ) : sessions.length > 0 && (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-2">
-            <Layers size={32} className="text-muted-fg/20 mx-auto" />
+            <Square3Stack3DIcon className="w-8 h-8 text-muted-fg/20 mx-auto" />
             <p className="text-sm text-muted-fg/50">Select a session to view details</p>
           </div>
         </div>

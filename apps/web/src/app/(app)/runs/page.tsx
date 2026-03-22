@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { RotateCcw, StopCircle, Rocket } from "lucide-react";
+import { ArrowPathIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
+import { StopIcon } from "@heroicons/react/24/solid";
 import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
 import { statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../../../lib/variants";
@@ -78,7 +79,7 @@ export default function RunsPage() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {sortedRuns.length === 0 ? (
             <div className="p-12 text-center space-y-2">
-              <Rocket size={20} className="text-muted-fg/60 mx-auto" />
+              <RocketLaunchIcon className="w-5 h-5 text-muted-fg/60 mx-auto" />
               <div className="text-muted-fg text-sm font-medium">No runs yet</div>
               <div className="text-muted-fg/60 text-xs">Launch a run from the Office page to see it here.</div>
             </div>
@@ -111,12 +112,12 @@ export default function RunsPage() {
                     <span className="w-16 px-4 flex justify-end">
                       {run.status === "running" && (
                         <button onClick={() => handleStop(run.id)} className={buttonVariants({ variant: "danger", size: "xs" })}>
-                          <StopCircle size={10} />
+                          <StopIcon className="w-2.5 h-2.5" />
                         </button>
                       )}
                       {run.config && run.status !== "running" && (
                         <button onClick={() => handleRerun(run)} className={buttonVariants({ variant: "ghost", size: "xs" })}>
-                          <RotateCcw size={10} />
+                          <ArrowPathIcon className="w-2.5 h-2.5" />
                         </button>
                       )}
                     </span>

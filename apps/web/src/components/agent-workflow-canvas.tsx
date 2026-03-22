@@ -5,17 +5,17 @@ import type React from "react";
 import { useRef, useState, useMemo } from "react";
 import { flushSync } from "react-dom";
 import {
-  ArrowRight,
-  Wrench,
-  FileCode,
-  Zap,
-  User,
-  Shield,
-  Code,
-  Terminal,
-  FileSearch,
-  Cpu,
-} from "lucide-react";
+  ArrowRightIcon,
+  WrenchIcon,
+  CodeBracketIcon,
+  BoltIcon,
+  UserIcon,
+  ShieldCheckIcon,
+  CodeBracketSquareIcon,
+  CommandLineIcon,
+  MagnifyingGlassIcon,
+  CpuChipIcon,
+} from "@heroicons/react/24/outline";
 import type { Agent, AgentEvent, Run, Session } from "@repo/shared";
 import { cn } from "../lib/cn";
 import { statusDotVariants, statusLabels } from "../lib/variants";
@@ -49,12 +49,12 @@ const NODE_WIDTH = 220;
 const NODE_HEIGHT = 120;
 
 const agentIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  Alice: Code,
-  Bob: Terminal,
-  Linter: FileSearch,
-  Carlos: Cpu,
-  Diana: Shield,
-  Eve: FileCode,
+  Alice: CodeBracketSquareIcon,
+  Bob: CommandLineIcon,
+  Linter: MagnifyingGlassIcon,
+  Carlos: CpuChipIcon,
+  Diana: ShieldCheckIcon,
+  Eve: CodeBracketIcon,
 };
 
 const agentColors: Record<string, string> = {
@@ -171,7 +171,7 @@ function AgentNodeCard({
   const { agent, run, eventCount, toolCount, fileCount, lastActivity } = node;
   const isPaused = agent.status === "idle" && run?.status === "stopped";
   const displayStatus = isPaused ? "paused" : agent.status;
-  const Icon = agentIcons[agent.name] ?? User;
+  const Icon = agentIcons[agent.name] ?? UserIcon;
 
   return (
     <div
@@ -220,17 +220,17 @@ function AgentNodeCard({
           <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
               <span className="flex items-center gap-1 text-amber-400/60">
-                <Wrench size={9} /> {toolCount}
+                <WrenchIcon className="w-[9px] h-[9px]" /> {toolCount}
               </span>
             )}
             {fileCount > 0 && (
               <span className="flex items-center gap-1 text-cyan-400/60">
-                <FileCode size={9} /> {fileCount}
+                <CodeBracketIcon className="w-[9px] h-[9px]" /> {fileCount}
               </span>
             )}
             {eventCount > 0 && (
               <span className="flex items-center gap-1">
-                <Zap size={9} /> {eventCount}
+                <BoltIcon className="w-[9px] h-[9px]" /> {eventCount}
               </span>
             )}
           </div>
@@ -274,18 +274,19 @@ function computeAutoLayout(
   // 2) Position standalone agents (mock + single) in a grid, top-left
   const standaloneAgents = agents.filter((a) => !sessionAgentIds.has(a.id));
   const STANDALONE_COLS = 3;
+  const PADDING_LEFT = 16;
   standaloneAgents.forEach((agent, i) => {
     positions.set(agent.id, {
-      x: 40 + (i % STANDALONE_COLS) * COL_WIDTH,
-      y: 50 + Math.floor(i / STANDALONE_COLS) * ROW_HEIGHT,
+      x: PADDING_LEFT + (i % STANDALONE_COLS) * COL_WIDTH,
+      y: 60 + Math.floor(i / STANDALONE_COLS) * ROW_HEIGHT,
     });
   });
 
   // 3) Position each session's agents in dependency-based layout, to the right
   const standaloneRows = Math.ceil(standaloneAgents.length / STANDALONE_COLS);
   const standaloneMaxX = standaloneAgents.length > 0
-    ? STANDALONE_COLS * COL_WIDTH + 60
-    : 0;
+    ? PADDING_LEFT + STANDALONE_COLS * COL_WIDTH + 40
+    : PADDING_LEFT;
 
   let sessionOffsetX = standaloneMaxX;
 

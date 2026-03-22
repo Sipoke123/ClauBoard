@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "../lib/use-socket";
 import { useStoreSelector } from "../lib/use-store";
-import { Wifi, WifiOff, FlaskConical, Radio, ShieldAlert, ShieldCheck } from "lucide-react";
+import { WifiIcon, BeakerIcon, ShieldExclamationIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
 import { cn } from "../lib/cn";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -42,22 +42,22 @@ export function StatusBar() {
         ? "bg-surface border-border-base text-muted-fg"
         : "bg-red-500/10 border-red-500/20 text-red-400"
     )}>
-      {!connected && <><WifiOff size={12} className="animate-pulse" /> Reconnecting...</>}
+      {!connected && <><WifiIcon className="w-3 h-3 animate-pulse" /> Reconnecting...</>}
       {connected && modeLabel && (
         <span className={cn(
           "flex items-center gap-1",
-          adapterMode === "mock" ? "text-amber-500/70" : "text-amber-400/60"
+          adapterMode === "mock" ? "text-emerald-500/70" : "text-emerald-400/60"
         )}>
-          {adapterMode === "mock" ? <FlaskConical size={10} /> : <Radio size={10} />}
+          {adapterMode === "mock" ? <BeakerIcon className="w-2.5 h-2.5" /> : <WifiIcon className="w-2.5 h-2.5" />}
           {modeLabel}
         </span>
       )}
-      {connected && !modeLabel && <><Wifi size={12} className="text-emerald-500" /> Live</>}
+      {connected && !modeLabel && <><WifiIcon className="w-3 h-3 text-emerald-500" /> Live</>}
       {connected && health && !cwdRestricted && adapterMode !== "mock" && (
         <>
           <span className="text-muted-fg/50">·</span>
-          <span className="flex items-center gap-1 text-amber-500/60" title="No allowed workspace roots configured — all paths accepted">
-            <ShieldAlert size={10} /> Open
+          <span className="flex items-center gap-1 text-emerald-500/60" title="No allowed workspace roots configured — all paths accepted">
+            <ShieldExclamationIcon className="w-2.5 h-2.5" /> Open
           </span>
         </>
       )}
@@ -65,7 +65,7 @@ export function StatusBar() {
         <>
           <span className="text-muted-fg/50">·</span>
           <span className="flex items-center gap-1 text-emerald-500/50" title="Working directory restricted to allowed roots">
-            <ShieldCheck size={10} />
+            <ShieldCheckIcon className="w-2.5 h-2.5" />
           </span>
         </>
       )}

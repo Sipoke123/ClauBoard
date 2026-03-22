@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { StopCircle, Wrench, FileCode, Zap, Terminal, CheckCircle, XCircle, Clock, AlertTriangle, Plus, Minus } from "lucide-react";
+import { WrenchIcon, BoltIcon, CommandLineIcon, CheckCircleIcon, XCircleIcon, ClockIcon, ExclamationTriangleIcon, PlusIcon, MinusIcon, CodeBracketIcon } from "@heroicons/react/24/outline";
+import { StopIcon } from "@heroicons/react/24/solid";
 import type { Agent, AgentEvent, Run, Task } from "@repo/shared";
 import { cn } from "../lib/cn";
 import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, tabVariants, statusLabels, getEventColor } from "../lib/variants";
@@ -68,7 +69,7 @@ function ToolCallRow({ invoked, result }: { invoked: AgentEvent; result?: AgentE
   return (
     <div className="border-b border-border-subtle py-2.5 px-3 text-xs font-mono h-full">
       <div className="flex items-center gap-2">
-        <Wrench size={10} className="text-amber-400/70 shrink-0" />
+        <WrenchIcon className="w-2.5 h-2.5 text-amber-400/70 shrink-0" />
         <span className="text-amber-400 font-semibold">{inv.payload.tool}</span>
         <span className="text-muted-fg">{new Date(invoked.ts).toLocaleTimeString()}</span>
         {succeeded && <span className="text-emerald-400 text-[10px]">{res.payload.durationMs}ms</span>}
@@ -107,9 +108,9 @@ function TextOutputRow({ event }: { event: AgentEvent }) {
 function FileChangeRow({ event }: { event: AgentEvent }) {
   const p = (event as any).payload;
   const icons: Record<string, React.ReactNode> = {
-    create: <Plus size={10} className="text-emerald-400" />,
-    edit: <Minus size={10} className="text-amber-400" />,
-    delete: <XCircle size={10} className="text-red-400" />,
+    create: <PlusIcon className="w-2.5 h-2.5 text-emerald-400" />,
+    edit: <MinusIcon className="w-2.5 h-2.5 text-amber-400" />,
+    delete: <XCircleIcon className="w-2.5 h-2.5 text-red-400" />,
   };
   return (
     <div className="flex items-center gap-2 py-1.5 px-3 text-xs font-mono border-b border-border-subtle h-full">
@@ -166,10 +167,10 @@ export function AgentDetail({
   };
 
   const tabs: { id: Tab; label: string; count: number; icon: React.ReactNode }[] = [
-    { id: "events", label: "Events", count: agentEvents.length, icon: <Zap size={11} /> },
-    { id: "output", label: "Output", count: textEvents.length, icon: <Terminal size={11} /> },
-    { id: "tools", label: "Tools", count: toolInvoked.length, icon: <Wrench size={11} /> },
-    { id: "files", label: "Files", count: fileEvents.length, icon: <FileCode size={11} /> },
+    { id: "events", label: "Events", count: agentEvents.length, icon: <BoltIcon className="w-[11px] h-[11px]" /> },
+    { id: "output", label: "Output", count: textEvents.length, icon: <CommandLineIcon className="w-[11px] h-[11px]" /> },
+    { id: "tools", label: "Tools", count: toolInvoked.length, icon: <WrenchIcon className="w-[11px] h-[11px]" /> },
+    { id: "files", label: "Files", count: fileEvents.length, icon: <CodeBracketIcon className="w-[11px] h-[11px]" /> },
   ];
 
   return (
@@ -201,7 +202,7 @@ export function AgentDetail({
                 disabled={stopping}
                 className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-md text-[11px] font-medium border border-red-500/30 bg-transparent text-red-400 hover:bg-red-500/10 hover:border-red-500/50 transition-all disabled:opacity-40"
               >
-                <StopCircle size={10} /> {stopping ? "..." : "Stop"}
+                <StopIcon className="w-2.5 h-2.5" /> {stopping ? "..." : "Stop"}
               </button>
             )}
             {isPaused && (
@@ -211,7 +212,7 @@ export function AgentDetail({
                 }}
                 className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-md text-[11px] font-medium border border-emerald-500/30 bg-transparent text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-all"
               >
-                <Zap size={10} /> Resume
+                <BoltIcon className="w-2.5 h-2.5" /> Resume
               </button>
             )}
           </div>
@@ -224,7 +225,7 @@ export function AgentDetail({
         )}
         {agent.status === "blocked" && agent.blockedReason && (
           <div className="flex items-center gap-1.5 mt-1.5 text-xs text-amber-400/80">
-            <AlertTriangle size={11} /> {agent.blockedReason}
+            <ExclamationTriangleIcon className="w-[11px] h-[11px]" /> {agent.blockedReason}
           </div>
         )}
         {lastRun?.error && <div className="mt-1 text-xs text-red-400/80 truncate">{lastRun.error}</div>}
@@ -253,7 +254,7 @@ export function AgentDetail({
               name="agentMsg"
               type="text"
               placeholder="Send message to agent..."
-              className="flex-1 h-7 rounded-lg border border-border-base bg-input-bg px-2.5 text-xs text-foreground placeholder:text-muted-fg/40 focus:outline-none focus:border-amber-500/40 transition-colors"
+              className="flex-1 h-7 rounded-lg border border-border-base bg-input-bg px-2.5 text-xs text-foreground placeholder:text-muted-fg/40 focus:outline-none focus:border-emerald-500/40 transition-colors"
             />
             <button
               type="submit"
@@ -268,10 +269,10 @@ export function AgentDetail({
       {/* Metrics strip */}
       <div className="grid grid-cols-4 gap-2 shrink-0">
         {[
-          { label: "Runs", value: agentRuns.length, icon: <Zap size={11} className="text-muted-fg" /> },
-          { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircle size={11} className="text-muted-fg" /> },
-          { label: "Tools", value: toolInvoked.length, icon: <Wrench size={11} className="text-amber-400/60" /> },
-          { label: "Files", value: fileEvents.length, icon: <FileCode size={11} className="text-cyan-400/60" /> },
+          { label: "Runs", value: agentRuns.length, icon: <BoltIcon className="w-[11px] h-[11px] text-muted-fg" /> },
+          { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircleIcon className="w-[11px] h-[11px] text-muted-fg" /> },
+          { label: "Tools", value: toolInvoked.length, icon: <WrenchIcon className="w-[11px] h-[11px] text-amber-400/60" /> },
+          { label: "Files", value: fileEvents.length, icon: <CodeBracketIcon className="w-[11px] h-[11px] text-cyan-400/60" /> },
         ].map((m) => (
           <div key={m.label} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-2.5 text-center")}>
             <div className="text-lg font-bold text-foreground">{m.value}</div>

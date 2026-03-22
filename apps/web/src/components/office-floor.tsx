@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Square, AlertTriangle, HelpCircle, StopCircle, Play, ExternalLink, Wrench, FileCode, Zap, Users, Rocket, Layers, Code, Terminal, FileSearch, Cpu, Shield, User } from "lucide-react";
+import { WrenchIcon, CodeBracketIcon, BoltIcon, UsersIcon, RocketLaunchIcon, Square3Stack3DIcon, CodeBracketSquareIcon, CommandLineIcon, MagnifyingGlassIcon, CpuChipIcon, ShieldCheckIcon, UserIcon, ArrowTopRightOnSquareIcon, BuildingOffice2Icon } from "@heroicons/react/24/outline";
+import { StopIcon } from "@heroicons/react/24/solid";
 import type { Agent, AgentEvent, Run, Session } from "@repo/shared";
 import { cn } from "../lib/cn";
 import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../lib/variants";
@@ -14,7 +15,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 // ---------------------------------------------------------------------------
 
 const agentIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  Alice: Code, Bob: Terminal, Linter: FileSearch, Carlos: Cpu, Diana: Shield, Eve: FileCode,
+  Alice: CodeBracketSquareIcon, Bob: CommandLineIcon, Linter: MagnifyingGlassIcon, Carlos: CpuChipIcon, Diana: ShieldCheckIcon, Eve: CodeBracketIcon,
 };
 
 const iconColors: Record<string, string> = {
@@ -149,7 +150,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
             "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
             iconColors[displayStatus] ?? iconColors.offline,
           )}>
-            {(() => { const Icon = agentIcons[agent.name] ?? User; return <Icon className="h-[18px] w-[18px]" />; })()}
+            {(() => { const Icon = agentIcons[agent.name] ?? UserIcon; return <Icon className="h-[18px] w-[18px]" />; })()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
@@ -181,17 +182,17 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
           <div className="flex items-center gap-3 text-[10px] text-muted-fg">
             {toolCount > 0 && (
               <span className="flex items-center gap-1 text-amber-400/60">
-                <Wrench size={9} /> {toolCount}
+                <WrenchIcon className="w-[9px] h-[9px]" /> {toolCount}
               </span>
             )}
             {fileCount > 0 && (
               <span className="flex items-center gap-1 text-cyan-400/60">
-                <FileCode size={9} /> {fileCount}
+                <CodeBracketIcon className="w-[9px] h-[9px]" /> {fileCount}
               </span>
             )}
             {eventCount > 0 && (
               <span className="flex items-center gap-1">
-                <Zap size={9} /> {eventCount}
+                <BoltIcon className="w-[9px] h-[9px]" /> {eventCount}
               </span>
             )}
           </div>
@@ -244,8 +245,8 @@ function Room({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Users size={13} className={cn(
-              "opacity-50",
+            <UsersIcon className={cn(
+              "w-[13px] h-[13px] opacity-50",
               metrics?.working ? "text-emerald-400 opacity-100" : metrics?.failed ? "text-red-400 opacity-100" : "text-muted-fg",
             )} />
             <span className="text-xs font-semibold text-muted-fg uppercase tracking-wider">{label}</span>
@@ -260,10 +261,10 @@ function Room({
                 <span className={statusPillVariants({ status: "completed" })}>{metrics.completed} done</span>
               )}
               {metrics.toolCalls > 0 && (
-                <span className="flex items-center gap-1 text-[10px] text-muted-fg"><Wrench size={9} />{metrics.toolCalls}</span>
+                <span className="flex items-center gap-1 text-[10px] text-muted-fg"><WrenchIcon className="w-[9px] h-[9px]" />{metrics.toolCalls}</span>
               )}
               {metrics.fileChanges > 0 && (
-                <span className="flex items-center gap-1 text-[10px] text-cyan-500/50"><FileCode size={9} />{metrics.fileChanges}</span>
+                <span className="flex items-center gap-1 text-[10px] text-cyan-500/50"><CodeBracketIcon className="w-[9px] h-[9px]" />{metrics.fileChanges}</span>
               )}
             </div>
           )}
@@ -272,12 +273,12 @@ function Room({
         <div className="flex gap-1.5">
           {onOpenSession && (
             <button onClick={onOpenSession} className={buttonVariants({ variant: "ghost", size: "xs" })}>
-              <ExternalLink size={10} /> Details
+              <ArrowTopRightOnSquareIcon className="w-2.5 h-2.5" /> Details
             </button>
           )}
           {onStopAll && metrics && metrics.working > 0 && (
             <button onClick={onStopAll} className={buttonVariants({ variant: "danger", size: "xs" })}>
-              <StopCircle size={10} /> Stop All
+              <StopIcon className="w-2.5 h-2.5" /> Stop All
             </button>
           )}
         </div>
@@ -299,7 +300,7 @@ function OfficeEmptyState({ onLaunchRun, onNavigateToSessions }: { onLaunchRun?:
     <div className="h-full flex items-center justify-center">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-5 max-w-md">
         <div className="w-16 h-16 rounded-2xl bg-surface border border-border-base flex items-center justify-center mx-auto">
-          <Building2 size={24} className="text-muted-fg" />
+          <BuildingOffice2Icon className="w-6 h-6 text-muted-fg" />
         </div>
         <div>
           <div className="text-foreground text-sm font-medium">The office is empty</div>
@@ -310,12 +311,12 @@ function OfficeEmptyState({ onLaunchRun, onNavigateToSessions }: { onLaunchRun?:
         <div className="flex items-center justify-center gap-3">
           {onLaunchRun && (
             <button onClick={onLaunchRun} className={buttonVariants({ variant: "primary", size: "sm" })}>
-              <Rocket size={13} /> Launch Run
+              <RocketLaunchIcon className="w-[13px] h-[13px]" /> Launch Run
             </button>
           )}
           {onNavigateToSessions && (
             <button onClick={onNavigateToSessions} className={buttonVariants({ variant: "outline", size: "sm" })}>
-              <Layers size={13} /> New Session
+              <Square3Stack3DIcon className="w-[13px] h-[13px]" /> New Session
             </button>
           )}
         </div>
@@ -422,5 +423,3 @@ export function OfficeFloor({
   );
 }
 
-// Re-export Building2 for empty state in other files
-import { Building2 } from "lucide-react";

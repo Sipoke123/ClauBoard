@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Activity } from "lucide-react";
+import { ChartBarIcon } from "@heroicons/react/24/outline";
 import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
 import { panelVariants, inputVariants, getEventColor } from "../../../lib/variants";
@@ -34,7 +34,7 @@ export default function TimelinePage() {
     <div className="flex flex-col h-full p-6">
       <div className="flex items-center justify-between mb-5 shrink-0">
         <div className="flex items-center gap-2.5">
-          <Activity size={18} className="text-muted-fg" />
+          <ChartBarIcon className="w-[18px] h-[18px] text-muted-fg" />
           <h2 className="text-lg font-semibold text-foreground">Event Timeline</h2>
           <span className="text-xs text-muted-fg/60">{filtered.length} events</span>
         </div>
@@ -74,7 +74,7 @@ export default function TimelinePage() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {filtered.length === 0 ? (
             <div className="p-12 text-center space-y-2">
-              <Activity size={20} className="text-muted-fg/60 mx-auto" />
+              <ChartBarIcon className="w-5 h-5 text-muted-fg/60 mx-auto" />
               <div className="text-muted-fg text-sm font-medium">No events yet</div>
               <div className="text-muted-fg/60 text-xs">Events appear here as agents work. Launch a run to get started.</div>
             </div>

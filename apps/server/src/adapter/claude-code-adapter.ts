@@ -54,7 +54,7 @@ export class ClaudeCodeAdapter implements AgentAdapter {
     this.taskId = `task-${Date.now()}`;
     const agentName = this.options.agentName ?? "Claude";
 
-    const interactive = this.options.interactive ?? false;
+    const interactive = this.options.interactive ?? true;
     const args = [
       ...(interactive ? [] : ["--print"]),
       "--output-format", "stream-json",

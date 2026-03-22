@@ -4,54 +4,69 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Building2,
-  Layers,
-  Play,
-  Activity,
-  Search,
-  Rocket,
-  ArrowRight,
-  Check,
-  AlertTriangle,
-  Terminal,
-  GitBranch,
-  Zap,
-  Database,
-  Wifi,
-  Server,
-  Globe,
-  Code2,
-  Box,
-  Send,
-  Minus,
-  Crown,
-  Users,
-} from "lucide-react";
+  BuildingOffice2Icon,
+  Square3Stack3DIcon,
+  PlayIcon,
+  ChartBarIcon,
+  MagnifyingGlassIcon,
+  RocketLaunchIcon,
+  ArrowRightIcon,
+  CheckIcon,
+  ExclamationTriangleIcon,
+  CommandLineIcon,
+  ArrowsRightLeftIcon,
+  BoltIcon,
+  CircleStackIcon,
+  WifiIcon,
+  ServerIcon,
+  GlobeAltIcon,
+  CodeBracketIcon,
+  CubeIcon,
+  PaperAirplaneIcon,
+  MinusIcon,
+  TrophyIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline";
 import { cn } from "../../lib/cn";
 import { buttonVariants, panelVariants } from "../../lib/variants";
 import { HeroSection } from "../../components/hero-section";
 import { ThemeToggle } from "../../components/ui/theme-toggle";
+import { FeatureCard } from "../../components/ui/grid-feature-cards";
 
 // ---------------------------------------------------------------------------
 // Animation helpers
 // ---------------------------------------------------------------------------
 
-const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" as any },
-  transition: { duration: 0.5 },
+const blurIn = {
+  initial: { opacity: 0, filter: "blur(4px)", y: 8 },
+  whileInView: { opacity: 1, filter: "blur(0px)", y: 0 },
+  viewport: { once: true, margin: "-60px" as any },
+  transition: { duration: 0.8 },
 };
 
+const blurInSlow = {
+  initial: { opacity: 0, filter: "blur(4px)", y: 8 },
+  whileInView: { opacity: 1, filter: "blur(0px)", y: 0 },
+  viewport: { once: true, margin: "-60px" as any },
+  transition: { delay: 0.2, duration: 0.8 },
+};
+
+// Keep old names as aliases for sections that already use them
+const fadeUp = blurIn;
 const stagger = {
-  whileInView: { transition: { staggerChildren: 0.08 } },
-  viewport: { once: true, margin: "-80px" as any },
+  initial: "hidden",
+  whileInView: "visible",
+  viewport: { once: true, margin: "-60px" as any },
+  variants: {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.08 } },
+  },
 };
-
 const fadeUpChild = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.4 },
+  variants: {
+    hidden: { opacity: 0, filter: "blur(4px)", y: 8 },
+    visible: { opacity: 1, filter: "blur(0px)", y: 0, transition: { duration: 0.6 } },
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -62,58 +77,139 @@ const fadeUpChild = {
 function Features() {
   const features = [
     {
-      icon: Building2,
+      icon: <BuildingOffice2Icon className="w-4 h-4 text-emerald-500" />,
       title: "Visual Workspace",
       description: "Drag agents on a canvas, see who depends on whom. Connection lines update in real time as agents work, finish, or fail.",
+      status: "Core",
+      tags: ["Canvas", "Drag & Drop"],
+      colSpan: 2,
+      hasPersistentHover: true,
+      docId: "visual-workspace",
     },
     {
-      icon: Layers,
+      icon: <Square3Stack3DIcon className="w-4 h-4 text-emerald-500" />,
       title: "Agent Pipelines",
-      description: "Chain agents together: analyst first, then strategist, then implementer. If one fails, the rest keep going with context.",
+      description: "Chain agents together: analyst first, then strategist, then implementer. If one fails, the rest keep going.",
+      status: "New",
+      tags: ["Sessions", "Dependencies"],
+      docId: "agent-pipelines",
     },
     {
-      icon: Play,
-      title: "Talk to Running Agents",
-      description: "Send follow-up instructions to agents while they work. Redirect, clarify, or course-correct without restarting.",
-    },
-    {
-      icon: Activity,
+      icon: <ChartBarIcon className="w-4 h-4 text-violet-500" />,
       title: "See Everything Live",
       description: "Every tool call, file edit, and output appears instantly. Scroll through 50,000+ events without a hiccup.",
+      status: "Live",
+      tags: ["Events", "Virtual Scroll"],
+      colSpan: 2,
+      docId: "live-events",
     },
     {
-      icon: GitBranch,
+      icon: <PlayIcon className="w-4 h-4 text-sky-500" />,
+      title: "Talk to Running Agents",
+      description: "Send follow-up instructions while agents work. Redirect or course-correct without restarting.",
+      status: "Interactive",
+      tags: ["Stdin", "Real-time"],
+      docId: "interactive-agents",
+    },
+    {
+      icon: <ArrowsRightLeftIcon className="w-4 h-4 text-emerald-500" />,
       title: "Automatic Handoffs",
-      description: "When one agent finishes, the next receives a summary of what was done — files created, tools used, key output.",
+      description: "When one agent finishes, the next receives a summary — files created, tools used, key output.",
+      status: "Smart",
+      tags: ["Context", "Failover"],
+      docId: "context-sharing",
     },
     {
-      icon: Database,
+      icon: <CircleStackIcon className="w-4 h-4 text-rose-500" />,
       title: "Deploy Anywhere",
-      description: "Docker-ready with one command. Plugin system, dual storage (JSONL or SQLite), event archival. Extensible by design.",
+      description: "Docker-ready with one command. Dual storage, event archival, plugin system. Extensible by design.",
+      status: "Docker",
+      tags: ["SQLite", "Plugins"],
+      colSpan: 2,
+      hasPersistentHover: false,
+      docId: "deployment",
     },
   ];
 
   return (
-    <section id="features" className="max-w-6xl mx-auto px-6 py-20">
-      <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">Everything you need</h2>
-        <p className="text-muted-fg text-sm">From launching a single agent to orchestrating a team — one tool does it all.</p>
-      </motion.div>
-      <motion.div {...stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {features.map((f) => (
-          <motion.div
-            key={f.title}
-            {...fadeUpChild}
-            className={cn(panelVariants({ variant: "elevated" }), "p-5 hover:border-foreground/[0.12] transition-colors")}
-          >
-            <div className="w-9 h-9 rounded-xl bg-amber-600/[0.08] border border-amber-500/15 flex items-center justify-center mb-4">
-              <f.icon size={16} className="text-amber-600 dark:text-amber-400" />
+    <section id="features" className="py-16 md:py-32">
+      <div className="mx-auto w-full max-w-6xl space-y-8 px-6">
+        <motion.div {...blurIn} className="mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl lg:text-5xl xl:font-extrabold">
+            Everything you need
+          </h2>
+          <p className="text-muted-fg mt-4 text-sm tracking-wide text-balance md:text-base">
+            From launching a single agent to orchestrating a team — one tool does it all.
+          </p>
+        </motion.div>
+
+        <motion.div {...blurInSlow} className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-6xl mx-auto">
+
+          {features.map((item, index) => (
+            <div
+              key={index}
+              className={cn(
+                "group relative p-4 rounded-xl overflow-hidden transition-all duration-300",
+                "border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03]",
+                "hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)]",
+                "hover:-translate-y-0.5 will-change-transform",
+                item.colSpan === 2 ? "md:col-span-2" : "col-span-1",
+                item.hasPersistentHover && "shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(255,255,255,0.03)] -translate-y-0.5",
+              )}
+            >
+              <div className={cn(
+                "absolute inset-0 transition-opacity duration-300",
+                item.hasPersistentHover ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+              )}>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[length:4px_4px]" />
+              </div>
+
+              <div className="relative flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10 group-hover:bg-gradient-to-br transition-all duration-300">
+                    {item.icon}
+                  </div>
+                  <span className={cn(
+                    "text-xs font-medium px-2 py-1 rounded-lg backdrop-blur-sm",
+                    "bg-black/5 dark:bg-white/10 text-gray-600 dark:text-gray-300",
+                    "transition-colors duration-300 group-hover:bg-black/10 dark:group-hover:bg-white/20",
+                  )}>
+                    {item.status || "Active"}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-snug font-[425]">
+                    {item.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                    {item.tags?.map((tag, i) => (
+                      <span key={i} className="px-2 py-1 rounded-md bg-black/5 dark:bg-white/10 backdrop-blur-sm transition-all duration-200 hover:bg-black/10 dark:hover:bg-white/20">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <Link href={`/docs#${item.docId}`} className="text-xs text-gray-500 dark:text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-emerald-600 dark:hover:text-emerald-400">
+                    Learn more →
+                  </Link>
+                </div>
+              </div>
+
+              <div className={cn(
+                "absolute inset-0 -z-10 rounded-xl p-px bg-gradient-to-br from-transparent via-gray-100/50 to-transparent dark:via-white/10",
+                item.hasPersistentHover ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                "transition-opacity duration-300",
+              )} />
             </div>
-            <h3 className="text-sm font-semibold text-foreground mb-2">{f.title}</h3>
-            <p className="text-xs text-muted-fg leading-relaxed">{f.description}</p>
-          </motion.div>
-        ))}
-      </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -152,24 +248,24 @@ function Workflows() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">How it works</h2>
-        <p className="text-muted-fg text-sm">Three ways to use AgentFlow, from simple to orchestrated.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">How it works</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Three ways to use AgentFlow, from simple to orchestrated.</p>
       </motion.div>
-      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {workflows.map((w, wi) => (
           <motion.div
             key={w.title}
             {...fadeUpChild}
-            className={cn(panelVariants({ variant: "surface" }), "p-5")}
+            className="group relative p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300"
           >
             <div className="flex items-center gap-2.5 mb-4">
-              <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-fg">{wi + 1}</span>
-              <h3 className="text-sm font-semibold text-foreground">{w.title}</h3>
+              <span className="w-7 h-7 rounded-lg bg-black/5 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">{wi + 1}</span>
+              <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">{w.title}</h3>
             </div>
             <ol className="space-y-2.5">
               {w.steps.map((step, si) => (
-                <li key={si} className="flex items-start gap-2.5 text-xs text-muted-fg leading-relaxed">
-                  <span className="text-muted-fg/60 font-mono shrink-0 mt-0.5">{si + 1}.</span>
+                <li key={si} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-300 leading-snug">
+                  <span className="text-gray-400 dark:text-gray-500 font-mono shrink-0 mt-0.5 text-xs">{si + 1}.</span>
                   {step}
                 </li>
               ))}
@@ -188,7 +284,7 @@ function Pricing() {
       price: "$0",
       period: "forever",
       description: "Get started with the basics",
-      icon: Rocket,
+      icon: RocketLaunchIcon,
       featured: false,
       features: [
         { text: "Up to 3 agents", included: true },
@@ -209,7 +305,7 @@ function Pricing() {
       price: "$29",
       period: "/month",
       description: "For power users and small teams",
-      icon: Crown,
+      icon: TrophyIcon,
       featured: true,
       features: [
         { text: "Up to 10 agents", included: true },
@@ -230,7 +326,7 @@ function Pricing() {
       price: "$99",
       period: "/month",
       description: "For teams running agents at scale",
-      icon: Users,
+      icon: UsersIcon,
       featured: false,
       features: [
         { text: "Unlimited agents", included: true },
@@ -251,10 +347,10 @@ function Pricing() {
   return (
     <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">Simple, transparent pricing</h2>
-        <p className="text-muted-fg text-sm">Start free. Upgrade when you need more agents or features.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Simple, transparent pricing</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Start free. Upgrade when you need more agents or features.</p>
       </motion.div>
-      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
         {plans.map((plan) => {
           const Icon = plan.icon;
           return (
@@ -262,14 +358,15 @@ function Pricing() {
               key={plan.name}
               {...fadeUpChild}
               className={cn(
-                panelVariants({ variant: plan.featured ? "elevated" : "surface" }),
-                "p-6 relative",
-                plan.featured && "ring-1 ring-amber-500/20",
+                "group relative p-6 rounded-xl border bg-white dark:bg-white/[0.03] transition-all duration-300 hover:-translate-y-0.5",
+                plan.featured
+                  ? "border-emerald-300/50 dark:border-emerald-500/20 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(255,255,255,0.03)]"
+                  : "border-gray-100/80 dark:border-white/10 hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)]",
               )}
             >
               {plan.featured && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1 rounded-full bg-amber-600 text-white text-[10px] font-semibold uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold uppercase tracking-wider">
                     Most Popular
                   </span>
                 </div>
@@ -277,33 +374,33 @@ function Pricing() {
 
               <div className="flex items-center gap-2.5 mb-4">
                 <div className={cn(
-                  "w-9 h-9 rounded-xl flex items-center justify-center border",
+                  "w-8 h-8 rounded-lg flex items-center justify-center",
                   plan.featured
-                    ? "bg-amber-600/[0.08] border-amber-500/15 text-amber-600 dark:text-amber-400"
-                    : "bg-foreground/[0.04] border-border-base text-muted-fg",
+                    ? "bg-emerald-500/10 text-emerald-500"
+                    : "bg-black/5 dark:bg-white/10 text-gray-600 dark:text-gray-300",
                 )}>
-                  <Icon size={16} />
+                  <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">{plan.name}</h3>
-                  <p className="text-[10px] text-muted-fg">{plan.description}</p>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">{plan.name}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{plan.description}</p>
                 </div>
               </div>
 
               <div className="mb-6">
-                <span className="text-3xl font-bold text-foreground">{plan.price}</span>
-                <span className="text-sm text-muted-fg ml-1">{plan.period}</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">{plan.price}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{plan.period}</span>
               </div>
 
               <ul className="space-y-2.5 mb-6">
                 {plan.features.map((f) => (
-                  <li key={f.text} className="flex items-center gap-2.5 text-xs">
+                  <li key={f.text} className="flex items-center gap-2.5 text-sm">
                     {f.included ? (
-                      <Check size={13} className="text-emerald-400 shrink-0" />
+                      <CheckIcon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     ) : (
-                      <Minus size={13} className="text-muted-fg/30 shrink-0" />
+                      <MinusIcon className="w-3.5 h-3.5 text-gray-300 dark:text-gray-600 shrink-0" />
                     )}
-                    <span className={f.included ? "text-foreground/80" : "text-muted-fg/40"}>{f.text}</span>
+                    <span className={f.included ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-600"}>{f.text}</span>
                   </li>
                 ))}
               </ul>
@@ -313,8 +410,8 @@ function Pricing() {
                 className={cn(
                   "block w-full text-center py-2.5 rounded-lg text-sm font-medium transition-all",
                   plan.featured
-                    ? "border border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/60"
-                    : "border border-border-base text-muted-fg hover:text-foreground hover:border-foreground/20 hover:bg-foreground/[0.04]",
+                    ? "border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60"
+                    : "border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02]",
                 )}
               >
                 {plan.cta}
@@ -330,19 +427,19 @@ function Pricing() {
 function Architecture() {
   const components = [
     {
-      icon: Globe,
+      icon: GlobeAltIcon,
       name: "apps/web",
       tech: "Next.js 15 + React 19",
       description: "Operator UI with spatial office layout, session management, run history, task board, and event timeline.",
     },
     {
-      icon: Server,
+      icon: ServerIcon,
       name: "apps/server",
       tech: "Express + WebSocket",
       description: "Orchestration server with agent registry, run lifecycle, event processor, JSONL persistence, and adapter layer.",
     },
     {
-      icon: Box,
+      icon: CubeIcon,
       name: "packages/shared",
       tech: "TypeScript",
       description: "15 event types, API contracts, WebSocket messages, and dependency graph utilities shared between both apps.",
@@ -350,38 +447,40 @@ function Architecture() {
   ];
 
   const patterns = [
-    { icon: Database, label: "Event-sourced", detail: "Append-only event stream as source of truth" },
-    { icon: Code2, label: "Adapter pattern", detail: "AgentAdapter interface with start(emit) and stop()" },
-    { icon: Wifi, label: "Real-time", detail: "WebSocket pushes events to UI; snapshot on connect" },
-    { icon: GitBranch, label: "Dependency graph", detail: "Validated execution order for staged sessions" },
+    { icon: CircleStackIcon, label: "Event-sourced", detail: "Append-only event stream as source of truth" },
+    { icon: CodeBracketIcon, label: "Adapter pattern", detail: "AgentAdapter interface with start(emit) and stop()" },
+    { icon: WifiIcon, label: "Real-time", detail: "WebSocket pushes events to UI; snapshot on connect" },
+    { icon: ArrowsRightLeftIcon, label: "Dependency graph", detail: "Validated execution order for staged sessions" },
   ];
 
   return (
     <section id="architecture" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">Architecture</h2>
-        <p className="text-muted-fg text-sm">Turborepo monorepo with shared typed contracts.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Architecture</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Turborepo monorepo with shared typed contracts.</p>
       </motion.div>
 
-      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
         {components.map((c) => (
-          <motion.div key={c.name} {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
+          <motion.div key={c.name} {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-center gap-2.5 mb-3">
-              <c.icon size={15} className="text-muted-fg" />
-              <code className="text-sm font-semibold text-foreground">{c.name}</code>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10">
+                <c.icon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              </div>
+              <code className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">{c.name}</code>
             </div>
-            <div className="text-[10px] text-muted-fg/60 font-medium uppercase tracking-wider mb-2">{c.tech}</div>
-            <p className="text-xs text-muted-fg leading-relaxed">{c.description}</p>
+            <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400">{c.tech}</span>
+            <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-snug">{c.description}</p>
           </motion.div>
         ))}
       </motion.div>
 
       <motion.div {...stagger} className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {patterns.map((p) => (
-          <motion.div key={p.label} {...fadeUpChild} className={cn(panelVariants({ variant: "inset" }), "p-4 text-center")}>
-            <p.icon size={16} className="text-amber-600/60 dark:text-amber-400/60 mx-auto mb-2" />
-            <div className="text-xs font-semibold text-foreground/80 mb-1">{p.label}</div>
-            <div className="text-[10px] text-muted-fg/60">{p.detail}</div>
+          <motion.div key={p.label} {...fadeUpChild} className="p-4 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] text-center hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] transition-all duration-300">
+            <p.icon className="w-4 h-4 text-emerald-500 mx-auto mb-2" />
+            <div className="text-xs font-medium text-gray-900 dark:text-gray-100 mb-1">{p.label}</div>
+            <div className="text-[11px] text-gray-500 dark:text-gray-400">{p.detail}</div>
           </motion.div>
         ))}
       </motion.div>
@@ -409,15 +508,15 @@ function WorksToday() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">Shipped and working</h2>
-        <p className="text-muted-fg text-sm">Everything below is live in the current build.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Shipped and working</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Everything below is live in the current build.</p>
       </motion.div>
       <motion.div {...stagger} className="max-w-2xl mx-auto">
-        <div className={cn(panelVariants({ variant: "surface" }), "p-6")}>
+        <div className="p-6 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03]">
           <ul className="space-y-3">
             {items.map((item) => (
-              <motion.li key={item} {...fadeUpChild} className="flex items-start gap-3 text-sm text-foreground/80">
-                <Check size={14} className="text-emerald-400 shrink-0 mt-0.5" />
+              <motion.li key={item} {...fadeUpChild} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300 leading-snug">
+                <CheckIcon className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                 {item}
               </motion.li>
             ))}
@@ -438,18 +537,18 @@ function Limitations() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">Known limitations</h2>
-        <p className="text-muted-fg text-sm">We are working on these. Transparency matters.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Known limitations</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">We are working on these. Transparency matters.</p>
       </motion.div>
       <motion.div {...stagger} className="max-w-2xl mx-auto">
-        <div className={cn(panelVariants({ variant: "inset" }), "p-6")}>
+        <div className="p-6 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03]">
           <ul className="space-y-3">
             {items.map((item) => (
               <motion.li key={item.text} {...fadeUpChild} className="flex items-start gap-3 text-sm">
-                <AlertTriangle size={13} className="text-amber-400/70 shrink-0 mt-0.5" />
+                <ExclamationTriangleIcon className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground/80 font-medium">{item.text}</span>
-                  <span className="text-muted-fg/60"> — {item.detail}</span>
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">{item.text}</span>
+                  <span className="text-gray-500 dark:text-gray-400"> — {item.detail}</span>
                 </div>
               </motion.li>
             ))}
@@ -464,36 +563,36 @@ function GettingStarted() {
   return (
     <section id="getting-started" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-2xl font-bold text-foreground mb-3">Get started in 2 minutes</h2>
-        <p className="text-muted-fg text-sm">Clone, install, run. That is it.</p>
+        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Get started in 2 minutes</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Clone, install, run. That is it.</p>
       </motion.div>
-      <motion.div {...stagger} className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
-        <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
-          <h3 className="text-sm font-semibold text-foreground mb-1">Try it now</h3>
-          <p className="text-xs text-muted-fg mb-4">No Claude CLI needed. Six demo agents show you everything.</p>
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
-            <div><span className="text-muted-fg/60">$</span> npm install</div>
-            <div><span className="text-muted-fg/60">$</span> npm run dev:mock</div>
+      <motion.div {...stagger} className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-3">
+        <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">Try it now</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">No Claude CLI needed. Six demo agents show you everything.</p>
+          <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
+            <div><span className="text-gray-400 dark:text-gray-500">$</span> npm install</div>
+            <div><span className="text-gray-400 dark:text-gray-500">$</span> npm run dev:mock</div>
           </div>
         </motion.div>
-        <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
-          <h3 className="text-sm font-semibold text-foreground mb-1">With real agents</h3>
-          <p className="text-xs text-muted-fg mb-4">Connect your <code className="text-muted-fg">claude</code> CLI and run real tasks.</p>
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
-            <div><span className="text-muted-fg/60">$</span> npm run dev</div>
+        <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">With real agents</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Connect your <code className="text-gray-600 dark:text-gray-300">claude</code> CLI and run real tasks.</p>
+          <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
+            <div><span className="text-gray-400 dark:text-gray-500">$</span> npm run dev</div>
           </div>
         </motion.div>
-        <motion.div {...fadeUpChild} className={cn(panelVariants({ variant: "surface" }), "p-5")}>
-          <h3 className="text-sm font-semibold text-foreground mb-1">Docker</h3>
-          <p className="text-xs text-muted-fg mb-4">One command to build and deploy. Production-ready.</p>
-          <div className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-4 font-mono text-xs text-foreground/80 space-y-1")}>
-            <div><span className="text-muted-fg/60">$</span> docker compose up</div>
+        <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">Docker</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">One command to build and deploy. Production-ready.</p>
+          <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
+            <div><span className="text-gray-400 dark:text-gray-500">$</span> docker compose up</div>
           </div>
         </motion.div>
       </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10">
-        <Link href="/office" className={cn(buttonVariants({ variant: "outline", size: "md" }), "h-10 px-6 text-sm border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/60")}>
-          <Rocket size={14} /> Open the Dashboard
+        <Link href="/office" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all">
+          <RocketLaunchIcon className="w-4 h-4" /> Open the Dashboard
         </Link>
       </motion.div>
     </section>
@@ -519,16 +618,16 @@ function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full h-10 rounded-lg border border-border-base bg-surface-inset px-3 pr-12 text-sm text-foreground placeholder:text-muted-fg/50 focus:outline-none focus:border-amber-500/40 focus:ring-1 focus:ring-amber-500/15 transition-colors"
+                className="w-full h-10 rounded-lg border border-border-base bg-surface-inset px-3 pr-12 text-sm text-foreground placeholder:text-muted-fg/50 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/15 transition-colors"
               />
               <button
                 type="submit"
-                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent border border-amber-500/40 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-all hover:bg-amber-500/10 hover:border-amber-500/60 hover:scale-105"
+                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all hover:bg-emerald-500/10 hover:border-emerald-500/60 hover:scale-105"
               >
-                <Send className="h-3.5 w-3.5" />
+                <PaperAirplaneIcon className="h-3.5 w-3.5" />
               </button>
             </form>
-            <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-amber-600/5 blur-2xl" />
+            <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-emerald-600/5 blur-2xl" />
           </div>
 
           {/* Quick Links */}
@@ -560,9 +659,9 @@ function Footer() {
             <h3 className="mb-4 text-sm font-semibold text-foreground uppercase tracking-wider">Connect</h3>
             <div className="mb-6 flex space-x-3">
               {[
-                { icon: Globe, label: "Website", href: "#" },
-                { icon: Code2, label: "GitHub", href: "https://github.com/Sipoke123/AgentFlow" },
-                { icon: Zap, label: "API", href: "https://docs.anthropic.com/en/docs/claude-code" },
+                { icon: GlobeAltIcon, label: "Website", href: "#" },
+                { icon: CodeBracketIcon, label: "GitHub", href: "https://github.com/Sipoke123/AgentFlow" },
+                { icon: BoltIcon, label: "API", href: "https://docs.anthropic.com/en/docs/claude-code" },
               ].map((social) => (
                 <a
                   key={social.label}
