@@ -103,19 +103,8 @@ export function HeroSection() {
                                     className="absolute inset-0 z-10 bg-gradient-to-b from-transparent from-35% to-background"
                                 />
                                 <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border-base bg-card p-3 shadow-lg shadow-panel-shadow ring-1 ring-border-subtle">
-                                    <div className="aspect-[15/8] relative rounded-xl bg-background border border-border-subtle overflow-hidden flex items-center justify-center">
-                                        <div className="text-center space-y-3 px-8">
-                                            <div className="flex items-center justify-center gap-3">
-                                                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                                                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" style={{ animationDelay: '0.2s' }} />
-                                                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
-                                                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" style={{ animationDelay: '0.6s' }} />
-                                                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" style={{ animationDelay: '0.8s' }} />
-                                                <div className="w-3 h-3 rounded-full bg-muted-fg" />
-                                            </div>
-                                            <p className="text-muted-fg text-sm">6 agents active — open the dashboard to see them live</p>
-                                        </div>
-                                    </div>
+                                    <img src="/dark.png" alt="ClauBoard dashboard" className="w-full rounded-xl hidden dark:block" />
+                                    <img src="/light.png" alt="ClauBoard dashboard" className="w-full rounded-xl dark:hidden" />
                                 </div>
                             </div>
                         </AnimatedGroup>

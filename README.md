@@ -4,6 +4,8 @@
 
 **Visual control plane for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) agents.** Launch, monitor, and coordinate multiple AI agents from one screen. Free, open-source, self-hosted.
 
+![ClauBoard Dashboard](apps/web/public/dark.png)
+
 ---
 
 Stop switching between terminals. ClauBoard gives you a real-time dashboard where every agent is a draggable node on a canvas — you see what it's doing, what tools it's calling, what files it's changing, and whether it's blocked. Group agents into pipelines with dependency chains, send follow-up instructions while they work, and export everything when you're done.
