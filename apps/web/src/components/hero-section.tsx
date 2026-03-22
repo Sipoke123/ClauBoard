@@ -187,7 +187,7 @@ export const HeroHeader = () => {
                             <Link
                                 href="/"
                                 aria-label="home"
-                                className="flex items-center gap-2.5">
+                                className="flex items-center gap-1">
                                 <img src="/logo.svg" alt="ClauBoard" className="w-6 h-6" />
                                 <span className="text-sm font-semibold tracking-tight text-foreground">ClauBoard</span>
                             </Link>
