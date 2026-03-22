@@ -7,6 +7,31 @@ import { CodeBracketIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline"
 
 export function LandingFooter() {
   const [email, setEmail] = React.useState("");
+  const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
+
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("https://api.buttondown.email/v1/subscribers", {
+        method: "POST",
+        headers: {
+          "Authorization": "Token d98637b1-1ba1-4bd9-a142-3a57428aa046",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email_address: email.trim() }),
+      });
+      if (res.ok || res.status === 201) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <footer className="relative border-t border-border-base bg-background text-foreground transition-colors duration-300">
@@ -18,21 +43,31 @@ export function LandingFooter() {
             <p className="mb-6 text-sm text-muted-fg">
               Get notified about new features, agent patterns, and product updates.
             </p>
-            <form className="relative" onSubmit={(e) => { e.preventDefault(); setEmail(""); }}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full h-10 rounded-lg border border-border-base bg-surface-inset px-3 pr-12 text-sm text-foreground placeholder:text-muted-fg/50 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/15 transition-colors"
-              />
-              <button
-                type="submit"
-                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all hover:bg-emerald-500/10 hover:border-emerald-500/60 hover:scale-105"
-              >
-                <PaperAirplaneIcon className="h-3.5 w-3.5" />
-              </button>
-            </form>
+            {status === "success" ? (
+              <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Thanks! You're subscribed.</p>
+            ) : (
+              <form className="relative" onSubmit={handleSubscribe}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  disabled={status === "loading"}
+                  className="w-full h-10 rounded-lg border border-border-base bg-surface-inset px-3 pr-12 text-sm text-foreground placeholder:text-muted-fg/50 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/15 transition-colors disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all hover:bg-emerald-500/10 hover:border-emerald-500/60 hover:scale-105 disabled:opacity-50"
+                >
+                  <PaperAirplaneIcon className="h-3.5 w-3.5" />
+                </button>
+              </form>
+            )}
+            {status === "error" && (
+              <p className="mt-2 text-sm text-red-500">Something went wrong. Try again.</p>
+            )}
             <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-emerald-600/5 blur-2xl" />
           </div>
 
