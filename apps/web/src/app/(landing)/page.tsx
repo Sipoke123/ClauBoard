@@ -20,10 +20,8 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { cn } from "../../lib/cn";
-import { buttonVariants, panelVariants } from "../../lib/variants";
 import { HeroSection } from "../../components/hero-section";
 import { ThemeToggle } from "../../components/ui/theme-toggle";
-import { FeatureCard } from "../../components/ui/grid-feature-cards";
 
 // ---------------------------------------------------------------------------
 // Animation helpers
@@ -206,69 +204,6 @@ function Features() {
   );
 }
 
-function Workflows() {
-  const workflows = [
-    {
-      title: "Quick Start",
-      steps: [
-        "Open the Dashboard and click Launch Run",
-        "Choose a preset or write your own prompt",
-        "Watch the agent appear on the canvas and start working",
-        "Click it to see output, tools, files in the detail panel",
-      ],
-    },
-    {
-      title: "Team of Agents",
-      steps: [
-        "Go to Sessions and create a new group",
-        "Add multiple agents with different prompts",
-        "Launch — they all work in parallel on your project",
-        "Track progress of each agent from one screen",
-      ],
-    },
-    {
-      title: "Build a Pipeline",
-      steps: [
-        "Set dependencies: analyst → strategist → implementer",
-        "The system validates the chain before launching",
-        "Each stage waits for the previous to finish",
-        "If one fails, the next still runs with a context warning",
-      ],
-    },
-  ];
-
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      <motion.div {...fadeUp} className="text-center mb-12">
-        <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">How it works</h2>
-        <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Three ways to use AgentFlow, from simple to orchestrated.</p>
-      </motion.div>
-      <motion.div {...stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {workflows.map((w, wi) => (
-          <motion.div
-            key={w.title}
-            {...fadeUpChild}
-            className="group relative p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300"
-          >
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className="w-7 h-7 rounded-lg bg-black/5 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">{wi + 1}</span>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px]">{w.title}</h3>
-            </div>
-            <ol className="space-y-2.5">
-              {w.steps.map((step, si) => (
-                <li key={si} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-300 leading-snug">
-                  <span className="text-gray-400 dark:text-gray-500 font-mono shrink-0 mt-0.5 text-xs">{si + 1}.</span>
-                  {step}
-                </li>
-              ))}
-            </ol>
-          </motion.div>
-        ))}
-      </motion.div>
-    </section>
-  );
-}
-
 function OpenSource() {
   const cards = [
     {
@@ -292,7 +227,7 @@ function OpenSource() {
   ];
 
   return (
-    <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
+    <section id="open-source" className="max-w-6xl mx-auto px-6 py-20">
       <motion.div {...fadeUp} className="text-center mb-12">
         <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Free &amp; Open Source</h2>
         <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">No subscriptions. No limits. Self-host and own your data.</p>
@@ -408,7 +343,7 @@ function GettingStarted() {
       </motion.div>
       <motion.div {...stagger} className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-3">
         <motion.div {...fadeUpChild} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">Try it now</h3>
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 tracking-tight text-[15px] mb-1">Quick Start</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">No Claude CLI needed. Six demo agents show you everything.</p>
           <div className="rounded-lg p-4 bg-black/[0.03] dark:bg-white/[0.03] font-mono text-sm text-gray-700 dark:text-gray-300 space-y-1">
             <div><span className="text-gray-400 dark:text-gray-500">$</span> npm install</div>
@@ -432,7 +367,7 @@ function GettingStarted() {
       </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10">
         <Link href="/office" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all">
-          <RocketLaunchIcon className="w-4 h-4" /> Open the Dashboard
+          <RocketLaunchIcon className="w-4 h-4" /> Try it Now
         </Link>
       </motion.div>
     </section>
@@ -537,9 +472,8 @@ export default function LandingPage() {
         />
       </div>
       <Features />
-      <Workflows />
-      <OpenSource />
       <Architecture />
+      <OpenSource />
       <GettingStarted />
       <Footer />
     </div>

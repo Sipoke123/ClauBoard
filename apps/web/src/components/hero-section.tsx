@@ -67,7 +67,7 @@ export function HeroSection() {
                                             className="rounded-xl px-5 text-base bg-card border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-surface hover:border-emerald-500/60">
                                             <Link href="/office" className="flex items-center gap-2">
                                                 <RocketLaunchIcon className="w-4 h-4" />
-                                                <span className="text-nowrap">Open Dashboard</span>
+                                                <span className="text-nowrap">Try it Now</span>
                                             </Link>
                                         </Button>
                                         <Button
@@ -77,7 +77,7 @@ export function HeroSection() {
                                             className="h-[42px] rounded-xl px-5 text-base text-muted-fg hover:text-foreground hover:bg-foreground/5">
                                             <Link href="#getting-started" className="flex items-center gap-2">
                                                 <CommandLineIcon className="w-4 h-4" />
-                                                <span className="text-nowrap">Quick Start</span>
+                                                <span className="text-nowrap">Get Started</span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -157,8 +157,8 @@ export function HeroSection() {
 
 const menuItems = [
     { name: 'Features', href: '/#features' },
-    { name: 'Community', href: 'https://github.com/Sipoke123/AgentFlow' },
     { name: 'Docs', href: '/docs' },
+    { name: 'Community', href: 'https://github.com/Sipoke123/AgentFlow', external: true },
     { name: 'Get Started', href: '/#getting-started' },
 ]
 
@@ -200,12 +200,13 @@ export const HeroHeader = () => {
                             </button>
                         </div>
 
-                        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2">
+                        <div className="hidden lg:flex">
                             <ul className="flex gap-8 text-sm">
                                 {menuItems.map((item, index) => (
                                     <li key={index}>
                                         <Link
                                             href={item.href}
+                                            {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                                             className="text-muted-fg hover:text-foreground block duration-150">
                                             <span>{item.name}</span>
                                         </Link>
@@ -214,39 +215,19 @@ export const HeroHeader = () => {
                             </ul>
                         </div>
 
-                        <div className="bg-card group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-border-base p-6 shadow-2xl shadow-panel-shadow md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none">
-                            <div className="lg:hidden">
-                                <ul className="space-y-6 text-base">
-                                    {menuItems.map((item, index) => (
-                                        <li key={index}>
-                                            <Link
-                                                href={item.href}
-                                                className="text-muted-fg hover:text-foreground block duration-150">
-                                                <span>{item.name}</span>
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-border-base bg-card text-foreground/80 hover:bg-surface hover:text-foreground">
-                                    <Link href="#getting-started">
-                                        <span>Get Started</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className="bg-card border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-surface hover:border-emerald-500/60">
-                                    <Link href="/office">
-                                        <span>Dashboard</span>
-                                    </Link>
-                                </Button>
-                            </div>
+                        <div className="bg-card group-data-[state=active]:block mb-6 hidden w-full rounded-3xl border border-border-base p-6 shadow-2xl shadow-panel-shadow lg:hidden">
+                            <ul className="space-y-6 text-base">
+                                {menuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <Link
+                                            href={item.href}
+                                            {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                                            className="text-muted-fg hover:text-foreground block duration-150">
+                                            <span>{item.name}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                 </div>
