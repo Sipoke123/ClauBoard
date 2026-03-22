@@ -110,18 +110,29 @@
 - [x] Demo guide document (`docs/demo-guide.md`)
 - [x] README rewritten for public readability
 
-## What's next
+## Completed extras
 
 - [x] SQLite persistence via `--storage sqlite` (WAL mode, indexed queries, drop-in replacement for JSONL)
-- [ ] Authentication and multi-user support
 - [x] Interactive sessions: operator can send follow-up messages to running agents via stdin
 - [x] Agent-to-agent context sharing: upstream run summary (files, tools, output) injected into dependent agent prompts
-- [ ] 3D office view (Three.js / R3F) — canvas view may suffice
 - [x] Failover: dependent agents launch even when upstream fails/stops (with context note in prompt)
 - [x] Docker deployment: multi-stage Dockerfile, docker-compose with mock profile, standalone Next.js output
 - [x] Notification engine: built-in rules (run failed, agent blocked, tool errors, long-running), WS push, UI alert bell with unread badge
 - [x] Event archival (move old events to timestamped archive files) + compaction (remove verbose events for terminal runs) + auto-compact threshold
 - [x] Plugin system: PluginRegistry with custom event types, notification rules, lifecycle hooks. Built-in metrics plugin
+
+## Community wanted
+
+Contributions welcome — these are the most requested features:
+
+- [ ] **Authentication & multi-user** — JWT auth, user roles, team workspaces
+- [ ] **Multi-provider support** — Cursor, Copilot, Devin, not just Claude Code
+- [ ] **Webhook integrations** — Slack, Discord, email notifications
+- [ ] **Mobile responsive** — dashboard usable on tablet/phone
+- [ ] **i18n** — multi-language support
+- [ ] **API keys management** — manage Claude API keys from the UI
+- [ ] **Replay mode** — scrub through session history like a video timeline
+- [ ] **Agent templates** — save and share agent configurations
 
 ## Risks
 
@@ -130,4 +141,4 @@
 | Event schema churn | Rework in both server and UI | Types in shared package; both apps import |
 | WebSocket reconnection edge cases | Stale UI state | Full snapshot on reconnect |
 | JSONL file corruption on crash | Lost events | Flush after each write; skip malformed lines on replay |
-| Scope creep into 3D/polish | Delays core work | Hard boundary: 2D/2.5D first |
+| Anthropic releases competing dashboard | Product value drops | Support multiple AI providers, focus on enterprise features |
