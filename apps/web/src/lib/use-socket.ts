@@ -4,7 +4,14 @@ import { useEffect, useRef } from "react";
 import type { ServerMessage } from "@repo/shared";
 import { store } from "./store";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:3001/ws";
+function getWsUrl(): string {
+  if (process.env.NEXT_PUBLIC_WS_URL) return process.env.NEXT_PUBLIC_WS_URL;
+  if (typeof window === "undefined") return "ws://localhost:3001/ws";
+  // Auto-detect: use current host with ws/wss protocol
+  const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${proto}//${window.location.host}/ws`;
+}
+const WS_URL = getWsUrl();
 const RECONNECT_MS = 2000;
 
 /**

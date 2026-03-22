@@ -11,8 +11,7 @@ import type { Session, Run, Agent, AgentEvent, SessionAgent } from "@repo/shared
 import { validateDependencyGraph, computeStages } from "@repo/shared";
 import { cn } from "../../../lib/cn";
 import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, inputVariants, tabVariants, statusLabels, getEventColor } from "../../../lib/variants";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { API_URL } from "../../../lib/api-url";
 
 interface SessionPreset {
   id: string;

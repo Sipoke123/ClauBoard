@@ -7,8 +7,7 @@ import { StopIcon } from "@heroicons/react/24/solid";
 import type { Agent, AgentEvent, Run, Session } from "@repo/shared";
 import { cn } from "../lib/cn";
 import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../lib/variants";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { API_URL } from "../lib/api-url";
 
 // ---------------------------------------------------------------------------
 // Desk border glow by status

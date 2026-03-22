@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { RocketLaunchIcon, CheckCircleIcon, ExclamationCircleIcon, SparklesIcon, UsersIcon, ArrowsRightLeftIcon } from "@heroicons/react/24/outline";
 import { cn } from "../lib/cn";
 import { buttonVariants, inputVariants, panelVariants } from "../lib/variants";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { API_URL } from "../lib/api-url";
 
 interface RunPreset {
   id: string;

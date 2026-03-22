@@ -8,8 +8,8 @@ import { useStore } from "../../../lib/use-store";
 import { cn } from "../../../lib/cn";
 import { statusPillVariants, buttonVariants, panelVariants, statusLabels } from "../../../lib/variants";
 import type { Run } from "@repo/shared";
+import { API_URL } from "../../../lib/api-url";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const ROW_HEIGHT = 40;
 
 function formatDuration(run: Run): string {

@@ -5,8 +5,7 @@ import { useSocket } from "../lib/use-socket";
 import { useStoreSelector } from "../lib/use-store";
 import { WifiIcon, BeakerIcon, ShieldExclamationIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
 import { cn } from "../lib/cn";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { API_URL } from "../lib/api-url";
 
 interface HealthData {
   adapterMode?: string;

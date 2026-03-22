@@ -50,6 +50,7 @@ COPY --from=build /app/apps/server/dist apps/server/dist
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static apps/web/.next/static
 COPY --from=build /app/apps/web/public apps/web/public
+COPY --from=build /app/apps/web/server-proxy.js apps/web/server-proxy.js
 COPY --from=build /app/packages/shared packages/shared
 
 # Data directory for persistence
