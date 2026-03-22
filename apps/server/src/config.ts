@@ -20,6 +20,8 @@ export const config = {
   port: parseInt(process.env.PORT ?? "3001", 10),
   dataDir: process.env.DATA_DIR ?? "./data",
   mockAgents: process.env.MOCK_AGENTS === "true" || process.argv.includes("--mock"),
+  /** Demo mode: in-memory only (no JSONL), capped events, slower agents. Safe for free-tier hosting. */
+  demoMode: process.env.DEMO_MODE === "true" || process.argv.includes("--demo"),
   storage: (getArgValue("--storage") ?? process.env.STORAGE ?? "jsonl") as "jsonl" | "sqlite",
   /** Auto-compact when event count exceeds this threshold (0 = disabled) */
   autoCompactThreshold: parseInt(getArgValue("--auto-compact") ?? process.env.AUTO_COMPACT ?? "0", 10),
@@ -37,7 +39,7 @@ export const config = {
 /** Which adapter mode is active */
 export function getAdapterMode(): "mock" | "claude" | "none" {
   if (config.claudePrompt) return "claude";
-  if (config.mockAgents) return "mock";
+  if (config.mockAgents || config.demoMode) return "mock";
   return "none";
 }
 

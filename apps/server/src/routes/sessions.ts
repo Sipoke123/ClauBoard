@@ -17,7 +17,14 @@ export function sessionsRouter(
   runManager: RunManager,
   runLauncher: RunLauncher,
   orchestrator: SessionOrchestrator,
-  opts?: { onSessionCreated?: () => void; emit?: EmitFn; onClearMockAgents?: () => void; agentRegistry?: AgentRegistry },
+  opts?: {
+    onSessionCreated?: () => void;
+    onSessionUpdated?: () => void;
+    onAgentPaused?: (agentId: string) => void;
+    emit?: EmitFn;
+    onClearMockAgents?: () => void;
+    agentRegistry?: AgentRegistry;
+  },
 ): Router {
   const router = Router();
 
@@ -108,19 +115,26 @@ export function sessionsRouter(
       const run = runManager.get(runId);
       if (run?.status === "running") {
         if (runLauncher.stop(runId)) stoppedCount++;
+        // Pause mock auto-launcher for this agent so it doesn't relaunch
+        if (run.agentId) opts?.onAgentPaused?.(run.agentId);
       }
     }
 
-    // Mark waiting agents as skipped
+    // Mark waiting agents as skipped, running agents as stopped
     if (session.agents) {
       for (const agent of session.agents) {
         if (agent.status === "waiting") {
           agent.status = "skipped";
+        } else if (agent.status === "running") {
+          agent.status = "stopped";
+          if (agent.agentId) opts?.onAgentPaused?.(agent.agentId);
         }
       }
     }
 
     sessionManager.updateStatus(session.id, "stopped");
+    // Broadcast updated state to all clients
+    opts?.onSessionUpdated?.();
     res.json({ stopped: stoppedCount, sessionId: session.id });
   });
 

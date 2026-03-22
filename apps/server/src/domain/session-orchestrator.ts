@@ -2,7 +2,7 @@ import type { AgentSpec, SessionAgent, SessionAgentStatus, AgentEvent } from "@r
 import type { SessionManager } from "./session-manager.js";
 import type { RunManager } from "./run-manager.js";
 import type { RunLauncher } from "./run-launcher.js";
-import type { EventStore } from "./event-store.js";
+import type { IEventStore } from "./event-store.js";
 
 /**
  * Watches run completions and launches waiting agents whose dependencies are met.
@@ -19,7 +19,7 @@ export class SessionOrchestrator {
     private sessionManager: SessionManager,
     private runManager: RunManager,
     private runLauncher: RunLauncher,
-    private eventStore: EventStore,
+    private eventStore: IEventStore,
   ) {}
 
   /**
@@ -28,7 +28,7 @@ export class SessionOrchestrator {
   onRunFinished(runId: string): void {
     for (const session of this.sessionManager.all()) {
       if (!session.agents || !session.runIds.includes(runId)) continue;
-      if (session.status !== "active") continue;
+      if (session.status === "completed" || session.status === "failed") continue;
 
       const finishedAgent = session.agents.find((a) => a.runId === runId);
       if (finishedAgent) {

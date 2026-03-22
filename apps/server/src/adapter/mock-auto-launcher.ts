@@ -52,13 +52,22 @@ export class MockAutoLauncher {
   private activeRunIds = new Map<string, string>();
   private promptIndex = new Map<string, number>();
   private stopped = false;
+  private delayMultiplier: number;
+  private demoMode: boolean;
+  private recoveryTimer: ReturnType<typeof setTimeout> | null = null;
+  private onDemoRecovery: (() => void) | null;
 
   constructor(
     private runLauncher: RunLauncher,
     private runManager: RunManager,
     private agentRegistry: AgentRegistry,
     private emit: EmitFn,
-  ) {}
+    options?: { delayMultiplier?: number; demoMode?: boolean; onDemoRecovery?: () => void },
+  ) {
+    this.delayMultiplier = options?.delayMultiplier ?? 1;
+    this.demoMode = options?.demoMode ?? false;
+    this.onDemoRecovery = options?.onDemoRecovery ?? null;
+  }
 
   start(): void {
     console.log(`[mock-auto-launcher] registering ${MOCK_AGENTS.length} mock agents`);
@@ -126,14 +135,15 @@ export class MockAutoLauncher {
 
     if (this.pausedAgents.has(agentId)) return; // paused — don't relaunch
 
-    // Relaunch after a natural pause (3-6s)
+    // Relaunch after a natural pause (3-6s, scaled by delayMultiplier)
     const agent = MOCK_AGENTS.find((a) => a.id === agentId);
     if (!agent) return;
+    const baseDelay = (3000 + Math.random() * 3000) * this.delayMultiplier;
     setTimeout(() => {
       if (!this.stopped && !this.pausedAgents.has(agentId)) {
         this.launchFor(agent);
       }
-    }, 3000 + Math.random() * 3000);
+    }, baseDelay);
   }
 
   /** Pause agent — stop the active run and disable auto-relaunching */
@@ -144,6 +154,7 @@ export class MockAutoLauncher {
       try { this.runLauncher.stop(runId); } catch {}
     }
     this.activeRunIds.delete(agentId);
+    this.scheduleRecoveryIfNeeded();
   }
 
   /** Resume agent — relaunch immediately */
@@ -185,5 +196,47 @@ export class MockAutoLauncher {
     } catch (err) {
       console.warn(`[mock-auto-launcher] failed to launch for ${agent.name}:`, err);
     }
+  }
+
+  /**
+   * Demo mode auto-recovery: if all agents are paused, resume them after 30s.
+   * Ensures the demo always looks alive for the next visitor.
+   */
+  private scheduleRecoveryIfNeeded(): void {
+    if (!this.demoMode || this.stopped) return;
+    if (this.recoveryTimer) return; // already scheduled
+
+    // Check if all mock agents are paused
+    const allPaused = MOCK_AGENTS.every((a) => this.pausedAgents.has(a.id));
+    if (!allPaused) return;
+
+    console.log("[demo] all agents paused — auto-recovery in 30s");
+    this.recoveryTimer = setTimeout(() => {
+      this.recoveryTimer = null;
+      if (this.stopped) return;
+
+      console.log("[demo] auto-recovering — resuming all agents");
+      for (const agent of MOCK_AGENTS) {
+        this.pausedAgents.delete(agent.id);
+        // Re-register agent
+        this.emit({
+          id: `demo-recover-${Date.now()}-${agent.id}`,
+          type: "agent.registered",
+          ts: Date.now(),
+          agentId: agent.id,
+          runId: "",
+          payload: { name: agent.name, role: agent.role },
+        });
+      }
+      // Stagger relaunches
+      for (let i = 0; i < MOCK_AGENTS.length; i++) {
+        setTimeout(() => {
+          if (!this.stopped) this.launchFor(MOCK_AGENTS[i]);
+        }, i * 1500);
+      }
+
+      // Notify server to reset sessions and broadcast
+      this.onDemoRecovery?.();
+    }, 30_000);
   }
 }

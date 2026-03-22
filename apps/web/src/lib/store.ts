@@ -64,7 +64,7 @@ class Store {
 
   applySnapshot(data: { agents: Agent[]; runs: Run[]; tasks: Task[]; sessions: Session[] }): void {
     this.seenEventIds.clear();
-    this.state = { ...this.state, ...data };
+    this.state = { ...this.state, ...data, events: [] };
     this.notify();
   }
 

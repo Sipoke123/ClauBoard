@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Shell, StatusBar } from "../../components/shell";
+import { DemoBanner } from "../../components/demo-banner";
 import { BuildingOffice2Icon, Square3Stack3DIcon, PlayIcon, ClipboardDocumentListIcon, ChartBarIcon, HomeIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import { cn } from "../../lib/cn";
@@ -36,11 +37,13 @@ export default function AppLayout({
   }, [collapsed, mounted]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="fixed inset-0 flex flex-col overflow-hidden">
+      <DemoBanner />
       <Shell>
+      <div className="flex flex-1 min-h-0 h-full">
         {/* Sidebar */}
         <aside className={cn(
-          "bg-surface border-r border-border-base p-3 flex flex-col gap-6 shrink-0 h-screen sticky top-0 backdrop-blur-sm transition-all duration-200",
+          "bg-surface border-r border-border-base p-3 flex flex-col gap-6 shrink-0 h-full backdrop-blur-sm transition-all duration-200",
           collapsed ? "w-14" : "w-56",
         )}>
           <div className="flex items-center justify-between">
@@ -87,7 +90,6 @@ export default function AppLayout({
 
           <div className={cn("mt-auto flex flex-col items-center gap-3", collapsed && "gap-2")}>
             {!collapsed && <StatusBar />}
-            {!collapsed ? <ThemeToggle /> : <ThemeToggle className="scale-75" />}
             {!collapsed && (
               <Link href="/" className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-fg hover:text-foreground hover:bg-foreground/[0.04] transition-colors w-full">
                 <HomeIcon className="w-[14px] h-[14px] shrink-0 opacity-60" />
@@ -99,11 +101,13 @@ export default function AppLayout({
                 <HomeIcon className="w-[14px] h-[14px] opacity-60" />
               </Link>
             )}
+            {!collapsed ? <ThemeToggle /> : <ThemeToggle className="scale-75" />}
           </div>
         </aside>
 
         {/* Main content */}
         <main className="flex-1 min-h-0 overflow-hidden">{children}</main>
+      </div>
       </Shell>
     </div>
   );

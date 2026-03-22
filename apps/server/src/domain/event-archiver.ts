@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { AgentEvent } from "@repo/shared";
-import type { EventStore } from "./event-store.js";
+import type { IEventStore } from "./event-store.js";
 import type { RunManager } from "./run-manager.js";
 
 /**
@@ -15,7 +15,7 @@ import type { RunManager } from "./run-manager.js";
  */
 export class EventArchiver {
   constructor(
-    private eventStore: EventStore,
+    private eventStore: IEventStore,
     private runManager: RunManager,
     private dataDir: string,
   ) {}

@@ -2,19 +2,22 @@ import { Router } from "express";
 import type { LaunchRunRequest } from "@repo/shared";
 import type { RunManager } from "../domain/run-manager.js";
 import type { RunLauncher } from "../domain/run-launcher.js";
-import type { EventStore } from "../domain/event-store.js";
+import type { IEventStore } from "../domain/event-store.js";
+import type { SessionManager } from "../domain/session-manager.js";
 import type { EmitFn } from "../adapter/types.js";
 
 export interface RunsRouterOpts {
   emit?: EmitFn;
   onRunStopped?: (agentId: string) => void;
   onAgentResumed?: (agentId: string) => void;
+  sessionManager?: SessionManager;
+  onSessionUpdated?: () => void;
 }
 
 export function runsRouter(
   runManager: RunManager,
   runLauncher: RunLauncher,
-  eventStore: EventStore,
+  eventStore: IEventStore,
   opts?: RunsRouterOpts,
 ): Router {
   const router = Router();
@@ -136,8 +139,33 @@ export function runsRouter(
     if (!opts?.onAgentResumed) {
       return res.status(400).json({ error: "resume not available" });
     }
-    opts.onAgentResumed(req.params.id);
-    res.json({ resumed: true, agentId: req.params.id });
+    const agentId = req.params.id;
+    opts.onAgentResumed(agentId);
+
+    // Update only this agent's status in parent session
+    let sessionReactivated = false;
+    if (opts.sessionManager) {
+      for (const session of opts.sessionManager.all()) {
+        if (session.status !== "stopped" && session.status !== "active") continue;
+        const sa = session.agents?.find((a) => a.agentId === agentId);
+        if (!sa) continue;
+
+        sa.status = "running";
+
+        // If session was stopped, reactivate it (at least one agent is now running)
+        if (session.status === "stopped") {
+          opts.sessionManager.updateStatus(session.id, "active");
+        }
+        sessionReactivated = true;
+      }
+    }
+
+    // Broadcast snapshot so /sessions UI updates immediately
+    if (sessionReactivated) {
+      opts.onSessionUpdated?.();
+    }
+
+    res.json({ resumed: true, agentId });
   });
 
   return router;

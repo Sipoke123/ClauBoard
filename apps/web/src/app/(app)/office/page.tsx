@@ -66,7 +66,7 @@ export default function OfficePage() {
   }
 
   return (
-    <div className="flex flex-col h-screen relative">
+    <div className="flex flex-col h-full relative">
       {/* Office header bar */}
       <div className="flex items-center justify-between px-5 py-2.5 bg-background border-b border-border-base shrink-0">
         <div className="flex items-center gap-4">

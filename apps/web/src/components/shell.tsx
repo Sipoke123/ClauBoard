@@ -12,6 +12,7 @@ interface HealthData {
   adapterMode?: string;
   cwdRestricted?: boolean;
   activeRuns?: number;
+  demoMode?: boolean;
 }
 
 export function StatusBar() {
@@ -34,6 +35,9 @@ export function StatusBar() {
   const adapterMode = health?.adapterMode;
   const modeLabel = adapterMode === "mock" ? "Mock" : adapterMode === "claude" ? "Claude" : null;
   const cwdRestricted = health?.cwdRestricted ?? false;
+
+  // Hide StatusBar in demo mode — the DemoBanner already indicates the mode
+  if (health?.demoMode) return null;
 
   return (
     <div className={cn(

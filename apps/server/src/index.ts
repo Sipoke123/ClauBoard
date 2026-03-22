@@ -3,6 +3,7 @@ import cors from "cors";
 import { config, getAdapterMode } from "./config.js";
 import { EventStore } from "./domain/event-store.js";
 import { SqliteEventStore } from "./domain/sqlite-event-store.js";
+import { DemoEventStore } from "./domain/demo-event-store.js";
 import { AgentRegistry } from "./domain/agent-registry.js";
 import { RunManager } from "./domain/run-manager.js";
 import { TaskManager } from "./domain/task-manager.js";
@@ -30,7 +31,11 @@ import type { AgentEvent } from "@repo/shared";
 import type { MockAutoLauncher as MockAutoLauncherType } from "./adapter/mock-auto-launcher.js";
 
 // -- Domain --
-const eventStore = config.storage === "sqlite" ? new SqliteEventStore() : new EventStore();
+const eventStore = config.demoMode
+  ? new DemoEventStore()
+  : config.storage === "sqlite"
+    ? new SqliteEventStore()
+    : new EventStore();
 const agentRegistry = new AgentRegistry();
 const runManager = new RunManager();
 const taskManager = new TaskManager();
@@ -70,13 +75,13 @@ function scheduleSnapshot(): void {
 // -- Shared emit function --
 function emit(event: AgentEvent): void {
   processor.process(event);
-  gateway.broadcast(event);
+  gateway?.broadcast(event);
   notificationEngine?.evaluate(event);
   pluginRegistry?.onEvent(event);
 
   // Notify orchestrator when runs finish
   if (event.type === "run.completed" || event.type === "run.failed" || event.type === "run.stopped") {
-    orchestrator.onRunFinished(event.runId);
+    orchestrator?.onRunFinished(event.runId);
     // Debounced snapshot broadcast for session state updates
     scheduleSnapshot();
     // Notify mock auto-launcher so it can relaunch
@@ -88,7 +93,7 @@ function emit(event: AgentEvent): void {
     // Defer to not block the emit pipeline
     setTimeout(() => {
       try {
-        const a = new EventArchiver(eventStore as EventStore, runManager, config.dataDir);
+        const a = new EventArchiver(eventStore, runManager, config.dataDir);
         const result = a.compact();
         if (result.removed > 0) {
           console.log(`[auto-compact] removed ${result.removed} events, ${result.remaining} remaining`);
@@ -106,7 +111,8 @@ let adapterFactory: AdapterFactory = claudeAdapterFactory;
 
 if (adapterMode === "mock") {
   const { MockRunAdapter } = await import("./adapter/mock-run-adapter.js");
-  adapterFactory = (opts) => new MockRunAdapter(opts);
+  const delayMultiplier = config.demoMode ? 3 : 1;
+  adapterFactory = (opts) => new MockRunAdapter({ ...opts, delayMultiplier });
 }
 
 // -- Run launcher --
@@ -125,6 +131,9 @@ const server = app.listen(config.port, () => {
   console.log(`[server] http://localhost:${config.port}`);
   console.log(`[server] ws://localhost:${config.port}/ws`);
   console.log(`[server] adapter: ${adapterMode}`);
+  if (config.demoMode) {
+    console.log(`[server] DEMO MODE: in-memory only, no disk writes, capped events, slower agents`);
+  }
   if (config.allowedWorkspaceRoots.length > 0) {
     console.log(`[server] allowed workspace roots: ${config.allowedWorkspaceRoots.join(", ")}`);
   } else {
@@ -144,16 +153,20 @@ app.use("/api", runsRouter(runManager, runLauncher, eventStore, {
   emit,
   onRunStopped: (agentId) => mockAutoLauncher?.pauseAgent(agentId),
   onAgentResumed: (agentId) => mockAutoLauncher?.resumeAgent(agentId),
+  sessionManager,
+  onSessionUpdated: () => gateway?.broadcastSnapshot(),
 }));
 app.use("/api", sessionsRouter(sessionManager, runManager, runLauncher, orchestrator, {
   onSessionCreated: () => gateway?.broadcastSnapshot(),
+  onSessionUpdated: () => gateway?.broadcastSnapshot(),
+  onAgentPaused: (agentId) => mockAutoLauncher?.pauseAgent(agentId),
   onClearMockAgents: () => mockAutoLauncher?.stopAndClear(),
   agentRegistry,
   emit,
 }));
 app.use("/api", presetsRouter());
 const archiver = config.storage !== "sqlite"
-  ? new EventArchiver(eventStore as EventStore, runManager, config.dataDir)
+  ? new EventArchiver(eventStore, runManager, config.dataDir)
   : null;
 app.use("/api", adminRouter(archiver));
 
@@ -176,7 +189,26 @@ app.use("/api", pluginsRouter(pluginRegistry, emit));
 // -- Mock auto-launcher --
 if (adapterMode === "mock") {
   const { MockAutoLauncher } = await import("./adapter/mock-auto-launcher.js");
-  mockAutoLauncher = new MockAutoLauncher(runLauncher, runManager, agentRegistry, emit);
+  const demoOpts = config.demoMode ? {
+    delayMultiplier: 3,
+    demoMode: true,
+    onDemoRecovery: () => {
+      // Reset all stopped sessions to active
+      for (const session of sessionManager.all()) {
+        if (session.status === "stopped") {
+          sessionManager.updateStatus(session.id, "active");
+          for (const sa of session.agents ?? []) {
+            if (sa.status === "stopped" || sa.status === "skipped") {
+              sa.status = "waiting";
+            }
+          }
+        }
+      }
+      console.log("[demo] sessions reset to active");
+      gateway?.broadcastSnapshot();
+    },
+  } : undefined;
+  mockAutoLauncher = new MockAutoLauncher(runLauncher, runManager, agentRegistry, emit, demoOpts);
   mockAutoLauncher.start();
 
   // Create demo sessions using main mock agents (after they're registered)

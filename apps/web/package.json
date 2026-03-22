@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3000",
     "dev:mock": "next dev --port 3000",
+    "dev:demo": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

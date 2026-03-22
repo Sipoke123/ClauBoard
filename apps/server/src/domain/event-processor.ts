@@ -2,7 +2,7 @@ import type { AgentEvent } from "@repo/shared";
 import type { AgentRegistry } from "./agent-registry.js";
 import type { RunManager } from "./run-manager.js";
 import type { TaskManager } from "./task-manager.js";
-import type { EventStore } from "./event-store.js";
+import type { IEventStore } from "./event-store.js";
 
 /**
  * Central reducer: appends event to store and updates all derived models.
@@ -13,7 +13,7 @@ import type { EventStore } from "./event-store.js";
  */
 export class EventProcessor {
   constructor(
-    private store: EventStore,
+    private store: IEventStore,
     private agents: AgentRegistry,
     private runs: RunManager,
     private tasks: TaskManager,

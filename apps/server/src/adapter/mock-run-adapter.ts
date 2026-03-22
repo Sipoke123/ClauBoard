@@ -43,6 +43,8 @@ export interface MockRunAdapterOptions {
   runId: string;
   agentName: string;
   prompt: string;
+  /** Multiply all delays by this factor (default 1). Use >1 to slow down for demo mode. */
+  delayMultiplier?: number;
 }
 
 /**
@@ -88,10 +90,11 @@ export class MockRunAdapter implements AgentAdapter {
 
   private async simulateRun(emit: EmitFn, signal: AbortSignal): Promise<void> {
     const { agentId, runId, prompt } = this.options;
+    const mult = this.options.delayMultiplier ?? 1;
 
     const delay = (ms: number) =>
       new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(resolve, ms);
+        const timer = setTimeout(resolve, ms * mult);
         signal.addEventListener("abort", () => {
           clearTimeout(timer);
           reject(new Error("aborted"));

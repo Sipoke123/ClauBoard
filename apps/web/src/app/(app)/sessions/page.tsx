@@ -532,7 +532,7 @@ function SessionsPageInner() {
   }
 
   return (
-    <div className="flex gap-6 h-full p-6 overflow-hidden">
+    <div className="flex gap-6 h-full p-6 overflow-hidden relative">
       {/* Sidebar */}
       <div className="w-80 shrink-0 flex flex-col min-h-0">
         <div className="flex items-center justify-between mb-4 shrink-0">
@@ -581,7 +581,7 @@ function SessionsPageInner() {
           <SessionDetail session={selectedSession} runs={runs} agents={agents} events={events} />
         </div>
       ) : sessions.length > 0 && (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center space-y-2">
             <Square3Stack3DIcon className="w-8 h-8 text-muted-fg/20 mx-auto" />
             <p className="text-sm text-muted-fg/50">Select a session to view details</p>

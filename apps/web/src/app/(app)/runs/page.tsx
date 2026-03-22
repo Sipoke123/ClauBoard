@@ -78,10 +78,12 @@ export default function RunsPage() {
         {/* Virtualized rows */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {sortedRuns.length === 0 ? (
-            <div className="p-12 text-center space-y-2">
-              <RocketLaunchIcon className="w-5 h-5 text-muted-fg/60 mx-auto" />
-              <div className="text-muted-fg text-sm font-medium">No runs yet</div>
-              <div className="text-muted-fg/60 text-xs">Launch a run from the Office page to see it here.</div>
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center space-y-2">
+                <RocketLaunchIcon className="w-5 h-5 text-muted-fg/60 mx-auto" />
+                <div className="text-muted-fg text-sm font-medium">No runs yet</div>
+                <div className="text-muted-fg/60 text-xs">Launch a run from the Office page to see it here.</div>
+              </div>
             </div>
           ) : (
             <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>

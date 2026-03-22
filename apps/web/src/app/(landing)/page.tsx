@@ -8,11 +8,8 @@ import {
   Square3Stack3DIcon,
   PlayIcon,
   ChartBarIcon,
-  MagnifyingGlassIcon,
   RocketLaunchIcon,
-  ArrowRightIcon,
   CheckIcon,
-  CommandLineIcon,
   ArrowsRightLeftIcon,
   CircleStackIcon,
   WifiIcon,
@@ -289,7 +286,7 @@ function OpenSource() {
     {
       icon: CodeBracketIcon,
       title: "Community",
-      description: "MIT licensed. Fork it, extend it, contribute back. Built in the open for the developer community.",
+      description: "AGPL-3.0 licensed. Fork it, extend it, contribute back. Built in the open for the developer community.",
       detail: "github.com/Sipoke123/AgentFlow",
     },
   ];
@@ -324,12 +321,6 @@ function OpenSource() {
         })}
       </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10 flex items-center justify-center gap-3 flex-wrap">
-        <Link
-          href="#getting-started"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all"
-        >
-          <RocketLaunchIcon className="w-4 h-4" /> Get Started
-        </Link>
         <a
           href="https://github.com/Sipoke123/AgentFlow"
           target="_blank"

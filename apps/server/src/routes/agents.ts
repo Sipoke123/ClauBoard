@@ -1,12 +1,12 @@
 import { Router } from "express";
 import type { AgentRegistry } from "../domain/agent-registry.js";
-import type { EventStore } from "../domain/event-store.js";
+import type { IEventStore } from "../domain/event-store.js";
 import type { RunManager } from "../domain/run-manager.js";
 
 export function agentsRouter(
   agents: AgentRegistry,
   runs: RunManager,
-  events: EventStore,
+  events: IEventStore,
 ): Router {
   const router = Router();
 

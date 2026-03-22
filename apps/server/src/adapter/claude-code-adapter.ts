@@ -38,6 +38,8 @@ export class ClaudeCodeAdapter implements AgentAdapter {
   private runId: string;
   private taskId = "";
   private sessionId = "";
+  /** Set to true once run.completed or run.failed has been emitted, to avoid a double-terminal-event on exit. */
+  private runFinished = false;
 
   constructor(private options: ClaudeCodeAdapterOptions) {
     const ts = Date.now();
@@ -110,7 +112,23 @@ export class ClaudeCodeAdapter implements AgentAdapter {
     child.on("close", (code) => {
       console.log(`[claude-code-adapter] process exited with code ${code}`);
 
-      // If we never got a result event, emit run completion based on exit code
+      // If no terminal run event was emitted (no `result` JSON line received),
+      // emit run.failed now so the run does not remain stuck in `running` status.
+      if (!this.runFinished) {
+        const errorMsg = code === 0
+          ? "Process exited cleanly but produced no result"
+          : `Process exited with code ${code} and produced no result`;
+        console.warn(`[claude-code-adapter] no terminal run event emitted — emitting run.failed: ${errorMsg}`);
+        emit({
+          id: uid(),
+          type: "run.failed",
+          ts: Date.now(),
+          agentId: this.agentId,
+          runId: this.runId,
+          payload: { error: errorMsg },
+        });
+      }
+
       emit({
         id: uid(),
         type: "agent.deregistered",
@@ -123,6 +141,7 @@ export class ClaudeCodeAdapter implements AgentAdapter {
 
     child.on("error", (err) => {
       console.error(`[claude-code-adapter] spawn error:`, err.message);
+      this.runFinished = true;
       emit({
         id: uid(),
         type: "run.failed",
@@ -327,6 +346,7 @@ export class ClaudeCodeAdapter implements AgentAdapter {
             },
           });
           // Complete run
+          this.runFinished = true;
           emit({
             id: uid(),
             type: "run.completed",
@@ -353,6 +373,7 @@ export class ClaudeCodeAdapter implements AgentAdapter {
             payload: { error: errorText.slice(0, 300) },
           });
           // Run failed
+          this.runFinished = true;
           emit({
             id: uid(),
             type: "run.failed",

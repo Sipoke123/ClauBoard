@@ -1,12 +1,12 @@
 import { Router } from "express";
 import type { AgentEvent } from "@repo/shared";
 import type { EventProcessor } from "../domain/event-processor.js";
-import type { EventStore } from "../domain/event-store.js";
+import type { IEventStore } from "../domain/event-store.js";
 import type { WsGateway } from "../ws/gateway.js";
 
 export function eventsRouter(
   processor: EventProcessor,
-  store: EventStore,
+  store: IEventStore,
   gateway: WsGateway,
 ): Router {
   const router = Router();

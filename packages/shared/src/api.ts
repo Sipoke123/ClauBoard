@@ -17,6 +17,8 @@ export interface HealthResponse {
   cwdRestricted?: boolean;
   /** Number of active runs managed by RunLauncher */
   activeRuns?: number;
+  /** Demo mode: auto-recovery, read-only destructive actions */
+  demoMode?: boolean;
 }
 
 // -- Agents -----------------------------------------------------------------

@@ -89,7 +89,7 @@ function VirtualTaskColumn({ tasks, agentMap }: { tasks: Task[]; agentMap: Map<s
                     {task.title}
                   </div>
                   <div className="flex items-center gap-1.5 mt-1.5">
-                    <span className={cn(statusDotVariants({ status: task.status === "in_progress" ? "running" : task.status, size: "sm" }))} />
+                    <span className={cn(statusDotVariants({ status: task.status === "in_progress" ? "running" : task.status === "pending" ? "waiting" : task.status, size: "sm" }))} />
                     <span className="text-[11px] text-muted-fg truncate">{agentName}</span>
                   </div>
                 </div>

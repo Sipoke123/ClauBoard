@@ -2,7 +2,23 @@ import fs from "node:fs";
 import path from "node:path";
 import type { AgentEvent } from "@repo/shared";
 
-export class EventStore {
+/**
+ * Public contract shared by EventStore (JSONL) and SqliteEventStore.
+ * All consumers should type against IEventStore, not the concrete class.
+ */
+export interface IEventStore {
+  initPersistence(dataDir: string): void;
+  append(event: AgentEvent): void;
+  loadFromFile(dataDir: string): AgentEvent[];
+  all(): AgentEvent[];
+  byRun(runId: string): AgentEvent[];
+  byAgent(agentId: string): AgentEvent[];
+  count(): number;
+  after(index: number, limit?: number): AgentEvent[];
+  close(): void;
+}
+
+export class EventStore implements IEventStore {
   private events: AgentEvent[] = [];
   private logStream: fs.WriteStream | null = null;
 
