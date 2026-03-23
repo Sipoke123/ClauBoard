@@ -68,68 +68,70 @@ export default function OfficePage() {
   return (
     <div className="flex flex-col h-full relative">
       {/* Office header bar */}
-      <div className="flex items-center justify-between px-5 py-2.5 bg-background border-b border-border-base shrink-0">
-        <div className="flex items-center gap-4">
-          <h2 className="text-sm font-semibold text-foreground">Office</h2>
-          <div className="flex items-center gap-2">
-            {agents.length > 0 && (
-              <span className="flex items-center gap-1.5 text-xs text-muted-fg">
-                <UsersIcon className="w-3 h-3" /> {agents.length}
-              </span>
-            )}
-            {working > 0 && <span className={statusPillVariants({ status: "working" })}>{working} active</span>}
-            {blocked > 0 && <span className={statusPillVariants({ status: "blocked" })}>{blocked} blocked</span>}
-            {errored > 0 && <span className={statusPillVariants({ status: "error" })}>{errored} error</span>}
-            {sessions.length > 0 && (
-              <span className="text-xs text-muted-fg">{sessions.length} session{sessions.length !== 1 ? "s" : ""}</span>
-            )}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between px-3 md:px-5 py-2 md:py-2.5 bg-background border-b border-border-base shrink-0 gap-2">
+        <div className="flex items-center justify-between md:justify-start gap-3 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
+            <h2 className="text-sm font-semibold text-foreground">Office</h2>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              {agents.length > 0 && (
+                <span className="flex items-center gap-1 text-xs text-muted-fg">
+                  <UsersIcon className="w-3 h-3" /> {agents.length}
+                </span>
+              )}
+              {working > 0 && <span className={statusPillVariants({ status: "working" })}>{working} active</span>}
+              {blocked > 0 && <span className={statusPillVariants({ status: "blocked" })}>{blocked} blocked</span>}
+              {errored > 0 && <span className={statusPillVariants({ status: "error" })}>{errored} error</span>}
+              {sessions.length > 0 && (
+                <span className="hidden md:inline text-xs text-muted-fg">{sessions.length} session{sessions.length !== 1 ? "s" : ""}</span>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto">
           {/* View toggle */}
-          <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
+          <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6 shrink-0">
             <button
               onClick={() => setViewMode("canvas")}
               className={cn(
-                "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
+                "flex items-center gap-1 px-1.5 md:px-2 h-full rounded text-[11px] font-medium transition-colors",
                 viewMode === "canvas" ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <SignalIcon className="w-[11px] h-[11px]" /> Canvas
+              <SignalIcon className="w-[11px] h-[11px]" /> <span className="hidden md:inline">Canvas</span>
             </button>
             <button
               onClick={() => setViewMode("grid")}
               className={cn(
-                "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
+                "flex items-center gap-1 px-1.5 md:px-2 h-full rounded text-[11px] font-medium transition-colors",
                 viewMode === "grid" ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <Squares2X2Icon className="w-[11px] h-[11px]" /> Grid
+              <Squares2X2Icon className="w-[11px] h-[11px]" /> <span className="hidden md:inline">Grid</span>
             </button>
           </div>
-<div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
+<div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6 shrink-0">
             <button
               onClick={() => setShowLauncher(!showLauncher)}
               className={cn(
-                "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
+                "flex items-center gap-1 px-1.5 md:px-2 h-full rounded text-[11px] font-medium transition-colors",
                 showLauncher ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
               )}
             >
-              <RocketLaunchIcon className="w-[11px] h-[11px]" /> Launch Run
+              <RocketLaunchIcon className="w-[11px] h-[11px]" /> <span className="hidden md:inline">Launch Run</span>
             </button>
           </div>
           {/* Alerts */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6">
               <button
                 onClick={() => { setShowAlerts(!showAlerts); if (!showAlerts) setSeenCount(alerts.length); }}
                 className={cn(
-                  "flex items-center gap-1.5 px-2 h-full rounded text-[11px] font-medium transition-colors",
+                  "flex items-center gap-1 px-1.5 md:px-2 h-full rounded text-[11px] font-medium transition-colors",
                   showAlerts ? "bg-foreground/[0.08] text-foreground" : "text-muted-fg hover:text-foreground",
                 )}
               >
                 <BellIcon className="w-[11px] h-[11px]" />
-                Alerts
+                <span className="hidden md:inline">Alerts</span>
               {unreadAlerts > 0 && (
                 <span className="flex items-center justify-center min-w-[16px] h-4 rounded-full bg-red-500 text-white text-[9px] font-bold px-1">
                   {unreadAlerts > 99 ? "99+" : unreadAlerts}
