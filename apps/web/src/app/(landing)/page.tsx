@@ -27,15 +27,15 @@ import { LandingFooter } from "../../components/landing-footer";
 // ---------------------------------------------------------------------------
 
 const blurIn = {
-  initial: { opacity: 0, filter: "blur(4px)", y: 8 },
-  whileInView: { opacity: 1, filter: "blur(0px)", y: 0 },
+  initial: { opacity: 0, filter: "blur(4px)" },
+  whileInView: { opacity: 1, filter: "blur(0px)" },
   viewport: { once: true, amount: 0.1 },
   transition: { duration: 0.8 },
 };
 
 const blurInSlow = {
-  initial: { opacity: 0, filter: "blur(4px)", y: 8 },
-  whileInView: { opacity: 1, filter: "blur(0px)", y: 0 },
+  initial: { opacity: 0, filter: "blur(4px)" },
+  whileInView: { opacity: 1, filter: "blur(0px)" },
   viewport: { once: true, amount: 0.1 },
   transition: { delay: 0.2, duration: 0.8 },
 };
