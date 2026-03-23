@@ -53,10 +53,10 @@ export default function RunsPage() {
   }
 
   return (
-    <div className="flex flex-col h-full p-6">
-      <div className="flex items-center justify-between mb-5 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-lg font-semibold text-foreground">Run History</h2>
+    <div className="flex flex-col h-full p-3 md:p-6">
+      <div className="flex items-center justify-between mb-3 md:mb-5 shrink-0">
+        <div className="flex items-center gap-2">
+          <h2 className="text-base md:text-lg font-semibold text-foreground">Run History</h2>
           <span className="text-xs text-muted-fg/60">{sortedRuns.length} runs</span>
         </div>
         {msg && (
@@ -67,12 +67,12 @@ export default function RunsPage() {
       <div className={cn(panelVariants({ variant: "surface" }), "flex flex-col min-h-0 flex-1 overflow-hidden")}>
         {/* Header */}
         <div className="flex items-center border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0" style={{ height: ROW_HEIGHT }}>
-          <span className="w-24 px-4">Status</span>
-          <span className="w-28 px-4">Agent</span>
-          <span className="flex-1 px-4">Prompt</span>
-          <span className="w-24 px-4 text-right">Duration</span>
-          <span className="w-44 px-4 text-right">Started</span>
-          <span className="w-16 px-4" />
+          <span className="w-16 md:w-24 px-2 md:px-4">Status</span>
+          <span className="w-20 md:w-28 px-2 md:px-4">Agent</span>
+          <span className="flex-1 px-2 md:px-4">Prompt</span>
+          <span className="hidden md:block w-24 px-4 text-right">Duration</span>
+          <span className="hidden md:block w-44 px-4 text-right">Started</span>
+          <span className="w-10 md:w-16 px-2 md:px-4" />
         </div>
 
         {/* Virtualized rows */}
@@ -96,22 +96,22 @@ export default function RunsPage() {
                     className="flex items-center border-b border-border-base hover:bg-foreground/5 transition-colors absolute w-full"
                     style={{ height: ROW_HEIGHT, top: vRow.start }}
                   >
-                    <span className="w-24 px-4">
+                    <span className="w-16 md:w-24 px-2 md:px-4">
                       <span className={cn(statusPillVariants({ status: run.status as any }), "justify-center")}>
                         {statusLabels[run.status] ?? run.status}
                       </span>
                     </span>
-                    <span className="w-28 px-4 text-muted-fg text-sm truncate">{agentName}</span>
-                    <span className="flex-1 px-4 text-foreground/80 text-sm truncate">
+                    <span className="w-20 md:w-28 px-2 md:px-4 text-muted-fg text-xs md:text-sm truncate">{agentName}</span>
+                    <span className="flex-1 px-2 md:px-4 text-foreground/80 text-xs md:text-sm truncate">
                       {run.config?.prompt ?? run.description ?? run.id}
                     </span>
-                    <span className="w-24 px-4 text-muted-fg/60 text-xs text-right whitespace-nowrap">
+                    <span className="hidden md:block w-24 px-4 text-muted-fg/60 text-xs text-right whitespace-nowrap">
                       {formatDuration(run)}
                     </span>
-                    <span className="w-44 px-4 text-muted-fg/60 text-xs text-right whitespace-nowrap">
+                    <span className="hidden md:block w-44 px-4 text-muted-fg/60 text-xs text-right whitespace-nowrap">
                       {new Date(run.startedAt).toLocaleString()}
                     </span>
-                    <span className="w-16 px-4 flex justify-end">
+                    <span className="w-10 md:w-16 px-2 md:px-4 flex justify-end">
                       {run.status === "running" && (
                         <button onClick={() => handleStop(run.id)} className={buttonVariants({ variant: "danger", size: "xs" })}>
                           <StopIcon className="w-2.5 h-2.5" />

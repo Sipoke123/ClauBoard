@@ -113,13 +113,13 @@ export default function TasksPage() {
   const agentMap = new Map(agents.map((a) => [a.id, a.name]));
 
   return (
-    <div className="flex flex-col h-full p-6">
-      <div className="flex items-center gap-2.5 mb-5 shrink-0">
+    <div className="flex flex-col h-full p-3 md:p-6">
+      <div className="flex items-center gap-2 mb-3 md:mb-5 shrink-0">
         <ClipboardDocumentListIcon className="w-[18px] h-[18px] text-muted-fg" />
-        <h2 className="text-lg font-semibold text-foreground">Task Board</h2>
+        <h2 className="text-base md:text-lg font-semibold text-foreground">Task Board</h2>
         <span className="ml-1 text-xs text-muted-fg/50 tabular-nums">{tasks.length} tasks</span>
       </div>
-      <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 flex-1 min-h-0">
         {columns.map((col) => {
           const colTasks = tasks.filter((t) => t.status === col.status);
           return (

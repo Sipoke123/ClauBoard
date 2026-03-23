@@ -36,11 +36,11 @@ export default function TimelinePage() {
   });
 
   return (
-    <div className="flex flex-col h-full p-6">
-      <div className="flex items-center justify-between mb-5 shrink-0">
-        <div className="flex items-center gap-2.5">
+    <div className="flex flex-col h-full p-3 md:p-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 md:mb-5 shrink-0">
+        <div className="flex items-center gap-2">
           <ChartBarIcon className="w-[18px] h-[18px] text-muted-fg" />
-          <h2 className="text-lg font-semibold text-foreground">Event Timeline</h2>
+          <h2 className="text-base md:text-lg font-semibold text-foreground">Event Timeline</h2>
           <span className="text-xs text-muted-fg/60">{filtered.length} events</span>
         </div>
         <div className="flex gap-2">
@@ -69,10 +69,10 @@ export default function TimelinePage() {
       <div className={cn(panelVariants({ variant: "surface" }), "flex flex-col min-h-0 flex-1 overflow-hidden")}>
         {/* Header */}
         <div className="flex items-center border-b border-border-base text-[11px] font-semibold text-muted-fg uppercase tracking-wider shrink-0" style={{ height: ROW_HEIGHT }}>
-          <span className="w-24 px-4">Time</span>
-          <span className="w-28 px-4">Agent</span>
-          <span className="w-40 px-4">Type</span>
-          <span className="flex-1 px-4">Payload</span>
+          <span className="w-16 md:w-24 px-2 md:px-4">Time</span>
+          <span className="hidden md:block w-28 px-4">Agent</span>
+          <span className="w-28 md:w-40 px-2 md:px-4">Type</span>
+          <span className="flex-1 px-2 md:px-4">Payload</span>
         </div>
 
         {/* Virtualized rows */}
@@ -96,10 +96,10 @@ export default function TimelinePage() {
                     className="flex items-center border-b border-border-base font-mono text-xs hover:bg-foreground/5 transition-colors absolute w-full"
                     style={{ height: ROW_HEIGHT, top: virtualRow.start }}
                   >
-                    <span className="w-24 px-4 text-muted-fg/60 whitespace-nowrap">{new Date(event.ts).toLocaleTimeString()}</span>
-                    <span className="w-28 px-4 text-muted-fg truncate">{agentMap.get(event.agentId) ?? event.agentId}</span>
-                    <span className={cn("w-40 px-4 whitespace-nowrap", color)}>{event.type}</span>
-                    <span className="flex-1 px-4 text-muted-fg/60 truncate">{JSON.stringify((event as any).payload).slice(0, 120)}</span>
+                    <span className="w-16 md:w-24 px-2 md:px-4 text-muted-fg/60 whitespace-nowrap text-[10px] md:text-xs">{new Date(event.ts).toLocaleTimeString()}</span>
+                    <span className="hidden md:block w-28 px-4 text-muted-fg truncate">{agentMap.get(event.agentId) ?? event.agentId}</span>
+                    <span className={cn("w-28 md:w-40 px-2 md:px-4 whitespace-nowrap text-[10px] md:text-xs", color)}>{event.type}</span>
+                    <span className="flex-1 px-2 md:px-4 text-muted-fg/60 truncate text-[10px] md:text-xs">{JSON.stringify((event as any).payload).slice(0, 120)}</span>
                   </div>
                 );
               })}

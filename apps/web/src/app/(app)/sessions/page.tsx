@@ -531,9 +531,9 @@ function SessionsPageInner() {
   }
 
   return (
-    <div className="flex gap-6 h-full p-6 overflow-hidden relative">
+    <div className="flex flex-col md:flex-row gap-3 md:gap-6 h-full p-3 md:p-6 overflow-hidden relative">
       {/* Sidebar */}
-      <div className="w-80 shrink-0 flex flex-col min-h-0">
+      <div className="w-full md:w-80 shrink-0 flex flex-col min-h-0 max-h-[40vh] md:max-h-none">
         <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="flex items-center gap-2">
             <Square3Stack3DIcon className="w-4 h-4 text-muted-fg" />

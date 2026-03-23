@@ -133,7 +133,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
       whileHover={{ scale: 1.02, y: -2 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className={cn(
-        "relative w-full h-[120px] text-left rounded-xl border transition-shadow cursor-pointer",
+        "relative w-full h-[90px] md:h-[120px] text-left rounded-xl border transition-shadow cursor-pointer",
         glow,
         selected
           ? "ring-2 ring-foreground/20 shadow-lg"
@@ -375,7 +375,7 @@ export function OfficeFloor({
 
   return (
     <div
-      className="min-h-full p-6 space-y-5"
+      className="min-h-full p-3 md:p-6 space-y-3 md:space-y-5"
       style={{
         backgroundImage: `radial-gradient(circle, var(--grid-dot) 1px, transparent 1px)`,
         backgroundSize: "20px 20px",
