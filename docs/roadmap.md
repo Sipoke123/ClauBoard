@@ -128,7 +128,7 @@ Contributions welcome — these are the most requested features:
 - [ ] **Authentication & multi-user** — JWT auth, user roles, team workspaces
 - [ ] **Multi-provider support** — Cursor, Copilot, Devin, not just Claude Code
 - [ ] **Webhook integrations** — Slack, Discord, email notifications
-- [ ] **Mobile responsive** — dashboard usable on tablet/phone
+- [x] **Mobile responsive** — dashboard usable on tablet/phone
 - [ ] **i18n** — multi-language support
 - [ ] **API keys management** — manage Claude API keys from the UI
 - [ ] **Replay mode** — scrub through session history like a video timeline
