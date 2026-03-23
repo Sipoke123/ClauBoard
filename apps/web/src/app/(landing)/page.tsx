@@ -231,7 +231,7 @@ function OpenSource() {
         <h2 className="text-3xl font-bold tracking-wide text-balance md:text-4xl">Free &amp; Open Source</h2>
         <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">No subscriptions. No limits. Self-host and own your data.</p>
       </motion.div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+      <motion.div {...blurInSlow} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
@@ -252,7 +252,7 @@ function OpenSource() {
             </div>
           );
         })}
-      </div>
+      </motion.div>
       <motion.div {...fadeUp} className="text-center mt-10 flex items-center justify-center gap-3 flex-wrap">
         <a
           href="https://github.com/Sipoke123/ClauBoard"
@@ -303,7 +303,7 @@ function Architecture() {
         <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">Turborepo monorepo with shared typed contracts.</p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+      <motion.div {...blurInSlow} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
         {components.map((c) => (
           <div key={c.name} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-center gap-2.5 mb-3">
@@ -316,9 +316,9 @@ function Architecture() {
             <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-snug">{c.description}</p>
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <motion.div {...blurInSlow} className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {patterns.map((p) => (
           <div key={p.label} className="p-4 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] text-center hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] transition-all duration-300">
             <p.icon className="w-4 h-4 text-emerald-500 mx-auto mb-2" />
@@ -326,7 +326,7 @@ function Architecture() {
             <div className="text-[11px] text-gray-500 dark:text-gray-400">{p.detail}</div>
           </div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
