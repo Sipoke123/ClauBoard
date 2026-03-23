@@ -17,6 +17,9 @@ const navItems = [
   { href: "/timeline", label: "Timeline", icon: ChartBarIcon },
 ];
 
+const skipLanding = process.env.NEXT_PUBLIC_SKIP_LANDING === "true";
+const logoHref = skipLanding ? "/office" : "/";
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -61,7 +64,7 @@ export default function AppLayout({
             <button onClick={() => setMobileOpen(!mobileOpen)} className="p-1.5 rounded-md text-muted-fg hover:text-foreground hover:bg-foreground/[0.06] transition-colors">
               {mobileOpen ? <XMarkIcon className="w-5 h-5" /> : <Bars3Icon className="w-5 h-5" />}
             </button>
-            <Link href="/" className="flex items-center gap-1">
+            <Link href={logoHref} className="flex items-center gap-1">
               <img src="/logo.svg" alt="ClauBoard" className="w-5 h-5" />
               <span className="text-sm font-semibold tracking-tight text-foreground">ClauBoard</span>
             </Link>
@@ -83,7 +86,7 @@ export default function AppLayout({
         )}>
           {!isMobile && (
             <div className="flex items-center justify-between">
-              <Link href="/" className={cn("flex items-center gap-1 px-1 group", collapsed && "justify-center px-0")}>
+              <Link href={logoHref} className={cn("flex items-center gap-1 px-1 group", collapsed && "justify-center px-0")}>
                 <img src="/logo.svg" alt="ClauBoard" className="w-6 h-6 shrink-0" />
                 {!collapsed && <h1 className="text-sm font-semibold tracking-tight text-foreground group-hover:opacity-80 transition-colors">ClauBoard</h1>}
               </Link>
@@ -127,13 +130,13 @@ export default function AppLayout({
 
           <div className={cn("mt-auto flex flex-col items-center gap-3", !isMobile && collapsed && "gap-2")}>
             {(isMobile || !collapsed) && <StatusBar />}
-            {(isMobile || !collapsed) && (
+            {!skipLanding && (isMobile || !collapsed) && (
               <Link href="/" className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-fg hover:text-foreground hover:bg-foreground/[0.04] transition-colors w-full">
                 <HomeIcon className="w-[14px] h-[14px] shrink-0 opacity-60" />
                 Home
               </Link>
             )}
-            {!isMobile && collapsed && (
+            {!skipLanding && !isMobile && collapsed && (
               <Link href="/" title="Home" className="p-2 rounded-lg text-muted-fg hover:text-foreground hover:bg-foreground/[0.04] transition-colors">
                 <HomeIcon className="w-[14px] h-[14px] opacity-60" />
               </Link>

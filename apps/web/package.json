@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
-    "dev:mock": "next dev --port 3000",
+    "dev": "SKIP_LANDING=true NEXT_PUBLIC_SKIP_LANDING=true next dev --port 3000",
+    "dev:mock": "SKIP_LANDING=true NEXT_PUBLIC_SKIP_LANDING=true next dev --port 3000",
     "dev:demo": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
