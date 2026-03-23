@@ -560,6 +560,7 @@ export function AgentWorkflowCanvas({
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const didDragRef = useRef(false);
+  const dragDistRef = useRef(0);
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
   const isMobile = useIsMobile();
   const SCALE = isMobile ? 0.55 : 1;
@@ -702,29 +703,18 @@ export function AgentWorkflowCanvas({
                 drag
                 dragMomentum={false}
                 dragConstraints={{ left: 0, top: 0, right: 100000, bottom: 100000 }}
-                onPointerDown={(e) => { didDragRef.current = false; pointerStartRef.current = { x: e.clientX, y: e.clientY }; }}
+                onPointerDown={(e) => { didDragRef.current = false; pointerStartRef.current = { x: e.clientX, y: e.clientY }; dragDistRef.current = 0; }}
                 onDragStart={() => { handleDragStart(node.id); }}
-                onDrag={(_, info) => { didDragRef.current = true; handleDrag(node.id, info); }}
-                onDragEnd={(e) => {
-                  handleDragEnd();
-                  if (!didDragRef.current && pointerStartRef.current) {
-                    const px = (e as unknown as PointerEvent).clientX ?? 0;
-                    const py = (e as unknown as PointerEvent).clientY ?? 0;
-                    const dx = px - pointerStartRef.current.x;
-                    const dy = py - pointerStartRef.current.y;
-                    if (Math.abs(dx) < 15 && Math.abs(dy) < 15) {
-                      onSelectAgent(node.id);
-                    }
-                  }
+                onDrag={(_, info) => {
+                  dragDistRef.current = Math.abs(info.offset.x) + Math.abs(info.offset.y);
+                  if (dragDistRef.current > 8) didDragRef.current = true;
+                  handleDrag(node.id, info);
                 }}
-                onPointerUp={(e) => {
-                  if (pointerStartRef.current) {
-                    const dx = e.clientX - pointerStartRef.current.x;
-                    const dy = e.clientY - pointerStartRef.current.y;
-                    if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && !didDragRef.current) {
-                      onSelectAgent(node.id);
-                    }
-                  }
+                onDragEnd={() => {
+                  handleDragEnd();
+                  setTimeout(() => {
+                    if (dragDistRef.current <= 8) onSelectAgent(node.id);
+                  }, 0);
                 }}
                 style={{
                   x: node.position.x,
