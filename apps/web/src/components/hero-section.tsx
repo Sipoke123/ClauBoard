@@ -102,8 +102,8 @@ export function HeroSection() {
                                     className="absolute inset-0 z-10 bg-gradient-to-b from-transparent from-35% to-background"
                                 />
                                 <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border-base bg-card p-3 shadow-lg shadow-panel-shadow ring-1 ring-border-subtle">
-                                    <img src="/dark.png" alt="ClauBoard dashboard" className="w-full rounded-xl hidden dark:block" />
-                                    <img src="/light.png" alt="ClauBoard dashboard" className="w-full rounded-xl dark:hidden" />
+                                    <img src="/dark.webp" alt="ClauBoard dashboard showing agent workflow canvas" width={1280} height={800} className="w-full rounded-xl hidden dark:block" />
+                                    <img src="/light.webp" alt="ClauBoard dashboard in light theme" width={1280} height={800} loading="lazy" className="w-full rounded-xl dark:hidden" />
                                 </div>
                             </div>
                         </AnimatedGroup>

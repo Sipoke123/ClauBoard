@@ -57,6 +57,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preload" as="image" type="image/webp" href="/dark.webp" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('clauboard-theme');var d=document.documentElement;if(t==='light'){d.className='light'}else{d.className='dark'}}catch(e){document.documentElement.className='dark'}})()`,

@@ -400,7 +400,7 @@ const jsonLd = {
       license: "https://www.gnu.org/licenses/agpl-3.0.html",
       isAccessibleForFree: true,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      screenshot: "https://clauboard.dev/dark.png",
+      screenshot: "https://clauboard.dev/dark.webp",
       softwareRequirements: "Node.js >= 20",
       codeRepository: "https://github.com/Sipoke123/ClauBoard",
     },
