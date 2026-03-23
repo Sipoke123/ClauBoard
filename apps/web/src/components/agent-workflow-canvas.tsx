@@ -710,9 +710,12 @@ export function AgentWorkflowCanvas({
                   if (pointerStartRef.current) {
                     const dx = e.clientX - pointerStartRef.current.x;
                     const dy = e.clientY - pointerStartRef.current.y;
-                    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) didDragRef.current = true;
+                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) didDragRef.current = true;
                   }
-                  if (!didDragRef.current) onSelectAgent(node.id);
+                  if (!didDragRef.current) { e.stopPropagation(); onSelectAgent(node.id); }
+                }}
+                onTouchEnd={(e) => {
+                  if (!didDragRef.current) { e.stopPropagation(); onSelectAgent(node.id); }
                 }}
                 style={{
                   x: node.position.x,
