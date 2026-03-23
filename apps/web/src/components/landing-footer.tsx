@@ -17,7 +17,7 @@ export function LandingFooter() {
       const res = await fetch("https://api.buttondown.email/v1/subscribers", {
         method: "POST",
         headers: {
-          "Authorization": "Token d98637b1-1ba1-4bd9-a142-3a57428aa046",
+          "Authorization": `Token ${process.env.NEXT_PUBLIC_BUTTONDOWN_TOKEN || ""}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email_address: email.trim() }),
