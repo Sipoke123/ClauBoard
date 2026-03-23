@@ -87,7 +87,7 @@ export default function OfficePage() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto">
+        <div className="flex items-center gap-1.5 md:gap-2">
           {/* View toggle */}
           <div className="flex items-center rounded-md border border-border-base bg-surface p-0.5 h-6 shrink-0">
             <button
@@ -202,11 +202,11 @@ export default function OfficePage() {
             </div>
           )}
 
-          {/* Export button */}
+          {/* Export button (hidden on mobile) */}
           {agents.length > 0 && (
             <button
               onClick={exportAgents}
-              className="absolute bottom-5 right-5 z-30 inline-flex items-center gap-1.5 h-7 px-3 rounded-lg text-[11px] font-medium border border-border-base bg-surface/90 text-muted-fg hover:text-foreground hover:border-border-base hover:bg-surface backdrop-blur-md transition-all"
+              className="hidden md:inline-flex absolute bottom-5 right-5 z-30 items-center gap-1.5 h-7 px-3 rounded-lg text-[11px] font-medium border border-border-base bg-surface/90 text-muted-fg hover:text-foreground hover:border-border-base hover:bg-surface backdrop-blur-md transition-all"
             >
               <ArrowDownTrayIcon className="w-[11px] h-[11px]" /> Export
             </button>

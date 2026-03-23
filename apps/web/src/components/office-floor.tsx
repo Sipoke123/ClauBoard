@@ -238,21 +238,21 @@ function Room({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={cn(panelVariants({ variant: "room" }), "p-5")}
+      className={cn(panelVariants({ variant: "room" }), "p-3 md:p-5")}
     >
       {/* Room header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 md:mb-4">
+        <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5 md:gap-2">
             <UsersIcon className={cn(
               "w-[13px] h-[13px] opacity-50",
               metrics?.working ? "text-emerald-400 opacity-100" : metrics?.failed ? "text-red-400 opacity-100" : "text-muted-fg",
             )} />
-            <span className="text-xs font-semibold text-muted-fg uppercase tracking-wider">{label}</span>
+            <span className="text-[11px] md:text-xs font-semibold text-muted-fg uppercase tracking-wider">{label}</span>
           </div>
 
           {metrics && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
               {metrics.working > 0 && <span className={statusPillVariants({ status: "working" })}>{metrics.working} active</span>}
               {metrics.failed > 0 && <span className={statusPillVariants({ status: "failed" })}>{metrics.failed} failed</span>}
               {metrics.blocked > 0 && <span className={statusPillVariants({ status: "blocked" })}>{metrics.blocked} blocked</span>}
@@ -283,7 +283,7 @@ function Room({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
         {children}
       </div>
     </motion.div>
