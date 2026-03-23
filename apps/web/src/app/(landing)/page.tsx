@@ -232,13 +232,11 @@ function OpenSource() {
         <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm">No subscriptions. No limits. Self-host and own your data.</p>
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-        {cards.map((card, i) => {
+        {cards.map((card) => {
           const Icon = card.icon;
           return (
-            <motion.div
+            <div
               key={card.title}
-              {...blurIn}
-              transition={{ duration: 0.8, delay: i * 0.1 }}
               className="group relative p-6 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)]"
             >
               <div className="flex items-center gap-2.5 mb-4">
@@ -251,7 +249,7 @@ function OpenSource() {
               <div className="font-mono text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 border border-emerald-500/15 rounded-lg px-3 py-2">
                 {card.detail}
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -306,8 +304,8 @@ function Architecture() {
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-        {components.map((c, i) => (
-          <motion.div key={c.name} {...blurIn} transition={{ duration: 0.8, delay: i * 0.1 }} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
+        {components.map((c) => (
+          <div key={c.name} className="group p-5 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10">
                 <c.icon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
@@ -316,17 +314,17 @@ function Architecture() {
             </div>
             <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400">{c.tech}</span>
             <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-snug">{c.description}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {patterns.map((p, i) => (
-          <motion.div key={p.label} {...blurIn} transition={{ duration: 0.8, delay: i * 0.08 }} className="p-4 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] text-center hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] transition-all duration-300">
+        {patterns.map((p) => (
+          <div key={p.label} className="p-4 rounded-xl border border-gray-100/80 dark:border-white/10 bg-white dark:bg-white/[0.03] text-center hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.03)] transition-all duration-300">
             <p.icon className="w-4 h-4 text-emerald-500 mx-auto mb-2" />
             <div className="text-xs font-medium text-gray-900 dark:text-gray-100 mb-1">{p.label}</div>
             <div className="text-[11px] text-gray-500 dark:text-gray-400">{p.detail}</div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>
