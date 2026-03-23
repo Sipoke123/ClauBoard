@@ -82,7 +82,7 @@ export default function OfficePage() {
               {blocked > 0 && <span className={statusPillVariants({ status: "blocked" })}>{blocked} blocked</span>}
               {errored > 0 && <span className={statusPillVariants({ status: "error" })}>{errored} error</span>}
               {sessions.length > 0 && (
-                <span className="hidden md:inline text-xs text-muted-fg">{sessions.length} session{sessions.length !== 1 ? "s" : ""}</span>
+                <span className="text-[10px] md:text-xs text-muted-fg">{sessions.length} session{sessions.length !== 1 ? "s" : ""}</span>
               )}
             </div>
           </div>

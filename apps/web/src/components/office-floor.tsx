@@ -133,7 +133,7 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
       whileHover={{ scale: 1.02, y: -2 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className={cn(
-        "relative w-full h-[90px] md:h-[120px] text-left rounded-xl border transition-shadow cursor-pointer",
+        "relative w-full h-[100px] md:h-[120px] text-left rounded-xl border transition-shadow cursor-pointer",
         glow,
         selected
           ? "ring-2 ring-foreground/20 shadow-lg"
@@ -241,9 +241,9 @@ function Room({
       className={cn(panelVariants({ variant: "room" }), "p-3 md:p-5")}
     >
       {/* Room header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 md:mb-4">
-        <div className="flex items-center gap-2 md:gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5 md:gap-2">
+      <div className="flex items-center justify-between gap-2 mb-3 md:mb-4">
+        <div className="flex items-center gap-2 md:gap-3 flex-wrap min-w-0">
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
             <UsersIcon className={cn(
               "w-[13px] h-[13px] opacity-50",
               metrics?.working ? "text-emerald-400 opacity-100" : metrics?.failed ? "text-red-400 opacity-100" : "text-muted-fg",
@@ -259,17 +259,13 @@ function Room({
               {metrics.completed > 0 && metrics.working === 0 && metrics.failed === 0 && (
                 <span className={statusPillVariants({ status: "completed" })}>{metrics.completed} done</span>
               )}
-              {metrics.toolCalls > 0 && (
-                <span className="flex items-center gap-1 text-[10px] text-muted-fg"><WrenchIcon className="w-[9px] h-[9px]" />{metrics.toolCalls}</span>
-              )}
-              {metrics.fileChanges > 0 && (
-                <span className="flex items-center gap-1 text-[10px] text-cyan-500/50"><CodeBracketIcon className="w-[9px] h-[9px]" />{metrics.fileChanges}</span>
-              )}
+              <span className="hidden md:flex items-center gap-1 text-[10px] text-muted-fg">{metrics.toolCalls > 0 && <><WrenchIcon className="w-[9px] h-[9px]" />{metrics.toolCalls}</>}</span>
+              <span className="hidden md:flex items-center gap-1 text-[10px] text-cyan-500/50">{metrics.fileChanges > 0 && <><CodeBracketIcon className="w-[9px] h-[9px]" />{metrics.fileChanges}</>}</span>
             </div>
           )}
         </div>
 
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 shrink-0">
           {onOpenSession && (
             <button onClick={onOpenSession} className={buttonVariants({ variant: "ghost", size: "xs" })}>
               <ArrowTopRightOnSquareIcon className="w-2.5 h-2.5" /> Details
