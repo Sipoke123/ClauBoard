@@ -2,7 +2,7 @@
 
 import { motion, type PanInfo } from "framer-motion";
 import type React from "react";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { flushSync } from "react-dom";
 import {
   ArrowRightIcon,
@@ -49,6 +49,17 @@ interface AgentConnection {
 
 const NODE_WIDTH = 220;
 const NODE_HEIGHT = 120;
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
 
 const agentIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   Alice: CodeBracketSquareIcon,
@@ -548,6 +559,8 @@ export function AgentWorkflowCanvas({
   onSelectAgent: (id: string | null) => void;
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const SCALE = isMobile ? 0.55 : 1;
   const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
   const [savedPositions, setSavedPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
@@ -652,10 +665,11 @@ export function AgentWorkflowCanvas({
       >
         <div
           data-canvas-bg
-          className="relative"
+          className="relative origin-top-left"
           style={{
-            minWidth: contentSize.width,
-            minHeight: contentSize.height,
+            minWidth: contentSize.width * SCALE,
+            minHeight: contentSize.height * SCALE,
+            transform: `scale(${SCALE})`,
           }}
         >
           {/* SVG Connections */}
@@ -716,8 +730,8 @@ export function AgentWorkflowCanvas({
         </div>
       </div>
 
-      {/* Legend — bottom left inside canvas */}
-      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-xl border border-border-base bg-background/90 backdrop-blur-md px-4 py-3 shadow-lg">
+      {/* Legend — bottom left inside canvas (hidden on mobile) */}
+      <div className="hidden md:flex absolute bottom-4 left-4 z-10 flex-col gap-2 rounded-xl border border-border-base bg-background/90 backdrop-blur-md px-4 py-3 shadow-lg">
         <span className="text-[10px] font-semibold text-muted-fg uppercase tracking-wider">Connections</span>
         <div className="flex items-center gap-2.5">
           <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#10b981" strokeWidth="3" strokeLinecap="round" /></svg>
