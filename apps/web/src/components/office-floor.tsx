@@ -142,14 +142,14 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
     >
       <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent pointer-events-none" />
 
-      <div className="relative p-3 h-full flex flex-col">
+      <div className="relative p-2 md:p-3 h-full flex flex-col">
         {/* Header: icon + name + status */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2 md:gap-2.5 shrink-0">
           <div className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
+            "flex h-7 w-7 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-lg border backdrop-blur",
             iconColors[displayStatus] ?? iconColors.offline,
           )}>
-            {(() => { const Icon = agentIcons[agent.name] ?? UserIcon; return <Icon className="h-[18px] w-[18px]" />; })()}
+            {(() => { const Icon = agentIcons[agent.name] ?? UserIcon; return <Icon className="h-3.5 w-3.5 md:h-[18px] md:w-[18px]" />; })()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
@@ -161,8 +161,8 @@ function AgentDesk({ meta, selected, onClick }: { meta: AgentMeta; selected: boo
         </div>
 
         {/* Middle: task + activity */}
-        <div className="flex-1 min-h-0 mt-2 space-y-0.5">
-          <p className="text-[10px] text-muted-fg truncate">
+        <div className="flex-1 min-h-0 mt-1 md:mt-2 space-y-0.5">
+          <p className="text-[9px] md:text-[10px] text-muted-fg truncate">
             {run?.config?.prompt ?? run?.description ?? "Idle"}
           </p>
           {lastActivity && (agent.status === "working" || agent.status === "blocked") && (

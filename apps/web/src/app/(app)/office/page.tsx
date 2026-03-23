@@ -140,7 +140,7 @@ export default function OfficePage() {
               </button>
             </div>
             {showAlerts && (
-              <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-border-base bg-background shadow-2xl z-50">
+              <div className="absolute left-0 md:left-auto md:right-0 top-full mt-2 w-72 md:w-80 max-h-96 overflow-y-auto rounded-xl border border-border-base bg-background shadow-2xl z-50">
                 <div className="p-3 border-b border-border-base flex items-center justify-between sticky top-0 bg-background z-10">
                   <span className="text-xs font-semibold text-foreground">Alerts ({alerts.length})</span>
                   <button onClick={() => setShowAlerts(false)} className="text-[10px] text-muted-fg hover:text-foreground focus-visible:text-foreground focus-visible:outline-none transition-colors">Close</button>
