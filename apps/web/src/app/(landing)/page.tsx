@@ -387,9 +387,42 @@ function GettingStarted() {
 // Page
 // ---------------------------------------------------------------------------
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "ClauBoard",
+      description: "Open-source visual control plane for Claude Code agents. Launch, monitor, and coordinate multiple AI coding agents from a single dashboard.",
+      url: "https://clauboard.dev",
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Cross-platform",
+      license: "https://www.gnu.org/licenses/agpl-3.0.html",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      screenshot: "https://clauboard.dev/dark.png",
+      softwareRequirements: "Node.js >= 20",
+      codeRepository: "https://github.com/Sipoke123/ClauBoard",
+    },
+    {
+      "@type": "WebSite",
+      name: "ClauBoard",
+      url: "https://clauboard.dev",
+    },
+    {
+      "@type": "Organization",
+      name: "ClauBoard",
+      url: "https://clauboard.dev",
+      logo: "https://clauboard.dev/logo.svg",
+      sameAs: ["https://github.com/Sipoke123/ClauBoard"],
+    },
+  ],
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="relative">
         <HeroSection />
         <div

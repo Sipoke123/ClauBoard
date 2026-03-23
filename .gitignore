@@ -8,4 +8,7 @@ data/
 .env.local
 .claude/
 CLAUDE.md
+scripts/
+seo/
+requirements-seo.txt
 *.tsbuildinfo

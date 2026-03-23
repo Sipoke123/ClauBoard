@@ -1,9 +1,48 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteUrl = "https://clauboard.dev";
+
 export const metadata: Metadata = {
-  title: "ClauBoard",
-  description: "Visual control plane for AI coding agents",
+  title: {
+    default: "ClauBoard — Visual Control Plane for AI Coding Agents",
+    template: "%s | ClauBoard",
+  },
+  description:
+    "Open-source dashboard to launch, monitor, and coordinate multiple Claude Code agents. Workflow canvas, pipelines, live events, interactive messaging. Free and self-hosted.",
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "ClauBoard",
+    title: "ClauBoard — Visual Control Plane for AI Coding Agents",
+    description:
+      "Open-source dashboard to launch, monitor, and coordinate multiple Claude Code agents. Workflow canvas, pipelines, live events, interactive messaging.",
+    url: siteUrl,
+    images: [{ url: "/dark.png", width: 1280, height: 800, alt: "ClauBoard dashboard showing agent workflow canvas" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ClauBoard — Visual Control Plane for AI Coding Agents",
+    description:
+      "Open-source dashboard for Claude Code agents. Workflow canvas, pipelines, live events.",
+    images: ["/dark.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  keywords: [
+    "Claude Code",
+    "AI agents",
+    "agent dashboard",
+    "coding agents",
+    "Claude Code dashboard",
+    "AI workflow",
+    "agent orchestration",
+    "open source",
+    "developer tools",
+  ],
 };
 
 export default function RootLayout({

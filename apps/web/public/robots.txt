@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /office
+Disallow: /sessions
+Disallow: /runs
+Disallow: /tasks
+Disallow: /timeline
+Disallow: /api/
+
+Sitemap: https://clauboard.dev/sitemap.xml

@@ -1,0 +1,39 @@
+# ClauBoard
+
+> Visual control plane for Claude Code agents.
+
+ClauBoard is a free, open-source dashboard for launching, monitoring, and coordinating multiple AI coding agents. It provides a workflow canvas with draggable nodes, pipeline orchestration, live event streaming, and interactive messaging — all from a single operator surface.
+
+## Key Facts
+
+- License: AGPL-3.0
+- Source: https://github.com/Sipoke123/ClauBoard
+- Website: https://clauboard.dev
+- Documentation: https://clauboard.dev/docs
+- Tech stack: Next.js 15, React 19, Express, WebSocket, TypeScript
+- Requirements: Node.js >= 20
+- Storage: JSONL (default) or SQLite
+
+## Features
+
+- Workflow canvas with draggable agent nodes and dependency connections
+- Pipeline presets: Parallel Analysis, Staged Pipeline, Review Team
+- Session orchestration with dependency chains
+- Live event stream via WebSocket (15 event types)
+- Interactive messaging to running agents
+- Agent-to-agent context sharing
+- Notification engine with 5 built-in alert rules
+- Plugin system for custom event types
+- Docker deployment ready
+- Light/dark theme
+
+## Quick Start
+
+```
+git clone https://github.com/Sipoke123/ClauBoard.git
+cd ClauBoard
+npm install
+npm run dev:mock
+```
+
+Open http://localhost:3000 to see the dashboard with 6 demo agents.
