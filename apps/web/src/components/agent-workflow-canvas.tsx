@@ -700,7 +700,7 @@ export function AgentWorkflowCanvas({
             return (
               <motion.div
                 key={node.id}
-                drag
+                drag={!isMobile}
                 dragMomentum={false}
                 dragConstraints={{ left: 0, top: 0, right: 100000, bottom: 100000 }}
                 onPointerDown={(e) => { didDragRef.current = false; pointerStartRef.current = { x: e.clientX, y: e.clientY }; dragDistRef.current = 0; }}
@@ -716,6 +716,7 @@ export function AgentWorkflowCanvas({
                     if (dragDistRef.current <= 8) onSelectAgent(node.id);
                   }, 0);
                 }}
+                onClick={() => { if (isMobile) onSelectAgent(node.id); }}
                 style={{
                   x: node.position.x,
                   y: node.position.y,
