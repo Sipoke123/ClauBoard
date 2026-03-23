@@ -173,16 +173,16 @@ export function AgentDetail({
   ];
 
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex flex-col h-full space-y-3 md:space-y-4">
       {/* Agent header */}
-      <div className={cn("p-4 rounded-xl border", headerGlow[displayStatus] ?? headerGlow.offline)}>
+      <div className={cn("p-3 md:p-4 rounded-xl border", headerGlow[displayStatus] ?? headerGlow.offline)}>
         {/* Name + role + status dot */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <span className={statusDotVariants({ status: displayStatus as any, size: "lg" })} />
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-foreground leading-none">{agent.name}</h3>
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <h3 className="text-sm md:text-base font-semibold text-foreground leading-none">{agent.name}</h3>
                 <span className={statusPillVariants({ status: displayStatus as any })}>
                   {statusLabels[displayStatus] ?? displayStatus}
                 </span>
@@ -266,16 +266,16 @@ export function AgentDetail({
       </div>
 
       {/* Metrics strip */}
-      <div className="grid grid-cols-4 gap-2 shrink-0">
+      <div className="grid grid-cols-4 gap-1.5 md:gap-2 shrink-0">
         {[
           { label: "Runs", value: agentRuns.length, icon: <BoltIcon className="w-[11px] h-[11px] text-muted-fg" /> },
           { label: "Tasks", value: agentTasks.filter((t) => t.status === "completed").length, icon: <CheckCircleIcon className="w-[11px] h-[11px] text-muted-fg" /> },
           { label: "Tools", value: toolInvoked.length, icon: <WrenchIcon className="w-[11px] h-[11px] text-amber-400/60" /> },
           { label: "Files", value: fileEvents.length, icon: <CodeBracketIcon className="w-[11px] h-[11px] text-cyan-400/60" /> },
         ].map((m) => (
-          <div key={m.label} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-2.5 text-center")}>
-            <div className="text-lg font-bold text-foreground">{m.value}</div>
-            <div className="flex items-center justify-center gap-1 text-[10px] text-muted-fg">{m.icon} {m.label}</div>
+          <div key={m.label} className={cn(panelVariants({ variant: "inset" }), "rounded-xl p-1.5 md:p-2.5 text-center")}>
+            <div className="text-sm md:text-lg font-bold text-foreground">{m.value}</div>
+            <div className="flex items-center justify-center gap-1 text-[9px] md:text-[10px] text-muted-fg">{m.icon} {m.label}</div>
           </div>
         ))}
       </div>

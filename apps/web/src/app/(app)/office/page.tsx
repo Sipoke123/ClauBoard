@@ -216,15 +216,27 @@ export default function OfficePage() {
         {/* Right sidebar: Detail or Launcher */}
         <AnimatePresence>
           {(selectedAgent || showLauncher) && (
-            <motion.div
-              key={showLauncher ? "launcher" : "detail"}
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 420, opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="shrink-0 border-l border-border-base bg-background overflow-hidden"
-            >
-              <div className="w-[420px] h-full flex flex-col p-5 overflow-y-auto">
+            <>
+              {/* Mobile backdrop */}
+              <motion.div
+                className="md:hidden fixed inset-0 z-40 bg-black/50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => { setSelectedId(null); setShowLauncher(false); }}
+              />
+              <motion.div
+                key={showLauncher ? "launcher" : "detail"}
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: typeof window !== "undefined" && window.innerWidth < 768 ? "100%" : 420, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className={cn(
+                  "shrink-0 border-l border-border-base bg-background overflow-hidden",
+                  "max-md:fixed max-md:inset-y-0 max-md:right-0 max-md:z-50 max-md:border-l-0 max-md:shadow-2xl",
+                )}
+              >
+                <div className="w-full md:w-[420px] h-full flex flex-col p-3 md:p-5 overflow-y-auto">
                 {showLauncher ? (
                   <>
                     <div className="flex items-center justify-between mb-5 shrink-0">
@@ -250,6 +262,7 @@ export default function OfficePage() {
                 ) : null}
               </div>
             </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>
