@@ -580,7 +580,7 @@ function SessionsPageInner() {
           <SessionDetail session={selectedSession} runs={runs} agents={agents} events={events} />
         </div>
       ) : sessions.length > 0 && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
           <div className="text-center space-y-2">
             <Square3Stack3DIcon className="w-8 h-8 text-muted-fg/20 mx-auto" />
             <p className="text-sm text-muted-fg/50">Select a session to view details</p>
