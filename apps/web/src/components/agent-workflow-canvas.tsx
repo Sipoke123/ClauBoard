@@ -559,6 +559,7 @@ export function AgentWorkflowCanvas({
   onSelectAgent: (id: string | null) => void;
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const didDragRef = useRef(false);
   const isMobile = useIsMobile();
   const SCALE = isMobile ? 0.55 : 1;
   const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
@@ -700,10 +701,11 @@ export function AgentWorkflowCanvas({
                 drag
                 dragMomentum={false}
                 dragConstraints={{ left: 0, top: 0, right: 100000, bottom: 100000 }}
-                onPointerDown={() => onSelectAgent(node.id)}
-                onDragStart={() => handleDragStart(node.id)}
+                onPointerDown={() => { didDragRef.current = false; }}
+                onDragStart={() => { didDragRef.current = true; handleDragStart(node.id); }}
                 onDrag={(_, info) => handleDrag(node.id, info)}
                 onDragEnd={handleDragEnd}
+                onPointerUp={() => { if (!didDragRef.current) onSelectAgent(node.id); }}
                 style={{
                   x: node.position.x,
                   y: node.position.y,
