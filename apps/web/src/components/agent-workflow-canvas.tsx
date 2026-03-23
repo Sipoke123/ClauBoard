@@ -703,19 +703,28 @@ export function AgentWorkflowCanvas({
                 dragMomentum={false}
                 dragConstraints={{ left: 0, top: 0, right: 100000, bottom: 100000 }}
                 onPointerDown={(e) => { didDragRef.current = false; pointerStartRef.current = { x: e.clientX, y: e.clientY }; }}
-                onDragStart={() => { didDragRef.current = true; handleDragStart(node.id); }}
+                onDragStart={() => { handleDragStart(node.id); }}
                 onDrag={(_, info) => { didDragRef.current = true; handleDrag(node.id, info); }}
-                onDragEnd={handleDragEnd}
+                onDragEnd={(e) => {
+                  handleDragEnd();
+                  if (!didDragRef.current && pointerStartRef.current) {
+                    const px = (e as unknown as PointerEvent).clientX ?? 0;
+                    const py = (e as unknown as PointerEvent).clientY ?? 0;
+                    const dx = px - pointerStartRef.current.x;
+                    const dy = py - pointerStartRef.current.y;
+                    if (Math.abs(dx) < 15 && Math.abs(dy) < 15) {
+                      onSelectAgent(node.id);
+                    }
+                  }
+                }}
                 onPointerUp={(e) => {
                   if (pointerStartRef.current) {
                     const dx = e.clientX - pointerStartRef.current.x;
                     const dy = e.clientY - pointerStartRef.current.y;
-                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) didDragRef.current = true;
+                    if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && !didDragRef.current) {
+                      onSelectAgent(node.id);
+                    }
                   }
-                  if (!didDragRef.current) { e.stopPropagation(); onSelectAgent(node.id); }
-                }}
-                onTouchEnd={(e) => {
-                  if (!didDragRef.current) { e.stopPropagation(); onSelectAgent(node.id); }
                 }}
                 style={{
                   x: node.position.x,
