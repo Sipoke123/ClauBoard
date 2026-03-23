@@ -56,9 +56,9 @@ export function HeroSection() {
                                         <span className="text-emerald-600 dark:text-emerald-400">AI agents</span>
                                     </h1>
                                     <p className="mt-8 max-w-2xl text-pretty text-lg text-muted-fg">
-                                        Stop switching between terminals. Launch multiple <span className="font-medium">Claude Code</span> agents,
+                                        ClauBoard is an open-source dashboard for managing Claude Code agents. Launch multiple agents,
                                         build pipelines, and watch everything happen live — tool calls, file changes,
-                                        results — all on one screen. <span className="font-medium text-foreground">Free and open-source.</span>
+                                        results — all on one screen. Self-hosted, <span className="font-medium text-foreground">free, no cloud dependency.</span>
                                     </p>
                                     <div className="mt-12 flex items-center gap-2">
                                         <Button

@@ -1,39 +1,46 @@
 # ClauBoard
 
-> Visual control plane for Claude Code agents.
+> ClauBoard is a free, open-source visual control plane for Claude Code agents. It lets developers launch, monitor, and coordinate multiple AI coding agents from a single dashboard.
 
-ClauBoard is a free, open-source dashboard for launching, monitoring, and coordinating multiple AI coding agents. It provides a workflow canvas with draggable nodes, pipeline orchestration, live event streaming, and interactive messaging — all from a single operator surface.
+## What is ClauBoard?
 
-## Key Facts
+ClauBoard is a self-hosted dashboard for managing Claude Code agents. Instead of switching between terminals, operators get a real-time workflow canvas showing all agents, their dependencies, tool calls, file changes, and output. It supports pipeline orchestration with presets like Parallel Analysis, Staged Pipeline, and Review Team. Built with Next.js 15, Express, and WebSocket, it runs locally with no cloud dependency.
 
-- License: AGPL-3.0
-- Source: https://github.com/Sipoke123/ClauBoard
-- Website: https://clauboard.dev
-- Documentation: https://clauboard.dev/docs
-- Tech stack: Next.js 15, React 19, Express, WebSocket, TypeScript
-- Requirements: Node.js >= 20
-- Storage: JSONL (default) or SQLite
+## Pages
 
-## Features
+- [Homepage](https://clauboard.dev): Product overview, features, architecture, getting started
+- [Documentation](https://clauboard.dev/docs): Full feature docs, configuration, plugins, security, quick start
+
+## Key Features
 
 - Workflow canvas with draggable agent nodes and dependency connections
-- Pipeline presets: Parallel Analysis, Staged Pipeline, Review Team
-- Session orchestration with dependency chains
-- Live event stream via WebSocket (15 event types)
-- Interactive messaging to running agents
-- Agent-to-agent context sharing
-- Notification engine with 5 built-in alert rules
-- Plugin system for custom event types
-- Docker deployment ready
-- Light/dark theme
+- Pipeline presets: Parallel Analysis (5+1 agents), Staged Pipeline, Review Team, Parallel Duo
+- Session orchestration with dependency chains and failover
+- Live event stream via WebSocket with 15 typed event types
+- Interactive messaging: send follow-up messages to running agents
+- Agent-to-agent context sharing: upstream summaries injected into dependent prompts
+- Notification engine with 5 built-in alert rules and real-time push
+- Plugin system for custom event types and lifecycle hooks
+- Dual storage: JSONL (default) or SQLite with WAL mode
+- Docker deployment with multi-stage build
+- Light and dark theme with Claude amber accent palette
+
+## Technical Details
+
+- License: AGPL-3.0
+- Source code: https://github.com/Sipoke123/ClauBoard
+- Stack: Next.js 15, React 19, Express, WebSocket (ws), TypeScript, Tailwind CSS v4
+- Requirements: Node.js >= 20, npm >= 10
+- Architecture: Turborepo monorepo (apps/web, apps/server, packages/shared)
+- Event-sourced: all state derived from append-only event stream
+- Storage: JSONL file or SQLite with WAL mode and indexed queries
 
 ## Quick Start
 
 ```
 git clone https://github.com/Sipoke123/ClauBoard.git
-cd ClauBoard
-npm install
+cd ClauBoard && npm install
 npm run dev:mock
 ```
 
-Open http://localhost:3000 to see the dashboard with 6 demo agents.
+Opens at http://localhost:3000 with 6 demo agents (Alice, Bob, Carlos, Diana, Eve, Linter).
