@@ -135,16 +135,12 @@ Client → Server:
 
 ## Security notes
 
+> **Warning:** Do not expose the server to a public network without adding authentication — there is none in the current implementation.
+
 - MVP is local-only, single operator, no auth.
 - Event ingestion endpoint has no authentication — acceptable for localhost.
 - Post-MVP: add API key for agent→server auth; add session auth for UI.
 - No secrets in the event stream — adapters must sanitize before emitting.
-
-## Open questions
-
-- Event pagination strategy for large timelines (cursor vs offset)?
-- Should old events be compacted/archived after N runs?
-- Claude Code adapter: wrap CLI stdout or use Agent SDK programmatic API?
 
 ## Related
 

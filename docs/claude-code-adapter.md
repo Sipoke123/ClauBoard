@@ -24,6 +24,8 @@ Flags:
 - `--output-format stream-json` — structured NDJSON stream on stdout
 - `--verbose` — required for stream-json; includes tool-level detail
 - `--dangerously-skip-permissions` — no interactive permission prompts (agent would block)
+
+> **Warning:** `--dangerously-skip-permissions` bypasses all file-system permission prompts. Only use in trusted/sandboxed environments.
 - `--no-session-persistence` — we manage our own persistence; don't clutter Claude's session store
 
 ## Stream JSON message types

@@ -41,25 +41,10 @@
 - Multi-provider support (Cursor, Copilot, Devin)
 - Authentication and multi-user support
 - Webhook integrations (Slack, Discord)
-- [x] Notification / alert rules
-- Authentication & multi-user
-- [x] Cloud deployment (Docker, fly.io)
-- [x] Plugin system for custom event types
 
 ## Explicitly out of scope for MVP
 
 - Multi-tenancy or user accounts
-- ~~Production-grade persistence (database)~~ — SQLite storage added
 - CI/CD pipeline
-- ~~Mobile layout~~ — mobile responsive added
 - Any 3D rendering or physics
-- ~~Direct agent control (start/stop/kill from UI) — display only in MVP~~ — implemented
 - Code editing or IDE features
-
-## Constraints
-
-- Prefer operational clarity over visual polish.
-- Do not over-scope 3D in the first iteration unless explicitly prioritized.
-- All UI state must be a projection of server-side events, never the source of truth.
-- Event schema is versioned from day one.
-- Local-first: everything runs on localhost in MVP.

@@ -88,6 +88,13 @@
 - [x] Demo presets for runs and sessions
 - [x] Improved empty states with onboarding hints
 
+## Phase 10 — Demo readiness ✅
+
+- [x] Demo presets API (`/api/presets/runs`, `/api/presets/sessions`)
+- [x] Quick-launch preset buttons in run launcher and session creation
+- [x] Demo guide document (`docs/demo-guide.md`)
+- [x] README rewritten for public readability
+
 ## Phase 11 — Workflow canvas ✅
 
 - [x] Draggable agent nodes on canvas with dot-grid background
@@ -102,13 +109,6 @@
 - [x] Click agent to open detail, click empty space to close
 - [x] Default workflow connections when no sessions exist
 - [x] Session dependency chains visualized automatically
-
-## Phase 10 — Demo readiness ✅
-
-- [x] Demo presets API (`/api/presets/runs`, `/api/presets/sessions`)
-- [x] Quick-launch preset buttons in run launcher and session creation
-- [x] Demo guide document (`docs/demo-guide.md`)
-- [x] README rewritten for public readability
 
 ## Completed extras
 
@@ -141,4 +141,3 @@ Contributions welcome — these are the most requested features:
 | Event schema churn | Rework in both server and UI | Types in shared package; both apps import |
 | WebSocket reconnection edge cases | Stale UI state | Full snapshot on reconnect |
 | JSONL file corruption on crash | Lost events | Flush after each write; skip malformed lines on replay |
-| Anthropic releases competing dashboard | Product value drops | Support multiple AI providers, focus on enterprise features |

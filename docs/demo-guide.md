@@ -136,7 +136,7 @@ If a live Claude Code run is unreliable (rate limits, network, etc.), use mock m
 npm run dev:mock
 ```
 
-Mock mode simulates two agents with realistic event sequences:
+Mock mode simulates six agents with realistic event sequences:
 - Task creation and completion
 - Tool invocations (Read, Edit, Bash, etc.)
 - File changes

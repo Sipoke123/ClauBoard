@@ -39,19 +39,15 @@ Real-time operational visibility into multi-agent Claude Code sessions, replacin
 - A new developer can run the full stack locally in under 5 minutes.
 - All visible data maps to real orchestration state (no fake/demo data shipped as default).
 
-## Risks & assumptions
+## Known limitations
 
-| Risk | Mitigation |
-|------|------------|
-| Claude Code has no stable event API yet | Design an adapter layer; mock events for MVP |
-| WebSocket scalability for many agents | MVP targets 2-10 agents; scale later |
-| Scope creep into 3D/animation | Constrain MVP to 2D/2.5D; 3D is post-MVP |
-| Event schema churn | Version events from day one; keep a catalog |
-
-**Assumptions:**
-- Agents emit structured events (or we can wrap their output into events).
-- Single operator per deployment in MVP (no multi-tenancy).
-- Local-first deployment (localhost); cloud deploy is post-MVP.
+| Limitation | Notes |
+|------------|-------|
+| No authentication | The server has no auth. Do not expose it to a public network as-is. |
+| Single operator per deployment | No multi-tenancy or user accounts. All sessions share one view. |
+| Claude Code only | The adapter layer supports other providers in principle, but only the Claude Code CLI adapter is implemented today. |
+| File change detection is best-effort | Changes via Bash commands may not be detected; only Edit/Write tool calls are reliably captured. |
+| Single-shot runs | Each run executes one prompt. Interactive multi-turn sessions are not yet supported. |
 
 ## Non-goals (initial)
 
