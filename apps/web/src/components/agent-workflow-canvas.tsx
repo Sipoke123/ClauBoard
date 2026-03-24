@@ -716,7 +716,7 @@ export function AgentWorkflowCanvas({
                     if (dragDistRef.current <= 8) onSelectAgent(node.id);
                   }, 0);
                 }}
-                onClick={() => { if (isMobile) onSelectAgent(node.id); }}
+                onClick={() => { if (isMobile || dragDistRef.current <= 8) onSelectAgent(node.id); }}
                 style={{
                   x: node.position.x,
                   y: node.position.y,
