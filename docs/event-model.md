@@ -25,7 +25,7 @@ interface AgentEventBase {
 }
 ```
 
-## Event catalog (15 types)
+## Event catalog (16 types)
 
 ### Agent lifecycle
 
@@ -43,6 +43,7 @@ interface AgentEventBase {
 | `run.started` | `{ description? }` | New run begins |
 | `run.completed` | `{ summary? }` | Run finishes successfully |
 | `run.failed` | `{ error }` | Run terminates with error |
+| `run.stopped` | `{ reason? }` | Run cancelled by operator |
 
 ### Task lifecycle
 
@@ -100,7 +101,8 @@ Both server and client maintain parallel derived state. Server is authoritative;
 - **Broadcast:** server pushes each new event to all WebSocket subscribers.
 - **Snapshot:** on WebSocket connect, server sends full derived state.
 
-### Post-MVP
-- SQLite or Postgres with event table indexed by `(runId, ts)`.
-- Event archival / compaction for old runs.
+### SQLite storage (available now)
+- SQLite event table indexed by `(runId, ts)` and `(agentId, ts)`.
+- Select with `--storage sqlite` at startup; implemented in `domain/sqlite-event-store.ts`.
+- Event archival / compaction for old runs via `event-archiver.ts`.
 - Snapshot files for faster startup with large event logs.

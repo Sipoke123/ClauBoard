@@ -42,9 +42,9 @@ The default view is a **workflow canvas** with draggable agent nodes and connect
 
 The bottom-left corner shows connection status and adapter mode:
 
-- **Live · Mock** — connected to server in mock mode (simulated agents)
-- **Live · Claude** — connected to server with real Claude Code adapter
-- **Live** — connected but no legacy adapter active (runs launch from UI)
+- **Mock** label + connected indicator — connected to server in mock mode (simulated agents)
+- **Claude** label + connected indicator — connected to server with real Claude Code adapter
+- Connected indicator only — connected but no adapter active (runs launch from UI)
 - **Reconnecting...** — WebSocket disconnected, retrying
 
 ## Demo Scenarios

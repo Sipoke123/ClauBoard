@@ -88,14 +88,43 @@ External agents can also POST events to `/api/events` — the adapter contract i
 
 ```
 GET    /api/health
+
 GET    /api/agents
 GET    /api/agents/:id
+POST   /api/agents/:id/pause
+POST   /api/agents/:id/resume
+
 GET    /api/runs
 GET    /api/runs/:id
 POST   /api/runs              ← operator launches a Claude Code run
+POST   /api/runs/:id/stop
+POST   /api/runs/:id/message
+
 GET    /api/tasks
+
 GET    /api/events
 POST   /api/events            ← external agents post here
+
+GET    /api/sessions
+POST   /api/sessions
+GET    /api/sessions/:id
+POST   /api/sessions/:id/stop
+
+GET    /api/presets/runs
+GET    /api/presets/sessions
+
+GET    /api/admin/stats
+POST   /api/admin/archive
+POST   /api/admin/compact
+
+GET    /api/alerts
+POST   /api/alerts/:id/ack
+POST   /api/alerts/ack-all
+GET    /api/alerts/rules
+POST   /api/alerts/rules/:id
+
+GET    /api/plugins
+GET    /api/plugins/event-types
 ```
 
 ### WebSocket messages
@@ -103,7 +132,8 @@ POST   /api/events            ← external agents post here
 ```
 Server → Client:
   { type: "event", data: AgentEvent }
-  { type: "snapshot", data: { agents, runs, tasks } }
+  { type: "snapshot", data: { agents, runs, tasks, sessions } }
+  { type: "alert", data: AlertPayload }
 
 Client → Server:
   { type: "subscribe", filters?: { agentId?, runId? } }

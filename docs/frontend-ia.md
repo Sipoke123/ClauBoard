@@ -88,7 +88,7 @@ Reverse-chronological feed of all events. Filterable by agent and event type pre
 ## State management
 
 - WebSocket connection managed at app root via `Shell` component
-- `Store` holds: `agents`, `runs`, `tasks`, `sessions`, `events` — all derived from server events
+- `Store` holds: `agents`, `runs`, `tasks`, `sessions`, `events`, `alerts` — all derived from server events
 - On connect: server sends snapshot → store initializes
 - On each event: store reducer updates the relevant slice
 - Components subscribe via `useStore()` / `useStoreSelector()`

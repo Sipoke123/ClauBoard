@@ -16,7 +16,7 @@
 
 ### Shared types
 - [x] TypeScript event schema with base fields (type, ts, agentId, runId, taskId?, payload)
-- [x] Event catalog: agent.started, agent.stopped, run.started, run.completed, task.created, task.assigned, task.completed, tool.invoked, tool.result, terminal.output, file.changed
+- [x] Event catalog: agent.registered, agent.deregistered, agent.heartbeat, agent.blocked, run.started, run.completed, run.failed, run.stopped, task.created, task.completed, task.failed, tool.invoked, tool.result, tool.error, terminal.output, file.changed
 - [x] Shared request/response types for REST API
 
 ### Frontend (operator UI)
