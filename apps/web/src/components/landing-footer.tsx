@@ -89,6 +89,7 @@ export function LandingFooter() {
           <span className="text-sm text-muted-fg/50">&copy; 2026 ClauBoard. Free &amp; Open Source.</span>
           <nav className="flex gap-4 text-sm text-muted-fg/50">
             <a href="https://github.com/Sipoke123/ClauBoard" target="_blank" rel="noopener noreferrer" className="hover:text-muted-fg transition-colors">GitHub</a>
+            <a href="https://x.com/ssergpv" target="_blank" rel="noopener noreferrer" className="hover:text-muted-fg transition-colors">X</a>
             <span>AGPL-3.0</span>
             <Link href="/privacy" className="hover:text-muted-fg transition-colors">Privacy</Link>
           </nav>
