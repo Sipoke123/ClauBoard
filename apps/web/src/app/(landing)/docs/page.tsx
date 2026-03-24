@@ -6,7 +6,7 @@ import React from "react";
 import { HeroHeader } from "../../../components/hero-section";
 import { LandingFooter } from "../../../components/landing-footer";
 
-const sections = [
+const sections: { id: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; title: string; description: string; details: string[]; code?: string }[] = [
   {
     id: "visual-workspace",
     icon: BuildingOffice2Icon,
@@ -116,6 +116,24 @@ const sections = [
       "Built-in metrics plugin as reference implementation",
       "API: GET /api/plugins (list), GET /api/plugins/event-types (custom types), POST /api/plugins/emit (inject events)",
     ],
+    code: `const costTracker: PluginDefinition = {
+  id: "cost-tracker",
+  name: "Cost Tracker",
+  version: "1.0.0",
+  eventTypes: [{
+    type: "plugin.cost.update",
+    label: "Cost Update",
+    color: "text-pink-400",
+  }],
+  onEvent(event) {
+    if (event.type === "run.completed") {
+      // Track costs per agent
+    }
+  },
+  onRegister(ctx) {
+    // ctx.emit() to send custom events
+  },
+};`,
   },
   {
     id: "mock-mode",
@@ -207,6 +225,17 @@ export default function DocsPage() {
                   </li>
                 ))}
               </ul>
+              {s.code && (
+                <div className="mt-6 rounded-lg border border-border-base bg-gray-950 overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/10">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                    <span className="ml-2 text-xs text-gray-500 font-mono">plugin.ts</span>
+                  </div>
+                  <pre className="p-4 text-sm text-gray-300 font-mono overflow-x-auto leading-relaxed"><code>{s.code}</code></pre>
+                </div>
+              )}
             </section>
           ))}
         </div>
