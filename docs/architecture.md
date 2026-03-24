@@ -174,7 +174,6 @@ Client → Server:
 
 ## Related
 
-- [ADR-0001: System overview](./decisions/ADR-0001-system-overview.md)
 - [Event model](./event-model.md)
 - [Backend architecture](./backend-architecture.md)
 - [Frontend IA](./frontend-ia.md)

@@ -4,10 +4,10 @@
 
 ## Phase 1 — Product & plan ✅
 
-- [x] Product brief defined (`docs/product-brief.md`)
-- [x] MVP scope locked (`docs/mvp-scope.md`)
+- [x] Product brief defined
+- [x] MVP scope locked
 - [x] Architecture designed (`docs/architecture.md`)
-- [x] ADR-0001 accepted (`docs/decisions/ADR-0001-system-overview.md`)
+- [x] Key architectural decisions documented
 - [x] Event model defined (`docs/event-model.md`)
 - [x] Backend architecture defined (`docs/backend-architecture.md`)
 - [x] Frontend IA defined (`docs/frontend-ia.md`)
