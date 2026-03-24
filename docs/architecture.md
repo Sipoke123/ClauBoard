@@ -37,7 +37,7 @@
             │                                        │
             │  ┌──────────────┐  ┌────────────────┐  │
             │  │ MockAdapter  │  │ ClaudeCode     │  │
-            │  │ 2 fake agents│  │ Adapter        │  │
+            │  │ 6 fake agents│  │ Adapter        │  │
             │  │ built-in     │  │ real CLI       │  │
             │  └──────────────┘  └────────────────┘  │
             │                                        │
@@ -54,7 +54,7 @@
 | **Event Processor** | Central reducer: appends events to store + derives state; supports replay mode for startup | `apps/server/src/domain/event-processor.ts` |
 | **Event Store** | In-memory event array + JSONL file append; loads from file on startup | `apps/server/src/domain/event-store.ts` |
 | **Adapter Layer** | Typed interface (`AgentAdapter`) for any agent runtime to emit events | `apps/server/src/adapter/types.ts` |
-| **MockAdapter** | Built-in adapter producing fake events for 2 agents | `apps/server/src/adapter/mock-adapter.ts` |
+| **MockRunAdapter** | Built-in adapter producing fake events for 6 role-based agents | `apps/server/src/adapter/mock-run-adapter.ts` |
 | **ClaudeCodeAdapter** | Spawns real `claude` CLI, parses stream-json output into events | `apps/server/src/adapter/claude-code-adapter.ts` |
 | **Shared Types** | TypeScript interfaces for events, API requests/responses, domain models | `packages/shared` |
 
