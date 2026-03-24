@@ -226,14 +226,14 @@ export default function DocsPage() {
                 ))}
               </ul>
               {s.code && (
-                <div className="mt-6 rounded-lg border border-border-base bg-gray-950 overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/10">
+                <div className="mt-6 rounded-xl border border-gray-200/80 dark:border-white/10 bg-white dark:bg-white/[0.02] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(255,255,255,0.02)]">
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-200/80 dark:border-white/10">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                     <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                     <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-                    <span className="ml-2 text-xs text-gray-500 font-mono">plugin.ts</span>
+                    <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">plugin.ts</span>
                   </div>
-                  <pre className="p-4 text-sm text-gray-300 font-mono overflow-x-auto leading-relaxed"><code>{s.code}</code></pre>
+                  <pre className="p-4 text-sm text-gray-800 dark:text-gray-300 font-mono overflow-x-auto leading-relaxed"><code>{s.code}</code></pre>
                 </div>
               )}
             </section>
