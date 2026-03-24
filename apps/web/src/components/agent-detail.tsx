@@ -10,6 +10,24 @@ import { statusDotVariants, statusPillVariants, buttonVariants, panelVariants, t
 import { API_URL } from "../lib/api-url";
 
 // ---------------------------------------------------------------------------
+// Expandable prompt
+// ---------------------------------------------------------------------------
+function ExpandablePrompt({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div
+      className={cn(
+        "mt-2 text-xs text-muted-fg cursor-pointer hover:text-foreground/70 transition-colors",
+        !expanded && "truncate"
+      )}
+      onClick={() => setExpanded(!expanded)}
+    >
+      {text}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Virtualized list helper
 // ---------------------------------------------------------------------------
 
@@ -217,19 +235,7 @@ export function AgentDetail({
           </div>
         </div>
         {/* Current task — expandable prompt */}
-        {(currentRun ?? lastRun) && (() => {
-          const promptText = (currentRun ?? lastRun)?.config?.prompt ?? (currentRun ?? lastRun)?.description ?? (currentRun ?? lastRun)?.id ?? "";
-          return (
-            <details className="mt-2 group">
-              <summary className="text-xs text-muted-fg truncate cursor-pointer list-none hover:text-foreground/70 transition-colors group-open:hidden">
-                {promptText}
-              </summary>
-              <div className="text-xs text-muted-fg whitespace-pre-wrap break-words cursor-pointer">
-                {promptText}
-              </div>
-            </details>
-          );
-        })()}
+        {(currentRun ?? lastRun) && <ExpandablePrompt text={(currentRun ?? lastRun)?.config?.prompt ?? (currentRun ?? lastRun)?.description ?? (currentRun ?? lastRun)?.id ?? ""} />}
         {agent.status === "blocked" && agent.blockedReason && (
           <div className="flex items-center gap-1.5 mt-1.5 text-xs text-amber-400/80">
             <ExclamationTriangleIcon className="w-[11px] h-[11px]" /> {agent.blockedReason}
