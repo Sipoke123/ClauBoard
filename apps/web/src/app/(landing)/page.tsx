@@ -285,7 +285,7 @@ function Architecture() {
       icon: CubeIcon,
       name: "packages/shared",
       tech: "TypeScript",
-      description: "15 event types, API contracts, WebSocket messages, and dependency graph utilities shared between both apps.",
+      description: "16 event types, API contracts, WebSocket messages, and dependency graph utilities shared between both apps.",
     },
   ];
 

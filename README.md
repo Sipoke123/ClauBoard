@@ -127,7 +127,7 @@ apps/server/         Express + WebSocket server (port 3001)
 packages/shared/     TypeScript types, API contracts, WS messages
 ```
 
-- **Event-sourced** — 15 typed event types, append-only, replayable
+- **Event-sourced** — 16 typed event types, append-only, replayable
 - **Adapter pattern** — `AgentAdapter` interface with `start(emit)` and `stop()`
 - **Real-time** — WebSocket pushes events and debounced snapshots
 - **Virtual scrolling** — `@tanstack/react-virtual` handles 50,000+ rows
@@ -146,7 +146,7 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 | Document | Contents |
 |----------|----------|
 | [Architecture](docs/architecture.md) | System design and data flow |
-| [Event model](docs/event-model.md) | 15 event types, persistence, replay |
+| [Event model](docs/event-model.md) | 16 event types, persistence, replay |
 | [Backend](docs/backend-architecture.md) | Server internals, adapter layer |
 | [Frontend](docs/frontend-ia.md) | UI structure and state management |
 | [Claude Code adapter](docs/claude-code-adapter.md) | Real agent integration |

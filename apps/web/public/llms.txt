@@ -16,7 +16,7 @@ ClauBoard is a self-hosted dashboard for managing Claude Code agents. Instead of
 - Workflow canvas with draggable agent nodes and dependency connections
 - Pipeline presets: Parallel Analysis (5+1 agents), Staged Pipeline, Review Team, Parallel Duo
 - Session orchestration with dependency chains and failover
-- Live event stream via WebSocket with 15 typed event types
+- Live event stream via WebSocket with 16 typed event types
 - Interactive messaging: send follow-up messages to running agents
 - Agent-to-agent context sharing: upstream summaries injected into dependent prompts
 - Notification engine with 5 built-in alert rules and real-time push

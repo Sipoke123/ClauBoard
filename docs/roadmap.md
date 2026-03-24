@@ -23,7 +23,7 @@
 
 ## Phase 3 — Shared event schema ✅
 
-- [x] `AgentEvent` discriminated union (15 event types)
+- [x] `AgentEvent` discriminated union (16 event types)
 - [x] API request/response types (`api.ts`)
 - [x] WebSocket message types (`ws.ts`)
 - [x] Dependency graph utilities (`graph.ts`)

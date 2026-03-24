@@ -121,7 +121,7 @@ export function HeroSection() {
                         </div>
                         <div className="group-hover:blur-sm mx-auto mt-12 grid max-w-3xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-2xl sm:text-3xl font-bold text-foreground">15</span>
+                                <span className="text-2xl sm:text-3xl font-bold text-foreground">16</span>
                                 <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-fg">Event Types</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
