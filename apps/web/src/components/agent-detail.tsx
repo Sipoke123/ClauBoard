@@ -221,10 +221,10 @@ export function AgentDetail({
           const promptText = (currentRun ?? lastRun)?.config?.prompt ?? (currentRun ?? lastRun)?.description ?? (currentRun ?? lastRun)?.id ?? "";
           return (
             <details className="mt-2 group">
-              <summary className="text-xs text-muted-fg truncate cursor-pointer list-none hover:text-foreground/70 transition-colors">
+              <summary className="text-xs text-muted-fg truncate cursor-pointer list-none hover:text-foreground/70 transition-colors group-open:hidden">
                 {promptText}
               </summary>
-              <div className="mt-1 text-xs text-muted-fg whitespace-pre-wrap break-words">
+              <div className="text-xs text-muted-fg whitespace-pre-wrap break-words cursor-pointer">
                 {promptText}
               </div>
             </details>
