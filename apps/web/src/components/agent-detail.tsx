@@ -216,12 +216,20 @@ export function AgentDetail({
             )}
           </div>
         </div>
-        {/* Current task */}
-        {(currentRun ?? lastRun) && (
-          <div className="mt-2 text-xs text-muted-fg truncate">
-            {(currentRun ?? lastRun)?.config?.prompt ?? (currentRun ?? lastRun)?.description ?? (currentRun ?? lastRun)?.id}
-          </div>
-        )}
+        {/* Current task — expandable prompt */}
+        {(currentRun ?? lastRun) && (() => {
+          const promptText = (currentRun ?? lastRun)?.config?.prompt ?? (currentRun ?? lastRun)?.description ?? (currentRun ?? lastRun)?.id ?? "";
+          return (
+            <details className="mt-2 group">
+              <summary className="text-xs text-muted-fg truncate cursor-pointer list-none hover:text-foreground/70 transition-colors">
+                {promptText}
+              </summary>
+              <div className="mt-1 text-xs text-muted-fg whitespace-pre-wrap break-words">
+                {promptText}
+              </div>
+            </details>
+          );
+        })()}
         {agent.status === "blocked" && agent.blockedReason && (
           <div className="flex items-center gap-1.5 mt-1.5 text-xs text-amber-400/80">
             <ExclamationTriangleIcon className="w-[11px] h-[11px]" /> {agent.blockedReason}
