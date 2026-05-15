@@ -8,21 +8,22 @@
 
 ---
 
-Stop switching between terminals. ClauBoard gives you a real-time dashboard where every agent is a draggable node on a canvas — you see what it's doing, what tools it's calling, what files it's changing, and whether it's blocked. Group agents into pipelines with dependency chains, send follow-up instructions while they work, and export everything when you're done.
+Stop switching between terminals. ClauBoard gives you a real-time dashboard where every agent is a draggable node on a canvas, so you can see what it's doing, what tools it's calling, what files it's changing, and whether it's blocked. Group agents into pipelines with dependency chains, send follow-up instructions while they work, and export everything when you're done.
 
-All state is derived from an append-only event stream. The UI is a projection — never the source of truth.
+All state is derived from an append-only event stream. The UI is just a projection of that stream, never the source of truth.
 
 ## Features
 
 | Category | What you get |
 |----------|-------------|
 | **Canvas** | Draggable agent nodes with live connection lines (green = active, purple = done, red = blocked, amber = failover) |
-| **Pipelines** | Chain agents with dependencies — parallel or staged. Presets included |
+| **Pipelines** | Chain agents with dependencies, parallel or staged. Presets included |
 | **Live events** | Every tool call, file edit, and terminal output streams via WebSocket |
 | **Interactive** | Send follow-up messages to running agents from the detail panel |
 | **Context sharing** | Dependent agents receive a summary of upstream work automatically |
 | **Failover** | If an upstream agent fails, dependents still launch with a warning |
 | **Notifications** | Built-in alert rules for failures, blocks, tool errors, and long runs |
+| **Metrics** | Prometheus-compatible `/api/metrics` endpoint for Grafana / Alertmanager |
 | **Plugins** | Extend with custom event types, notification rules, and lifecycle hooks |
 | **Storage** | JSONL (default) or SQLite with WAL mode. Event archival and auto-compact |
 | **Docker** | Multi-stage build, docker-compose with mock profile. One command to deploy |
@@ -40,13 +41,13 @@ cd ClauBoard
 npm install
 ```
 
-**Mock mode** — no Claude CLI needed, six demo agents with realistic events:
+**Mock mode**, no Claude CLI needed, six demo agents with realistic events:
 
 ```bash
 npm run dev:mock
 ```
 
-**Real mode** — launch actual Claude Code agents from the UI:
+**Real mode**, launch actual Claude Code agents from the UI:
 
 ```bash
 npm run dev
@@ -119,6 +120,22 @@ docker compose --profile mock up         # mock mode
 STORAGE=sqlite docker compose up -d      # detached with SQLite
 ```
 
+## Metrics
+
+Prometheus exposition format at `GET /api/metrics`. Plug it into your existing Prometheus, Grafana and Alertmanager without adding heavy infra to ClauBoard itself.
+
+```yaml
+scrape_configs:
+  - job_name: clauboard
+    metrics_path: /api/metrics
+    static_configs:
+      - targets: ['localhost:3001']
+```
+
+Exposed series cover uptime, total events, registered agents, active runs, run counts by status and agent, tool invocations, tool errors, file changes, and run-duration sums. Full reference, PromQL examples, and starter Alertmanager rules in [docs/observability.md](docs/observability.md).
+
+For log shipping (Loki, ELK), tail `data/events.jsonl` directly with Promtail / Filebeat / Vector. Example pipeline in the same doc.
+
 ## Architecture
 
 ```
@@ -127,19 +144,19 @@ apps/server/         Express + WebSocket server (port 3001)
 packages/shared/     TypeScript types, API contracts, WS messages
 ```
 
-- **Event-sourced** — 16 typed event types, append-only, replayable
-- **Adapter pattern** — `AgentAdapter` interface with `start(emit)` and `stop()`
-- **Real-time** — WebSocket pushes events and debounced snapshots
-- **Virtual scrolling** — `@tanstack/react-virtual` handles 50,000+ rows
-- **Plugin system** — custom event types, notification rules, lifecycle hooks
+- **Event-sourced**: 16 typed event types, append-only, replayable
+- **Adapter pattern**: `AgentAdapter` interface with `start(emit)` and `stop()`
+- **Real-time**: WebSocket pushes events and debounced snapshots
+- **Virtual scrolling**: `@tanstack/react-virtual` handles 50,000+ rows
+- **Plugin system**: custom event types, notification rules, lifecycle hooks
 
 See [docs/architecture.md](docs/architecture.md) for the full design.
 
 ## Limitations
 
-- **Local only** — no auth, no multi-user. Runs on localhost
-- **Trusted environment** — uses `--dangerously-skip-permissions` for non-interactive runs
-- **File detection is best-effort** — catches Edit/Write but may miss Bash file changes
+- **Local only**: no auth, no multi-user. Runs on localhost
+- **Trusted environment**: uses `--dangerously-skip-permissions` for non-interactive runs
+- **File detection is best-effort**: catches Edit/Write but may miss Bash file changes
 
 ## Documentation
 
@@ -150,6 +167,7 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 | [Backend](docs/backend-architecture.md) | Server internals, adapter layer |
 | [Frontend](docs/frontend-ia.md) | UI structure and state management |
 | [Claude Code adapter](docs/claude-code-adapter.md) | Real agent integration |
+| [Observability](docs/observability.md) | Prometheus metrics, Alertmanager, Loki/ELK |
 | [Demo guide](docs/demo-guide.md) | Step-by-step demo scenarios |
 | [Roadmap](docs/roadmap.md) | What's done, what's next |
 
@@ -159,6 +177,6 @@ Contributions welcome. Fork, branch, make changes, run `npm run type-check && np
 
 ## License
 
-[AGPL-3.0](./LICENSE). Commercial licensing available — contact via [GitHub](https://github.com/Sipoke123/ClauBoard).
+[AGPL-3.0](./LICENSE). Commercial licensing available, contact via [GitHub](https://github.com/Sipoke123/ClauBoard).
 
 Copyright (c) 2026 ClauBoard

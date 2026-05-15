@@ -26,9 +26,11 @@ import { presetsRouter } from "./routes/presets.js";
 import { adminRouter } from "./routes/admin.js";
 import { notificationsRouter } from "./routes/notifications.js";
 import { pluginsRouter } from "./routes/plugins.js";
+import { metricsRouter } from "./routes/metrics.js";
 import { EventArchiver } from "./domain/event-archiver.js";
 import { NotificationEngine } from "./domain/notification-engine.js";
 import { PluginRegistry } from "./domain/plugin-registry.js";
+import { MetricsCollector } from "./domain/metrics-collector.js";
 import { metricsPlugin } from "./plugins/metrics-plugin.js";
 import type { AgentEvent } from "@repo/shared";
 import type { MockAutoLauncher as MockAutoLauncherType } from "./adapter/mock-auto-launcher.js";
@@ -44,6 +46,7 @@ const runManager = new RunManager();
 const taskManager = new TaskManager();
 const sessionManager = new SessionManager();
 const processor = new EventProcessor(eventStore, agentRegistry, runManager, taskManager);
+const metricsCollector = new MetricsCollector();
 
 // -- Replay persisted events, then init persistence for new writes --
 const replayed = eventStore.loadFromFile(config.dataDir);
@@ -51,6 +54,7 @@ if (replayed.length > 0) {
   console.log(`[server] replaying ${replayed.length} persisted events...`);
   for (const event of replayed) {
     processor.replay(event);
+    metricsCollector.observe(event);
   }
   console.log(`[server] replay complete — ${agentRegistry.count()} agents, ${runManager.all().length} runs`);
 }
@@ -81,6 +85,7 @@ function emit(event: AgentEvent): void {
   gateway?.broadcast(event);
   notificationEngine?.evaluate(event);
   pluginRegistry?.onEvent(event);
+  metricsCollector.observe(event);
 
   // Notify orchestrator when runs finish
   if (event.type === "run.completed" || event.type === "run.failed" || event.type === "run.stopped") {
@@ -168,6 +173,7 @@ app.use("/api", sessionsRouter(sessionManager, runManager, runLauncher, orchestr
   emit,
 }));
 app.use("/api", presetsRouter());
+app.use("/api", metricsRouter(metricsCollector, eventStore, agentRegistry, runManager, runLauncher));
 const archiver = config.storage !== "sqlite"
   ? new EventArchiver(eventStore, runManager, config.dataDir)
   : null;
