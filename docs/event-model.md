@@ -4,11 +4,11 @@
 
 ## Principles
 
-- **Append-only** — events are immutable once written; never updated or deleted.
-- **Replayable** — current state can be reconstructed by replaying events from the beginning.
-- **Shared contract** — TypeScript types in `packages/shared/src/events.ts`; server and UI share the same definitions.
-- **Versioned** — each event type has a stable name; breaking changes get a new type name.
-- **Persisted** — events are appended to `data/events.jsonl`; server replays on startup.
+- **Append-only**: events are immutable once written; never updated or deleted.
+- **Replayable**: current state can be reconstructed by replaying events from the beginning.
+- **Shared contract**: TypeScript types in `packages/shared/src/events.ts`; server and UI share the same definitions.
+- **Versioned**: each event type has a stable name; breaking changes get a new type name.
+- **Persisted**: events are appended to `data/events.jsonl`; server replays on startup.
 
 ## Base fields
 

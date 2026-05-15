@@ -20,7 +20,7 @@ Start the dev environment in two terminals:
 # Terminal 1: Next.js UI
 cd apps/web && npm run dev
 
-# Terminal 2: Server (no adapter — runs launch from UI)
+# Terminal 2: Server (no adapter, runs launch from UI)
 cd apps/server && npx tsx src/index.ts
 ```
 
@@ -42,10 +42,10 @@ The default view is a **workflow canvas** with draggable agent nodes and connect
 
 The bottom-left corner shows connection status and adapter mode:
 
-- **Mock** label + connected indicator — connected to server in mock mode (simulated agents)
-- **Claude** label + connected indicator — connected to server with real Claude Code adapter
-- Connected indicator only — connected but no adapter active (runs launch from UI)
-- **Reconnecting...** — WebSocket disconnected, retrying
+- **Mock** label + connected indicator: connected to server in mock mode (simulated agents)
+- **Claude** label + connected indicator: connected to server with real Claude Code adapter
+- Connected indicator only: connected but no adapter active (runs launch from UI)
+- **Reconnecting...**: WebSocket disconnected, retrying
 
 ## Demo Scenarios
 
@@ -60,7 +60,7 @@ The bottom-left corner shows connection status and adapter mode:
 5. Click the desk to open the **Agent Detail** sidebar
 6. Switch between tabs: Events, Output, Tools, Files
 
-**If the office is empty:** The empty state has direct "Launch Run" and "New Session" buttons — no need to find them in the header.
+**If the office is empty:** The empty state has direct "Launch Run" and "New Session" buttons, no need to find them in the header.
 
 **Key things to highlight:**
 - Real Claude Code process running underneath
@@ -89,7 +89,7 @@ The bottom-left corner shows connection status and adapter mode:
 
 ### Scenario 3: Staged Dependency Pipeline
 
-**What it shows:** Agents executing in dependency order — some wait for others to finish.
+**What it shows:** Agents executing in dependency order, with some waiting for others to finish.
 
 1. Navigate to **Sessions**
 2. Click **New**
@@ -104,16 +104,16 @@ The bottom-left corner shows connection status and adapter mode:
 - Dependency graph validation (cycles, duplicates rejected)
 - Staged execution visible in Pipeline tab
 - Waiting vs running vs completed status flows
-- Honest representation — no fake collaboration
+- Honest representation, no fake collaboration
 
 ## Navigating the UI
 
 | Page | What it shows |
 |------|---------------|
 | **Landing** (`/`) | Product overview, getting started, capabilities |
-| **Office** (`/office`) | Spatial overview — session rooms with agent desks, status at a glance |
+| **Office** (`/office`) | Spatial overview: session rooms with agent desks, status at a glance |
 | **Sessions** (`/sessions`) | Create and inspect multi-agent sessions |
-| **Runs** (`/runs`) | Run history table — all runs, status, duration, rerun/stop |
+| **Runs** (`/runs`) | Run history table: all runs, status, duration, rerun/stop |
 | **Tasks** (`/tasks`) | Kanban-style task board (in-progress / completed / failed) |
 | **Timeline** (`/timeline`) | Raw event feed with type and agent filters |
 
@@ -143,17 +143,17 @@ Mock mode simulates six agents with realistic event sequences:
 - Occasional errors and blocked states
 - Terminal output
 
-Everything in the UI works the same — it's the same event pipeline.
+Everything in the UI works the same. It's the same event pipeline.
 
 **Tip:** You can start the demo in mock mode to show the UI working quickly, then switch to real mode for the "real deal" if time permits.
 
 ## Tips for a Smooth Demo
 
 1. **Start with mock mode** to show the UI working, then switch to real mode for the "real deal"
-2. **Use Quick Launch** — hover a preset and click the blue button for one-click launch
+2. **Use Quick Launch**: hover a preset and click the blue button for one-click launch
 3. **Keep prompts read-only** (e.g., "do not modify any files") for safe demos
-4. **Use the Office page as your home screen** — it's the most visual and impressive surface
+4. **Use the Office page as your home screen**: it's the most visual and impressive surface
 5. **Click into agent desks** to show the detail sidebar with tabs
 6. **Navigate to Sessions** for the pipeline visualization
-7. **The mode indicator** (bottom-left) shows connection status and whether you're in mock or real mode — useful to point out
+7. **The mode indicator** (bottom-left) shows connection status and whether you're in mock or real mode. Useful to point out.
 8. **The landing page** is a great opening slide for context before entering the dashboard

@@ -4,11 +4,11 @@
 
 ## Operator priorities
 
-1. Clarity — can I tell what's happening at a glance?
-2. Realtime state visibility — is this live or stale?
-3. Task navigation — where is each task and who owns it?
-4. Debugging utility — can I trace what went wrong?
-5. Visual polish — looks good, but never at the expense of 1-4
+1. Clarity: can I tell what's happening at a glance?
+2. Realtime state visibility: is this live or stale?
+3. Task navigation: where is each task and who owns it?
+4. Debugging utility: can I trace what went wrong?
+5. Visual polish: looks good, but never at the expense of 1-4
 
 ## Views
 
@@ -18,24 +18,24 @@ Two view modes, toggled via header switcher:
 
 #### Canvas view (default)
 
-Draggable workflow canvas — the primary operator awareness surface.
+Draggable workflow canvas, the primary operator awareness surface.
 
 - **Agent nodes**: draggable cards showing status dot, role icon, prompt, live activity line, and mini metrics
 - **Connection lines**: bezier curves between agents showing data flow with status-aware colors:
-  - Green solid — active (agent working, data flowing)
-  - Purple dashed — completed
-  - Red dashed + X marker — blocked (agent stopped/failed, chain broken)
-  - Gray thin — idle (waiting)
+  - Green solid: active (agent working, data flowing)
+  - Purple dashed: completed
+  - Red dashed + X marker: blocked (agent stopped/failed, chain broken)
+  - Gray thin: idle (waiting)
 - **Default connections**: when no sessions exist, shows logical workflow connections (e.g., Frontend→Backend→QA)
 - **Session connections**: built automatically from session dependency chains
 - **Legend**: bottom-left corner explains all connection types
 - **Selection**: click agent to open detail sidebar; click empty canvas to close
-- **Dragging**: reposition agents freely; does not affect detail panel selection
+- **Dragging**: reposition agents freely. Does not affect detail panel selection
 - **Auto-scroll**: canvas scrolls when dragging near edges
 
 #### Grid view
 
-Traditional card grid — same as previous office floor layout with session rooms and desk cards.
+Traditional card grid, same as previous office floor layout with session rooms and desk cards.
 
 #### Shared elements
 
@@ -88,20 +88,20 @@ Reverse-chronological feed of all events. Filterable by agent and event type pre
 ## State management
 
 - WebSocket connection managed at app root via `Shell` component
-- `Store` holds: `agents`, `runs`, `tasks`, `sessions`, `events`, `alerts` — all derived from server events
-- On connect: server sends snapshot → store initializes
+- `Store` holds: `agents`, `runs`, `tasks`, `sessions`, `events`, `alerts`, all derived from server events
+- On connect: server sends snapshot, store initializes
 - On each event: store reducer updates the relevant slice
 - Components subscribe via `useStore()` / `useStoreSelector()`
-- No local state for domain data — everything comes from the server
+- No local state for domain data. Everything comes from the server
 
 ## State mapping
 
 Every visual element maps to **real** runtime/orchestration state:
-- Agent desk status → derived from latest `agent.heartbeat` event
-- Desk glow → `working` status (real)
-- Session room → session grouping from server
-- Tool counts → counted from `tool.invoked` events
-- Connection indicator → WebSocket readyState
+- Agent desk status: derived from latest `agent.heartbeat` event
+- Desk glow: `working` status (real)
+- Session room: session grouping from server
+- Tool counts: counted from `tool.invoked` events
+- Connection indicator: WebSocket readyState
 
 No fake data for demos unless explicitly labeled as mock.
 

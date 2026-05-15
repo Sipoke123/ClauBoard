@@ -72,7 +72,7 @@ type EmitFn = (event: AgentEvent) => void;
 
 Adapters receive a single `emit` callback. The server handles persistence, state derivation, and WS broadcast. Adapters never access server internals.
 
-External agents can also POST events to `/api/events` — the adapter contract is the in-process equivalent.
+External agents can also POST events to `/api/events`. The adapter contract is the in-process equivalent.
 
 ## Communication
 
@@ -165,12 +165,12 @@ Client → Server:
 
 ## Security notes
 
-> **Warning:** Do not expose the server to a public network without adding authentication — there is none in the current implementation.
+> **Warning:** Do not expose the server to a public network without adding authentication. There is none in the current implementation.
 
 - MVP is local-only, single operator, no auth.
-- Event ingestion endpoint has no authentication — acceptable for localhost.
+- Event ingestion endpoint has no authentication. Acceptable for localhost.
 - Post-MVP: add API key for agent→server auth; add session auth for UI.
-- No secrets in the event stream — adapters must sanitize before emitting.
+- No secrets in the event stream. Adapters must sanitize before emitting.
 
 ## Related
 

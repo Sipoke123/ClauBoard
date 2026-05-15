@@ -4,22 +4,22 @@
 
 ## Responsibilities
 
-- **Agent session registry** — track which agents are connected, their status (including blocked)
-- **Run lifecycle** — create, start, complete, fail runs; associate with agents
-- **Task management** — CRUD tasks, assign to agents, track status
-- **Event ingestion** — accept structured events via adapter `emit()` or REST POST, validate, persist
-- **Event broadcasting** — push events to WebSocket subscribers in real-time
-- **State derivation** — maintain in-memory views of agents/runs/tasks by reducing events
-- **Persistence** — append events to JSONL; replay on startup to rebuild state
-- **Adapter hosting** — start/stop `AgentAdapter` implementations
-- **Health / status APIs** — liveness check, system stats
+- **Agent session registry**: track which agents are connected, their status (including blocked)
+- **Run lifecycle**: create, start, complete, fail runs; associate with agents
+- **Task management**: CRUD tasks, assign to agents, track status
+- **Event ingestion**: accept structured events via adapter `emit()` or REST POST, validate, persist
+- **Event broadcasting**: push events to WebSocket subscribers in real-time
+- **State derivation**: maintain in-memory views of agents/runs/tasks by reducing events
+- **Persistence**: append events to JSONL; replay on startup to rebuild state
+- **Adapter hosting**: start/stop `AgentAdapter` implementations
+- **Health / status APIs**: liveness check, system stats
 
 ## Boundaries
 
 - Orchestration and domain logic live here; the UI is a **read-only client**.
 - Domain models must not be frontend-specific.
-- The server owns event validation and ordering — adapters are untrusted producers.
-- Adapters interact only through the `EmitFn` callback — no access to server internals.
+- The server owns event validation and ordering. Adapters are untrusted producers.
+- Adapters interact only through the `EmitFn` callback. No access to server internals.
 
 ## Internal structure
 
@@ -87,7 +87,7 @@ This keeps adapters decoupled from persistence, state derivation, and WS transpo
 
 ### Current (JSONL)
 - Events appended to `data/events.jsonl` (one JSON line per event)
-- On startup: `loadFromFile()` reads lines → `replay()` derives state → `initPersistence()` opens append stream
+- On startup: `loadFromFile()` reads lines, `replay()` derives state, `initPersistence()` opens append stream
 - Malformed lines skipped during replay
 - `data/` directory created automatically, gitignored
 
@@ -100,7 +100,7 @@ This keeps adapters decoupled from persistence, state derivation, and WS transpo
 ## Error handling
 
 - Invalid events rejected with 400 + validation errors (REST path)
-- Adapter events go through the same processor — invalid events are stored but may not derive correctly
+- Adapter events go through the same processor. Invalid events are stored but may not derive correctly
 - WS disconnects handled gracefully; clients reconnect and receive a fresh snapshot
 - Graceful shutdown: adapter stopped, JSONL stream closed, HTTP server closed
 
