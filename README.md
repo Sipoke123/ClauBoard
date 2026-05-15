@@ -132,7 +132,17 @@ scrape_configs:
       - targets: ['localhost:3001']
 ```
 
-Exposed series cover uptime, total events, registered agents, active runs, run counts by status and agent, tool invocations, tool errors, file changes, and run-duration sums. Full reference, PromQL examples, and starter Alertmanager rules in [docs/observability.md](docs/observability.md).
+Exposed series cover uptime, total events, registered agents, active runs, run counts by status and agent, tool invocations, tool errors, file changes, and run-duration sums.
+
+**Want graphs in 30 seconds?** A standalone Prometheus + Grafana stack with a pre-provisioned dashboard ships in `docker-compose.observability.yml`:
+
+```bash
+docker compose -f docker-compose.observability.yml up -d
+# Grafana    http://localhost:3002   (admin / admin)
+# Prometheus http://localhost:9090
+```
+
+Full reference, PromQL examples, Alertmanager rules, and the production (Render + Grafana Cloud) path in [docs/observability.md](docs/observability.md).
 
 For log shipping (Loki, ELK), tail `data/events.jsonl` directly with Promtail / Filebeat / Vector. Example pipeline in the same doc.
 

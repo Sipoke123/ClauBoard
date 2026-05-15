@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: clauboard
+
+scrape_configs:
+  # Local ClauBoard server running via `npm run dev` or `npm run dev:mock`
+  # on the Docker host. Uses host.docker.internal so the container can reach
+  # the host's port 3001 (Docker Desktop sets this; on Linux compose adds an
+  # extra_hosts entry mapping it to host-gateway).
+  - job_name: clauboard-local
+    metrics_path: /api/metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:3001']
+        labels:
+          env: local
+
+  # Production. Will start returning data after the next deploy that includes
+  # the /api/metrics endpoint. Until then this job will show "DOWN" in
+  # Prometheus, which is harmless.
+  - job_name: clauboard-prod
+    metrics_path: /api/metrics
+    scheme: https
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['clauboard.dev']
+        labels:
+          env: prod
+
+  # Self-monitor Prometheus itself. Useful when first wiring things up to
+  # confirm the stack is alive even if both ClauBoard targets are down.
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

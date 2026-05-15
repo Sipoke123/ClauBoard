@@ -1,0 +1,67 @@
+# ---------------------------------------------------------------------------
+# ClauBoard — Observability stack (Prometheus + Grafana)
+# ---------------------------------------------------------------------------
+#
+# Standalone stack that scrapes ClauBoard's /api/metrics endpoint and visualises
+# it in Grafana with a pre-provisioned dashboard. Independent from the main
+# docker-compose.yml so you can run it against any ClauBoard instance.
+#
+# Usage:
+#   docker compose -f docker-compose.observability.yml up -d
+#
+# Then open:
+#   Grafana    http://localhost:3002   (login: admin / admin)
+#   Prometheus http://localhost:9090
+#
+# Default scrape targets (configured in observability/prometheus/prometheus.yml):
+#   - host.docker.internal:3001   (your local `npm run dev` / `npm run dev:mock`)
+#   - clauboard.dev               (production, after it ships /api/metrics)
+#
+# To stop:
+#   docker compose -f docker-compose.observability.yml down
+#
+# To wipe Grafana state and dashboards:
+#   docker compose -f docker-compose.observability.yml down -v
+# ---------------------------------------------------------------------------
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: clauboard-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle
+    extra_hosts:
+      # Lets the container reach the host on Linux (Docker Desktop sets this automatically)
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: clauboard-grafana
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:
