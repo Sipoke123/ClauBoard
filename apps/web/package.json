@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "SKIP_LANDING=true NEXT_PUBLIC_SKIP_LANDING=true next dev --port 3000",
-    "dev:mock": "SKIP_LANDING=true NEXT_PUBLIC_SKIP_LANDING=true next dev --port 3000",
+    "dev": "cross-env SKIP_LANDING=true NEXT_PUBLIC_SKIP_LANDING=true next dev --port 3000",
+    "dev:mock": "cross-env SKIP_LANDING=true NEXT_PUBLIC_SKIP_LANDING=true next dev --port 3000",
     "dev:demo": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next"
+    "clean": "rimraf .next"
   },
   "dependencies": {
     "@repo/shared": "*",
@@ -28,6 +28,8 @@
     "@tailwindcss/postcss": "^4.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "cross-env": "^7.0.3",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0"
   }
