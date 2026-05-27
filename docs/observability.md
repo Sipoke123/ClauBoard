@@ -122,6 +122,8 @@ Then open:
 | Grafana    | http://localhost:3002        | admin / admin |
 | Prometheus | http://localhost:9090        | (none)        |
 
+> **Security:** the stack ships with the default `admin / admin` Grafana credentials and no auth on Prometheus, which is fine for a localhost-only setup (the same trust model as ClauBoard itself). If you expose either service beyond your machine, change `GF_SECURITY_ADMIN_PASSWORD` in `docker-compose.observability.yml` and put both behind an authenticated reverse proxy.
+
 Grafana boots with the **ClauBoard Overview** dashboard already loaded under the `ClauBoard` folder. It includes:
 
 * Stat panels: active runs, registered agents, total events, server uptime
