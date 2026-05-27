@@ -52,6 +52,11 @@ export class MetricsCollector {
     if (this.seenIds.has(event.id)) return;
     this.seenIds.add(event.id);
 
+    // Skip synthetic/aggregate emitters (e.g. the metrics plugin's periodic
+    // "plugin.metrics.snapshot" uses agentId "system"). They are not real
+    // agents and would otherwise show up as an all-zero phantom series.
+    if (!event.agentId || event.agentId === "system") return;
+
     const m = this.getOrCreate(event.agentId);
 
     switch (event.type) {
